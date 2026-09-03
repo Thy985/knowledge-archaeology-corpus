@@ -1,0 +1,55 @@
+# DeepSeek Harness — Archaeology Project Metadata
+
+## Project
+project: deepseek-harness
+project_slug: deepseek-harness
+repository: https://github.com/deepseek-ai/deepseek-harness.git
+repository_version: 0.1.2-rc.1
+commit_sha: 76fda729799fe9b3848dbe2c211d4b231032b81e
+branch: master
+archaeology_date: 2026-09-03
+
+## Run
+run_id: ARCH-2026-09-03-001
+mode: initial
+skill_version: v3.2
+skill_commit: 939973175b509e53e7b4f6c133c28dce4e52dcbf
+corpus_commit: <filled-at-push>
+
+## Quality Metrics
+quality_metrics:
+  evidence_count: 38
+  engineering_knowledge_count: 32        # 26 原始 + 6 Reconciliation 新增（EK-27..EK-32）
+  generalized_ko_count: 8
+  candidates_count: 9
+  flow_atlas_count: 7
+  ek_avg_out_edges: ">=1（全部 EK 有出边）"
+  isolated_ek_ratio: 0.0
+  aggregation_rule_coverage: 1.0
+  ko_avg_cluster_size: 5.0
+  l4_ko_count: 7
+  l3_ko_count: 1
+  l5_ko_count: 0
+  cross_project_pending_count: 3          # KO-03, KO-05 + Candidate 跨项目假说
+
+## Reconciliation
+reconciliation:
+  source: 07-independent-validation-report.md
+  applied_fixes:
+    - "F-05 Authority 管道顺序修正：collapse-check → pre-execute → approval(ask) → guards → execute"
+    - "EK-07 工具管线描述补齐 approval 精确位置与 collapse 先于策略管线"
+    - "新增 EK-27..EK-32（approval 委派继承 / PTC collapse / plan-mode / settings seam / repeat-tool-reminder / legacy 硬拒绝）"
+    - "KO-03 scope 收紧：限定为『受限执行路径上的分层 fail-closed』"
+    - "05_candidates 保留全部 Hypothesis / Counterexample / Cross-project Candidate"
+  coverage_gaps:
+    - "web_frontend_rpc"
+    - "acp_protocol_bridge"
+    - "goal / schedule / spill / mcp / feedback / jobs / code-runtime 等周边子系统（登记，未深度考古）"
+
+## Validation
+validation_result:
+  verdict: ACCEPT
+  original: PASS (6 validators)
+  independent: "CONFIRMED 34 / PARTIALLY_CONFIRMED 6 / INCORRECT 1 (F-05)"
+  contradictions_kept: 3   # compaction 有损 / SEARCH_FAILED 掩盖 / danger-full-access 绕过
+  counterexamples_kept: 3  # C-06, C-07, C-08 反例

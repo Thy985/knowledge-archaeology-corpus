@@ -1,0 +1,48 @@
+run_id: ARCH-2026-09-03-001
+repository: https://github.com/deepseek-ai/deepseek-harness.git
+commit: 76fda729799fe9b3848dbe2c211d4b231032b81e
+branch: master
+repository_version: 0.1.2-rc.1
+skill_version: v3.2
+skill_commit: 939973175b509e53e7b4f6c133c28dce4e52dcbf
+timestamp: 2026-09-03T20:57:11+08:00
+mode: initial
+status: COMPLETED_ARCHAEOLOGY_RUN   # 未写入 Corpus；等用户确认后交付
+
+quality_metrics:
+  evidence_count: 38
+  engineering_knowledge_count: 26
+  generalized_ko_count: 8
+  candidates_count: 9
+  flow_atlas_count: 7
+  ek_avg_out_edges: 2.4
+  isolated_ek_ratio: 0.0
+  aggregation_rule_coverage: 1.0
+  ko_avg_cluster_size: 4.3
+  l4_ko_count: 7
+  l3_ko_count: 1
+  l5_ko_count: 0
+  cross_project_pending_count: 2
+
+validation_result:
+  verdict: ACCEPT
+  truth_auditor: PASS
+  coverage_auditor: PASS
+  flow_auditor: PASS
+  abstraction_auditor: PASS
+  counterexample_hunter: PASS
+  epistemic_auditor: PASS
+  ek_graph_gate: PASS
+  blind_reconstruction: performed
+  conflicts_resolved: CONDITIONAL_x4
+  coverage_gaps: [web_frontend_rpc, acp_protocol_bridge]
+
+artifacts:
+  - 00-overview.md
+  - 01-project-layer.md
+  - 01-repository-snapshot.md
+  - 02-engineering-knowledge.md
+  - 03-knowledge-layer.md
+  - 04-flow-atlas.md
+  - 05-candidates.md
+  - 06-validation-evidence.md
