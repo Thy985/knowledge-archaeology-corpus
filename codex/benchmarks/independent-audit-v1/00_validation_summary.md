@@ -1,6 +1,6 @@
 # 00 · Validation Summary（独立对抗验证总结）
 
-> 独立对抗验证：对 OpenAI Codex 仓库（D:\Projects\Active\codex）的已有 Knowledge Archaeology 结果做独立审计。
+> 独立对抗验证：对 OpenAI Codex 仓库（OpenAI Codex 仓库（本地只读克隆））的已有 Knowledge Archaeology 结果做独立审计。
 > 方法：盲重建 Independent Findings → 六类审计（Source Truth / Coverage / Five-Layer Abstraction / Flow Atlas / Counterexample Hunt / Epistemic Status）+ Design-Reality Gap → Reconciliation → Quality Scorecard。
 > 铁律：仓库是最高真理源；已有 KO 是待审计对象；禁止维护已有结论。
 > 时间：2026-09-03
@@ -9,7 +9,7 @@
 
 ## 一、审计对象
 
-- 仓库：`D:\Projects\Active\codex`（OpenAI Codex，Rust 112 crates）
+- 仓库：`OpenAI Codex 仓库（本地只读克隆）`（OpenAI Codex，Rust 112 crates）
 - 已有考古产物：7 Knowledge Object（4A+3B，L1-L5）+ 6 Flow + 原验证报告（声称 7/7 PASS、0 反例、0 冲突）
 - 审计者独立核验文件：orchestrator.rs 全文 / session.rs / guardian/mod.rs / review.rs / sandboxing.rs / control.rs / exec_policy.rs / AGENTS.md
 

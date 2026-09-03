@@ -155,5 +155,5 @@ Counterexample Detection 30        → ?
 - [ ] 新增 Policy/Governance Analyst + Policy Flow（第七类流）
 - [ ] Counterexample Hunter 反例预算制（≥3 个定向攻击/高价值 KO）
 - [ ] Flow→KO 交叉校验门（L1 事实必须回溯 Flow Edge）
-- [ ] benchmark 目录保留 v1 痕迹（已完成：benchmarks/codex/）
+- [ ] benchmark 目录保留 v1 痕迹（已完成：benchmarks/）
 - [ ] 用 Codex 重跑一次 v2，对比 v1→v2 指标
