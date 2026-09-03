@@ -14,7 +14,7 @@ run_id: ARCH-2026-09-03-001
 mode: initial
 skill_version: v3.2
 skill_commit: 939973175b509e53e7b4f6c133c28dce4e52dcbf
-corpus_commit: 700604a
+corpus_commit: 3c393f5
 
 ## Quality Metrics
 quality_metrics:
