@@ -1,0 +1,53 @@
+run_id: ARCH-2026-09-04-001
+repository: https://github.com/microsoft/RAMPART.git
+commit: 125595cb2dc53ed81ac4da0f30a7042d6951e897
+branch: main
+snapshot_timestamp: 2026-09-04T02:05:00+08:00
+skill_version: 3.2
+skill_commit: 9399731
+job_manifest: job_manifest.md
+
+project:
+  name: rampart
+  slug: rampart
+  description: pytest-native safety testing framework for agentic AI applications (Microsoft AI Red Team)
+  mode: initial
+  priority: S
+
+outputs:
+  - 00_overview.md
+  - 01_project-layer/01_project_map.md
+  - 02_engineering-knowledge/02_ek_graph.md
+  - 03_knowledge-layer/03_ko_layer.md
+  - 04_flow-atlas/04_flow_atlas.md
+  - 05_candidates/05_candidates.md
+  - 06_validation/06_validation.md
+
+quality_metrics:
+  engineering_knowledge_count: 28
+  ko_count: 8
+  ko_l3: 4
+  ko_l4: 4
+  ko_l5: 0
+  candidates_count: 9
+  flows_count: 7
+  ek_avg_out_edges: ">=2"
+  isolated_ek: 0
+  ko_traceable_to_ek: true
+  scope_declared_on_all_ko: true
+  l4_counterexamples: "6/6 KO >=2 定向反例"
+  independent_verified: "resolve语义/三值逻辑(9x9真值表)/Payload校验/PayloadStore逃逸(7/7)/trial gate聚合 5项脚本实测"
+  official_suite_run: false  # pytest/pyrit 未安装，以源码精读+独立实测替代
+  env_limitation: "pytest 与 pyrit 未安装，官方单测套件未运行"
+  reconciliation: "独立验证修正3处(EK-14/EK-16/C-07)+强化2处(EK-23/EK-16)+新增2 EK(EK-27/28)+4新Benchmark case"
+
+validation_result:
+  truth: CONFIRMED
+  coverage: "13/13 子包覆盖；3 项边界缺口标注"
+  causality: PASS
+  flow: "七类流全可回溯；1 处 deviation 已记录"
+  abstraction: "8/8 KO 保留，均带 scope；未升 L5"
+  counterexample: PASS
+  epistemic: PASS
+  quality_gate: ACCEPT
+  notes: "全部 KO 有源码/测试/实测支撑；跨项目声明标 pending"

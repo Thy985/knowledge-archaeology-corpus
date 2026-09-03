@@ -1,0 +1,75 @@
+# RAMPART — Archaeology Project Metadata
+
+## Project
+project: rampart
+project_slug: rampart
+repository: https://github.com/microsoft/RAMPART.git
+repository_version: 0.1.0.dev0 (hatch-vcs)
+commit_sha: 125595cb2dc53ed81ac4da0f30a7042d6951e897
+branch: main
+archaeology_date: 2026-09-04
+license: MIT
+status: Alpha
+
+## Run
+run_id: ARCH-2026-09-04-001
+mode: initial
+priority: S
+skill_version: v3.2
+skill_commit: 939973175b509e53e7b4f6c133c28dce4e52dcbf
+source_entry: 03_expansion_queue/candidates/[cand]rampart-clarity-2026.md
+
+## Quality Metrics
+quality_metrics:
+  engineering_knowledge_count: 28        # 26 原始 + 2 Reconciliation 新增（EK-27 safe_* / EK-28 @harm 卫生检测）
+  generalized_ko_count: 8                # L3×4 + L4×4
+  candidates_count: 9
+  flow_atlas_count: 7
+  ek_avg_out_edges: ">=2"
+  isolated_ek_ratio: 0.0
+  ko_traceable_to_ek: true
+  scope_declared_on_all_ko: true
+  l4_counterexamples: "6/6 KO >=2 定向反例"
+  independent_verified: "resolve语义/三值逻辑(9x9真值表)/Payload校验/PayloadStore逃逸(7/7)/trial gate聚合 5项脚本实测"
+  official_suite_run: false              # pytest/pyrit 未安装，以源码精读+独立实测替代
+  cross_project_pending_count: 5         # KO-01..08 均标 pending + C-01..C-03 跨项目假说
+
+## Reconciliation
+reconciliation:
+  source: 07-independent-validation.md
+  applied_fixes:
+    - "EK-14 改写为混合并发策略（entry gather / ready TaskGroup），修正'禁 TaskGroup'误述"
+    - "EK-16 补充 no_result→UNDETERMINED→FAIL 分支 + pass_rate 达标含 unsafe 仍 PASS 的统计容忍"
+    - "EK-23 强化：NaN/Infinity/bool 拒绝 + outcome 字面量契约 {detected,not_detected,undetermined}"
+    - "C-07 收窄：incomplete 强制非 xdist 也生效；缺口仅剩 _absorb_results 异常 warning"
+    - "04_flow_atlas Policy Flow incomplete 措辞修正"
+    - "新增 EK-27（safe_* 序列化解析族）、EK-28（@harm 无结果 warning）"
+    - "独立验证补充 ToolCalled'实际数据优先于声明'（并入 EK-01 佐证）"
+  coverage_gaps:
+    - "pytest_plugin/_xdist.py 增量 merge 细节（1596 行未逐行深读）"
+    - "llm_judge.yaml 提示词模板内部措辞"
+    - "surfaces/onedrive / converters/docx 外围扩展（非核心机制）"
+
+## Validation
+validation_result:
+  verdict: ACCEPT
+  original: "PASS（Truth/Coverage/Causality/Flow/Abstraction/Counterexample/Epistemic 7 项）"
+  independent: "CONFIRMED 18 / PARTIALLY_CONFIRMED 3 / MISSING 4 / DOWNGRADED 0 / OVER_GENERALIZED 0 / CONTRADICTED 0 / NEEDS_HUMAN_REVIEW 1 (C-04)"
+  contradictions_kept: 2   # C-04 工具可见洗白边界 / C-07 单进程吸收失败 warning
+  counterexamples_kept: 3  # C-04, C-06, C-07
+  needs_human_review: "C-04：RESPONSE_ONLY+零工具→UNDETERMINED 而 RESPONSE_ONLY+有工具→SAFE 的语义是否意味着'工具可见可洗白'，建议向 RAMPART 作者确认"
+
+## Benchmark Cases (from this run)
+benchmark_cases:
+  - B-RAMPART-1: "observability 降级必须触发（RESPONSE_ONLY+零工具→UNDETERMINED）"
+  - B-RAMPART-2: "UNDETERMINED 必须是有意显式（不可静默转 SAFE/UNSAFE）"
+  - B-RAMPART-3: "PayloadStore 路径逃逸全拒"
+  - B-RAMPART-4: "trial gate ERROR→FAIL"
+  - B-RAMPART-5: "判断句 scope 必须声明边界"
+  - B-RAMPART-6: "trial gate 全 no_result→UNDETERMINED→FAIL"
+  - B-RAMPART-7: "trial gate pass_rate 达标含 unsafe→PASS（统计容忍）"
+  - B-RAMPART-8: "非 xdist 序列化超限→incomplete→强制非零退出"
+  - B-RAMPART-9: "und&not=not / und|det=det（组合顺序无关性）"
+
+## Skill Improvement Proposal
+skill_improvement_proposal: "是（P-013 候选：safety-critical 框架考古需强制审计'self-defense/攻击面'维度；见阶段7 评估）"
