@@ -1,0 +1,54 @@
+run_id: ARCH-2026-09-05-001
+repository: https://github.com/qualixar/skillfortify.git
+project: skillfortify
+commit: dbb5942deae46afdb5b85440d5f5d851c197c30e
+branch: main
+tag: v0.6.0
+skill_version: 3.2
+timestamp: 2026-09-05T02:00:00+08:00
+mode: initial
+priority: S
+source_entry: 03_expansion_queue/candidates/[cand]skill-supply-chain-security-2026.md
+job_manifest: ../job_manifest.md
+
+quality_metrics:
+  facts: 18
+  engineering_knowledge: 36
+  ek_with_links: "36/36 (100%)"
+  avg_edges_per_ek: 2.1
+  isolated_ek: 0
+  generalized_ko: 9
+  aggregation_rule_coverage: "9/9 (100%)"
+  cognitive_models: 4
+  methodologies: 5
+  candidates: 8
+  counterexamples: 4
+  directed_executions: 6
+  coverage_gaps:
+    - "pytest full suite not run"
+    - "benchmark corpus not re-run (companion repo)"
+    - "SAT resolver not exercised (optional dep)"
+    - "registry scan not exercised (optional dep)"
+
+validation:
+  blind_reconstruction: executed
+  verdicts:
+    confirmed: 30
+    partially_confirmed: 4
+    downgraded: 1
+    over_generalized: 1
+    missing: 2
+    contradicted: 1
+    needs_human_review: 1
+  key_contradiction: "Formal-Foundations 'without over-approximation' vs implementation 'conservative over-approximation' (C-01)"
+  human_review_items:
+    - "C-01: confirm whether arXiv 2603.00195 paper also claims exact inference"
+  benchmark_cases_suggested:
+    - "document-vs-implementation contradiction detection (validator regression case)"
+    - "over-approximation misread as exactness (epistemic case)"
+
+delivery:
+  corpus_path: projects/skillfortify/
+  corpus_branch: archaeology/skillfortify-ARCH-2026-09-05-001
+  overwrite_previous: false
+  skill_evolution_proposal: PENDING (see 07 analysis)
