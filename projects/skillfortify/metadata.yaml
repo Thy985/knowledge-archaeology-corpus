@@ -1,0 +1,67 @@
+# SkillFortify — Archaeology Project Metadata
+
+## Project
+project: skillfortify
+project_slug: skillfortify
+repository: https://github.com/qualixar/skillfortify.git
+repository_version: 0.6.0 (hatchling, tag v0.6.0)
+commit_sha: dbb5942deae46afdb5b85440d5f5d851c197c30e
+branch: main
+archaeology_date: 2026-09-05
+license: Elastic-2.0
+status: Alpha
+
+## Run
+run_id: ARCH-2026-09-05-001
+mode: initial
+priority: S
+skill_version: v3.2
+source_entry: 03_expansion_queue/candidates/[cand]skill-supply-chain-security-2026.md
+
+## Quality Metrics
+quality_metrics:
+  engineering_knowledge_count: 38          # 36 原始 + 2 Reconciliation 新增（EK-37 over-declaration / EK-38 is_safe 聚合）
+  generalized_ko_count: 9                  # L3 Pattern x9 + CM x4 + M x4
+  candidates_count: 9                      # C-01..C-08 + C-09（Reconciliation）
+  flow_atlas_count: 7                      # Control/State/Data/Evidence/Authority/Memory/Policy
+  ek_avg_out_edges: 2.1
+  isolated_ek_ratio: 0.0
+  ko_traceable_to_ek: true
+  aggregation_rule_coverage: "9/9 (100%, R1-R4)"
+  l4_counterexamples: "4/4 CM 各带反例预算"
+  directed_executions: "6 项考古实测 + 5 项独立审计实测（over-declaration/unparsed/is_safe 语义等）"
+  official_suite_run: false                # pytest 未全量跑；benchmark corpus 在 companion repo 未复跑；SAT/registry 可选依赖未装
+  cross_project_pending_count: 4           # CM-1..CM-4 + C-02 跨项目假说
+
+## Reconciliation
+reconciliation:
+  source: 06_validation/independent-validation-report.md
+  applied_fixes:
+    - "新增 EK-37（over-declaration 防护：ADMIN>=3 或通配 -> HIGH A6；unparsed 声明 -> LOW fail-safe）"
+    - "新增 EK-38（威胁模式 58 个 + is_safe 聚合 pattern_match/capability_violation 语义）"
+    - "EK-20 升级 Obs -> Fact（allowed-tools 实现确认：claude_skills.py L208-215 + engine.py L348）"
+    - "EK-05 补充威胁模式规模 58"
+    - "新增 C-09（is_safe 二值语义混合 Observation）"
+  coverage_gaps:
+    - "pytest 全量未跑（环境约束，定向实测替代）"
+    - "arXiv 2603.00195 论文正文未读（五定理证明细节无法核验）"
+    - "benchmark corpus（skillfortifybench companion repo）未复跑"
+    - "SAT resolver / registry scan 因可选依赖未装未实测"
+
+## Validation
+validation_result:
+  verdict: ACCEPT
+  original: "PASS（Truth/Coverage/Causality/Flow/Abstraction/Counterexample/Epistemic）"
+  independent: "CONFIRMED 33 / PARTIALLY_CONFIRMED 2 / DOWNGRADED 1 / OVER_GENERALIZED 1 / MISSING 0 / CONTRADICTED 1 / NEEDS_HUMAN_REVIEW 1 (C-01)"
+  contradictions_kept: 1   # C-01 文档 without-over-approximation vs 实现 conservative over-approximation
+  counterexamples_kept: 4  # E-1..E-4
+  needs_human_review: "C-01：确认 arXiv 2603.00195 论文是否同样声称 exact capability inference（若一致则属系统性声明过度）"
+
+## Benchmark Cases (from this run)
+benchmark_cases:
+  - B-SKILLFORTIFY-1: "文档-实现矛盾检测（validator 应主动抓设计文档声称性质 vs 实现不一致）"
+  - B-SKILLFORTIFY-2: "over-declaration 防护必须触发（声明过宽 -> HIGH 而非静默 PASS）"
+  - B-SKILLFORTIFY-3: "is_safe 报告应区分 pattern_match 与 capability_violation 两类不安全"
+
+## Skill Improvement Proposal
+skill_improvement_proposal: "是（P-014/P-015 候选：文档-实现对账维度 + over-declaration/self-defense 维度；见阶段7 评估）"
