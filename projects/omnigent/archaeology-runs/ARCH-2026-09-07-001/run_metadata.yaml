@@ -1,0 +1,42 @@
+run_id: ARCH-2026-09-07-001
+project: omnigent
+repository: https://github.com/omnigent-ai/omnigent.git
+commit: 381bf638fb31e6a51990d9dab54ea9ef4b933711
+branch: main
+repository_version: 0.13.0.dev0 (latest release v0.12.0, 2026-09-01)
+skill_version: knowledge-archaeology v3.2 (local production)
+timestamp: "2026-09-07"
+mode: initial
+source_entry: 03_expansion_queue/candidates/[cand]agent-harness-control-plane.md
+priority: A
+
+quality_metrics:
+  ek_count: 30
+  ek_links_coverage: 1.0
+  ek_avg_out_edges: 2.5
+  ek_isolated: 0
+  ko_count: 7
+  ko_aggregation_rule_coverage: 1.0
+  cognitive_models: 4
+  methodologies: 4
+  candidates: 8
+  flow_atlas: 7 (control/state/data/evidence/authority/memory/policy)
+  evidence_levels: {S2: 2, S3: 28, S4: 0}
+
+validation_result:
+  status: PASS_WITH_DOCUMENTED_GAPS
+  truth_audit: PASS (12/30 spot-checked verbatim)
+  coverage_audit: PARTIAL (3 documented gaps: tests not run / giant files head-only / web-desktop not covered)
+  flow_audit: PASS (all edges traceable; 1 junction ambiguity -> C-07)
+  abstraction_audit: PASS (no over-promotion found)
+  counterexample_hunt: PASS (5 attacks: 3 confirmed, 2 partially confirmed)
+  epistemic_audit: PASS (no Hypothesis-as-Fact; candidates separated)
+  needs_human_review:
+    - git_credential_github.py credential flow scope vs KO-06
+    - C-07 proxy_stream gate-vs-relay ordering
+    - pre-v0.12.0 behavior cited as history only
+
+notes:
+  - Test execution blocked by missing heavy test deps (playwright visual snapshot plugin etc.);
+    test-revealed-behavior evidence is S3 (test intent reading), not S4. Documented honestly.
+  - Snapshot based on shallow-clone HEAD; later commits not tracked.
