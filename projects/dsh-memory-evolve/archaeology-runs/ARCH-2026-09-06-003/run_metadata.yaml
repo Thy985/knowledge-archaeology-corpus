@@ -1,0 +1,31 @@
+run_id: ARCH-2026-09-06-003
+repository: https://github.com/csyangwen/dsh-memory-evolve.git
+commit: 999a0edb39894ebb2c5ceeb97712db8c3a9c5093
+branch: main
+tag: null
+repository_version: 0.1.0
+skill_version: knowledge-archaeology v3.2
+timestamp: '2026-09-06'
+mode: initial
+requested_by: user direct request
+quality_metrics:
+  facts_evidence: 60
+  ek_count: 30
+  ek_links_coverage: 100%
+  ek_orphan: 0
+  ko_count: 8
+  cm_count: 4
+  m_count: 4
+  candidates_count: 8
+  counterexample_attacks: 14
+  test_files: 60
+  executed_tests: full suite 798 assertions → 795 pass / 3 fail (all darwin platform
+    assumptions; 48 env-fails resolved by git main-branch + identity config)
+validation:
+  result: PASS (2 tightenings, 0 NEEDS_HUMAN_REVIEW, no obfuscation blind spot — lib/
+    fully readable)
+  blind_reconstruction: true
+  ecosystem_connections:
+  - deepseek-harness (corpus)
+  - evolver (hermes-cli-calling)
+  - 'KnowlegeMap radar: hermes-agent'
