@@ -1,0 +1,30 @@
+run_id: ARCH-2026-09-06-002
+repository: https://github.com/EvoMap/evolver.git
+commit: 31b0691
+branch: main
+tag: null
+repository_version: 1.94.0
+skill_version: knowledge-archaeology v3.2
+timestamp: '2026-09-06'
+mode: initial
+requested_by: user direct request (non-SOP)
+quality_metrics:
+  facts_evidence: 60
+  ek_count: 30
+  ek_links_coverage: 100%
+  ek_orphan: 0
+  ko_count: 7
+  cm_count: 4
+  m_count: 4
+  candidates_count: 8
+  counterexample_attacks: 12
+  obfuscated_files: 57/202 src (evolve 8/8, gep 44/86, proxy 4/29)
+  test_files: 221
+  executed_tests: 'sampled: sandboxExecutor.security + rollbackSafety + savingsCoreConformance
+    + crypto → 60 pass / 2 fail (env: @evomap/gep-sdk not installed)'
+validation:
+  result: PASS (2 tightens, 2 NEEDS_HUMAN_REVIEW, obfuscation blind-spot declared)
+  blind_reconstruction: true
+  blind_spots:
+  - src/evolve.js + evolve/pipeline (8 files) obfuscated
+  - gep 44/86 obfuscated (solidify/crypto/contentHash...)
