@@ -1,0 +1,59 @@
+run_id: ARCH-2026-09-06-001
+repository: https://github.com/xmudeeplit/memgraphrag.git
+commit: cd6fabda1ec31a302bb283089e17c087ab7713e8
+branch: main
+tag: null
+repository_version: unversioned (no tag; HEAD 'update readme')
+skill_version: knowledge-archaeology v3.2
+skill_source: /home/user/.super_doubao/super-doubao-runtime/workspace/.user_skills/knowledge-archaeology/
+timestamp: '2026-09-06T02:00:00+08:00'
+analysis_timestamp: '2026-09-06'
+mode: initial
+quality_metrics:
+  facts_evidence: 50
+  ek_count: 33
+  ek_links_coverage: 100%
+  ek_orphan: 0
+  ko_count: 8
+  ko_aggregation_rule_coverage: 100%
+  cm_count: 4
+  m_count: 4
+  counterexample_attacks: 10
+  target_ratio: 50 facts / 33 EK / 8 KO / 4 CM / 4 M
+validation:
+  result: PASS (2 tightens + reconciliation of 3 errors / 4 omissions from independent
+    audit)
+  blind_reconstruction: true
+  executed_tests:
+  - ThreeLayerMemory build (two/three layer)
+  - dedup
+  - bidirectional links
+  - serialization roundtrip
+  not_executed:
+  - LLM pipeline (OpenIE/conflict/QA)
+  - PPR (igraph)
+  - retrieval eval
+  notes: LLM/embedding dependencies not installed in runtime env; mechanisms verified
+    by code reading (S3); data structures verified by execution (S4)
+  independent_audit:
+    confirmed: 24
+    partially_confirmed: 2
+    downgraded: 1
+    over_generalized: 1
+    missing: 4
+    contradicted: 0
+    needs_human_review: 0
+    top_successes:
+    - three-layer memory verified by execution
+    - conflict 3-stage separation
+    - eval() safety boundary
+    top_errors_fixed:
+    - EK-19 IRCoT was dead code (downgraded)
+    - graph edge co-occurrence weights missed
+    - CLI threshold-filter main path missed
+    new_benchmark_cases:
+    - C-08 ThreeLayerMemory regression
+    - R-01 dead-config consumption check
+    - R-02 eval/dynamic-exec scan
+corpus_target: projects/memgraphrag/
+pr_branch: archaeology/memgraphrag-ARCH-2026-09-06-001

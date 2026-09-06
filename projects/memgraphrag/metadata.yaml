@@ -1,0 +1,57 @@
+# MemGraphRAG — Archaeology Project Metadata
+
+## Project
+project: MemGraphRAG
+project_slug: memgraphrag
+repository: https://github.com/xmudeeplit/memgraphrag.git
+repository_version: unversioned (no tag; HEAD commit 'update readme')
+commit_sha: cd6fabda1ec31a302bb283089e17c087ab7713e8
+branch: main
+archaeology_date: 2026-09-06
+license: MIT (DeepLIT Group, Xiamen University)
+status: Research prototype (KDD'26, arXiv 2606.00610)
+
+## Run
+run_id: ARCH-2026-09-06-001
+mode: initial
+priority: A
+skill_version: knowledge-archaeology v3.2
+skill_source: local .user_skills/knowledge-archaeology/
+source_entry: 03_expansion_queue/candidates/[cand]agentic-graphrag-2026.md
+
+## Quality Metrics
+quality_metrics:
+  engineering_knowledge_count: 33        # 30 原始 + 3 Reconciliation 新增（EK-31 图边共现权重 / EK-32 QA 单步协议 / EK-33 CLI 阈值过滤主路径）
+  generalized_ko_count: 8                # KO-01..08，aggregation_rule 覆盖率 100%
+  cognitive_models_count: 4              # CM-1..4
+  methodologies_count: 4                 # M-1..4
+  candidates_count: 9                    # C-01..09（含死代码 IRCoT C-09）
+  flow_atlas_count: 7                    # Control/State/Data/Evidence/Authority/Memory/Policy
+  ek_links_coverage: "100%"
+  isolated_ek_ratio: 0.0
+  ko_traceable_to_ek: true
+  counterexample_attacks: 10
+  executed_tests: "ThreeLayerMemory build(2/3 layer)+dedup+bidirectional links+serialization roundtrip (S4)"
+  not_executed: "LLM pipeline (OpenIE/conflict/QA), PPR(igraph), retrieval eval — deps not installed (S3 code-reading)"
+
+## Independent Validation (Auditor blind reconstruction)
+validation:
+  result: "PASS with reconciliation (2 tightens + 3 errors fixed + 4 omissions added)"
+  confirmed: 24
+  partially_confirmed: 2
+  downgraded: 1           # EK-19 IRCoT: iteration was dead code, not main QA path
+  over_generalized: 1     # KO-03/CM-3 IRCoT agentic phrasing tightened
+  missing: 4
+  contradicted: 0
+  needs_human_review: 0
+  top_3_successes: ["three-layer memory verified by execution", "conflict 3-stage separation (deterministic candidates + LLM verdict)", "eval() safety boundary finding"]
+  top_3_errors_fixed: ["EK-19 IRCoT dead code (single-step QA actual)", "graph edge co-occurrence weights missed", "CLI threshold-filter main path missed"]
+  new_benchmark_cases: ["C-08 ThreeLayerMemory regression", "R-01 dead-config consumption check", "R-02 eval/dynamic-exec scan"]
+
+## Key Findings
+key_findings:
+  - "Three-layer memory (Schema 1:N Fact N:M Passage) with bidirectional links — data structure verified by execution"
+  - "Conflict-aware construction: deterministic candidate generation → LLM verdict (temp=0, evidence injection, confidence gate) → connected-component batch resolution (priority actions, content-filter fallback)"
+  - "'Multi-Agent' naming vs implementation reality: 7-role LLM prompt pipeline + multithreading, no agentic loop; IRCoT iteration is dead code (C-01/C-09)"
+  - "Graph retrieval: phrase weights + co-occurrence edge weights + frequency normalization + PPR, with explicit dense fallback"
+  - "eval() on internally generated fact content — conditional security boundary (C-04)"
