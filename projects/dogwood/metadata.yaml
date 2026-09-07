@@ -1,0 +1,13 @@
+project: dogwood
+repository: https://github.com/dogwood-policy/dogwood
+slug: dogwood
+description: AWS 开源的 agent 运行时验证治理语言（Cedar 派生 + 时间条件 since/formerly/once/聚合 + compile-to-Cedar + 可插拔引擎）；参考解释器，Apache 2.0
+archaeology_runs:
+  - run_id: ARCH-2026-09-08-001
+    date: 2026-09-08
+    mode: initial
+    commit: c6237c88099b3f492ecc5fcee42df06a19224b97
+    skill_version: knowledge-archaeology v3.2
+    priority: A
+    status: merged
+source_entry: 03_expansion_queue/candidates/[cand]agent-formal-verification-2026.md
