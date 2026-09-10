@@ -1,0 +1,61 @@
+# Run Metadata — ARCH-2026-09-11-001
+
+run_id: ARCH-2026-09-11-001
+mode: refresh
+job: 每日 Knowledge Archaeology Runtime（SOP）— 2026-09-11
+
+## Target
+repository: https://github.com/deepseek-ai/deepseek-harness.git
+repository_version: 0.1.5-rc.2
+commit_sha: fb2c4b9e698e30edb738bca4cf0618587db7d203
+branch: master (tag: dsh-v0.1.5-rc.2)
+baseline_run: ARCH-2026-09-03-001 (v0.1.2-rc.1, 76fda729799fe9b3848dbe2c211d4b231032b81e)
+
+## Skill
+skill_version: v3.2
+skill_path: /home/user/.doubao/agent_mode/workspace/.user_skills/knowledge-archaeology/
+skill_commit: 939973175b509e53e7b4f6c133c28dce4e52dcbf（生产版，未修改；skill-repo HEAD 7e0b5f5）
+
+## Timeline
+- 2026-09-11T02:00+08:00 cron 触发
+- 阶段1 权限核验：三仓库 fetch OK；corpus push 待阶段6
+- 阶段2 Job Selection：dsh refresh（雷达 #10 第一优先级）
+- 阶段3 Snapshot：fb2c4b9 浅克隆 + 基线 diff（notes 862→958、packages 50→55）
+- 阶段4 Archaeology：notes 体系 + PTC 链 + workspace-files + V3 envelope + python SDK（111 passed/7 skipped）
+- 阶段5 Independent Validation：独立重读后判定（见 independent_validation_report.md）
+- 阶段6 Corpus Commit：projects/deepseek-harness/ 增量，PR #11
+
+## Quality Metrics
+quality_metrics:
+  evidence_count: 45
+  engineering_knowledge_count: 45      # 32 基线存续核对 + 13 新增（EK-R01..R13）
+  generalized_ko_count: 10             # 8 基线存续 + 2 新增（KO-09, KO-10）
+  candidates_count: 14                 # 9 基线 + 5 新增
+  flow_atlas_count: 7                  # 基线 7 类 + 增量边（Control/State/Data/Authority）
+  ek_avg_out_edges: ">=1"
+  isolated_ek_ratio: 0.0
+  aggregation_rule_coverage: 1.0
+  ko_avg_cluster_size: 5.0
+  l4_ko_count: 9
+  l3_ko_count: 1
+  l5_ko_count: 0
+  cross_project_pending_count: 5
+  python_sdk_tests: "111 passed / 7 skipped (S4, 3.35s)"
+
+## Validation Result
+validation_result:
+  verdict: ACCEPT
+  independent: "CONFIRMED 为主；13/13 新 EK 证据可回溯；coverage gap（.agents/notes）确认并补偿"
+  contradictions_kept: 3               # 09-03 保留项（compaction 有损/SEARCH_FAILED/danger-full-access）
+  counterexamples_kept: 5              # 09-03 C-06/07/08 + 本轮 KO-09/KO-10 反例
+  new_contradiction_notes:
+    - "09-05 containment vs 09-09 继承 fs 授权（supersede 演进，非错误）"
+    - "雷达'三模式联合训练' vs 仓库证据（一方称）"
+
+## Coverage Gaps（登记）
+- .agents/notes ADR 体系：09-03 零引用 → 本轮已补偿（13 EK）
+- 09-03 登记 gaps 状态：feedback（补 EK-R11）、code-runtime（补 EK-R02/R03）、acp（仍浅，登记）、goal/schedule/spill/jobs（未深挖，保留登记）
+
+## Evidence Grade Notes
+- 已查证：tag/version/star（GitHub API）、notes 内容、packages 结构、pytest 实测
+- 一方称：三模式联合训练（媒体）、181 插件生态（媒体；仓库仅 55 packages 可核验）
