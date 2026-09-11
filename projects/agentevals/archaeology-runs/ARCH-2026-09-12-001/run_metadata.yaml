@@ -1,0 +1,37 @@
+run_id: ARCH-2026-09-12-001
+repository: https://github.com/agentevals-dev/agentevals.git
+project: agentevals
+mode: initial
+commit: 65e677b79affdda5bf056fc0e72e34f2b7cbfa8b
+branch: main
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-09-12T02:00:00+08:00
+source_entry: "[cand]trace-based-agent-eval-2026 (KnowlegeMap radar #11, 2026-09-12, A)"
+
+quality_metrics:
+  ek_count: 16
+  ko_count: 4
+  candidates_count: 5
+  flow_atlas_flows: 7
+  test_result: "798 passed / 24 skipped (40.19s, after pytest-asyncio)"
+  initial_test_failure: "69 failed / 29 errors — root cause: pytest-asyncio missing (env, not product defect)"
+  test_revealed: "pyproject configures asyncio_mode but does not declare pytest-asyncio (dev dep gap, EK-16)"
+
+validation_result:
+  status: PASS
+  auditors: [truth, coverage, flow, abstraction, counterexample, epistemic]
+  counterexamples: 5
+  known_gaps:
+    - "api/otlp_grpc.py GRPC receiver details not deep-dived (implementation detail)"
+    - "openai_eval_backend.py full chain not deep-dived"
+    - "postgres migrations SQL not deep-dived"
+    - "LLM judge API error/retry propagation not covered (R4)"
+  contradictions: []
+  notes: "Validation keeps gaps explicitly; not a false-all-green."
+
+key_findings:
+  - "Evaluation/execution decoupling: no re-execution, trace is the evidence (KO-01)"
+  - "Format normalization layer: loader registry + ADK > GenAI priority (KO-02)"
+  - "Deterministic gates vs LLM judges are separate trust tiers (KO-03)"
+  - "Fail-closed credential injection via ADK private seam + 409 spec-mismatch (KO-04, EK-07)"
+  - "Boundary: non-GenAI-semconv harnesses (Claude Code/Codex/OpenCode) need glue (EK-15)"

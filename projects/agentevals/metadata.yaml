@@ -1,0 +1,44 @@
+# agentevals — Archaeology Corpus Entry
+
+## 项目定位
+框架无关的 Agent 评测方案：从 OpenTelemetry traces 直接评分（record once, evaluate many times），golden eval sets + CI 门禁，CLI/Web UI/MCP server/Helm chart。
+
+## 考古状态
+
+| 字段 | 值 |
+|---|---|
+| project | agentevals |
+| repository | https://github.com/agentevals-dev/agentevals.git |
+| first_archaeology | ARCH-2026-09-12-001（initial） |
+| latest_run | ARCH-2026-09-12-001 |
+| latest_commit | 65e677b79affdda5bf056fc0e72e34f2b7cbfa8b |
+| skill_version | knowledge-archaeology v3.2 |
+| source_entry | [cand]trace-based-agent-eval-2026（KnowlegeMap 雷达 #11） |
+| status | COMPLETED（2026-09-12） |
+
+## 产物清单
+
+- `00_overview.md` — Overview（定位 / 3 Top Findings / 边界）
+- `01_project-layer/` — 项目地图（架构 / 模块 / 生命周期 / 配置 / 权限 / 依赖）
+- `02_engineering-knowledge/` — 16 EK（EK Graph，6 类边）
+- `03_knowledge-layer/` — 4 KO（L3/L4，aggregation_rule R1-R4）
+- `04_flow-atlas/` — 七类流（Control/State/Data/Evidence/Authority/Memory/Policy）
+- `05_candidates/` — 5 Candidates（Hypothesis/Tentative/Cross-project）
+- `06_validation/` — Validation + 反例 + Reconciliation + 质量指标
+- `archaeology-runs/ARCH-2026-09-12-001/` — run_metadata + snapshot + independent validation
+
+## 关键认知（可复用）
+
+- **KO-01** 执行是采样，评测是审阅——证据落盘后评判与事实解耦
+- **KO-02** 外部多样性在边界收敛（归一化注册表层）
+- **KO-03** 可复现性是门禁前提，判定置信度与机制匹配（确定性 gate vs LLM judge）
+- **KO-04** 不确定处失败好过错误处成功（fail-closed 族：credential / 409 / 结果去重）
+
+## 连接
+
+- OpenCode（遥测缺口被 agentevals 边界声明点名）
+- DeepSeek Harness（session-telemetry-otel 若对齐 GenAI semconv 可接入）
+- Agentic CLEAR（trace 作为证据）
+
+## 考古日期
+2026-09-12（每日 Knowledge Archaeology Runtime SOP，cron）
