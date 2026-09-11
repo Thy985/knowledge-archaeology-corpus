@@ -1,0 +1,14 @@
+project: opencode
+repository: https://github.com/opencode-ai/opencode
+slug: opencode
+description: Go 终端 AI coding agent（Bubble Tea TUI + SQLite + LSP 集成 + 多 LLM provider）；2025-09-17 归档，迁移 charmbracelet/crush；Charm 团队单体 TUI harness 谱系源头
+archaeology_runs:
+  - run_id: ARCH-2026-09-09-001
+    date: 2026-09-09
+    mode: initial
+    commit: 73ee493265acf15fcd8caab2bc8cd3bd375b63cb
+    skill_version: knowledge-archaeology v3.2
+    priority: A
+    status: merged
+source_entry: 03_expansion_queue/candidates/[cand]opencode-agent-2026.md
+source_fidelity_note: 候选卡声称 headless Hono HTTP/Vercel AI SDK/~147k★，仓库实际为 Go 单体 TUI/13,727★/已归档——考古以仓库实际为准
