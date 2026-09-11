@@ -1,0 +1,14 @@
+project: clear
+repository: https://github.com/IBM/CLEAR
+slug: clear
+description: IBM Research 开源 LLM-as-a-Judge 错误分析工具包（clear_eval v2.0.5）——评估是证据生产管线：trace→IR→compact→多粒度评估→聚合→统计模式；LLM Analysis + Agentic Analysis 双模式
+archaeology_runs:
+  - run_id: ARCH-2026-09-10-001
+    date: 2026-09-10
+    mode: initial
+    commit: 9a5367bd048ed656b62093cc09d77b872fca4ff8
+    skill_version: knowledge-archaeology v3.2
+    priority: A
+    status: merged
+source_entry: 03_expansion_queue/candidates/[cand]agentic-clear-2026.md
+source_fidelity_note: 候选卡主张与仓库实际完整对应（judge 三级 + 统计模式挖掘 + IBM 开源），作者即论文作者——无失真
