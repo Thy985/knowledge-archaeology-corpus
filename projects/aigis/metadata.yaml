@@ -1,0 +1,46 @@
+# aigis — Archaeology Corpus Entry
+
+## 项目定位
+确定性、零依赖的 AI Agent 运行时防火墙：每次工具调用前跑 L1-L7 检测管线（正则/语义/解码/CaMeL taint/沙箱/安全规约/FSM），产出可解释 allow/deny + HMAC 签名防篡改审计日志；覆盖 MCP rug-pull、记忆投毒、间接注入、外泄通道；带 12 合规模板（本 fork 聚焦韩国 PIPA/ISMS-P/금융위）。本条目考古的是 **pyaigis-kr fork**（gaebalai/aigis-kr，v1.1.4），能力文档指向原版 Aigis 架构。
+
+## 考古状态
+
+| 字段 | 值 |
+|---|---|
+| project | aigis |
+| repository | https://github.com/gaebalai/aigis-kr.git |
+| first_archaeology | ARCH-2026-09-13-001（initial） |
+| latest_run | ARCH-2026-09-13-001 |
+| latest_commit | 229a2917dfa9ae881ee551c98c3c45a0f43b658d |
+| repository_version | pyaigis-kr v1.1.4（零核心依赖） |
+| skill_version | knowledge-archaeology v3.2 |
+| source_entry | [cand]agent-firewall-runtime-defense-2026（KnowlegeMap 雷达 #10 建卡/#11 增量/#12 连续三日第一验证优先级） |
+| status | COMPLETED（2026-09-13） |
+
+## 产物清单
+
+- `00_overview.md` — Overview（定位 / 3 Top Findings / 边界）
+- `01_project-layer/` — 项目地图（架构 / 模块 / 生命周期 / 配置 / 权限 / 依赖）
+- `02_engineering-knowledge/` — 18 EK（EK Graph，6 类边；16 条初始 + 2 条 Auditor Reconciliation 增量）
+- `03_knowledge-layer/` — 4 KO（L3/L4，aggregation_rule R1-R4）
+- `04_flow-atlas/` — 七类流（Control/State/Data/Evidence/Authority/Memory/Policy）
+- `05_candidates/` — 4 Candidates（2 Hypothesis / 1 Tentative / 1 L3 候选）
+- `06_validation/` — Validation + 反例 + Reconciliation + 质量指标
+- `archaeology-runs/ARCH-2026-09-13-001/` — run_metadata + snapshot + independent validation
+
+## 关键认知（可复用）
+
+- **KO-01** 当后果不可逆时，判定的可解释性优先于判定覆盖面（确定性规则 vs LLM judge 双路线）
+- **KO-02** 防御层的价值在于失效模式的正交性，而非层数本身
+- **KO-03** 不可抵赖性是设计目标也是测试断言——没有测试的防篡改只是愿望
+- **KO-04** 安全工具的依赖面即其攻击面（零依赖 + MCP trust score + 对抗循环）
+
+## 连接
+
+- **agentevals**（已考古）：评测门禁 vs 运行时防火墙——Agent 工程两翼，可构造"确定性 guardrail + 评测门禁"联合基准
+- **deepseek-harness / opencode**（已考古）：Agent 运行时宿主，是 Aigis 类防火墙的部署目标
+- **rampart / skillfortify**（已考古）：同类防线，本条目提供品类基准点
+- **C-01**：确定性检测与 LLM judge 互补性假说（跨项目验证 pending）
+
+## 考古日期
+2026-09-13（每日 Knowledge Archaeology Runtime SOP，cron TaskID 11659931249922）
