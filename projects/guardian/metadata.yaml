@@ -1,0 +1,25 @@
+project: guardian
+slug: guardian
+repository: https://github.com/LegionForge/guardian.git
+package: legionforge-guardian
+latest_run: ARCH-2026-09-14-001
+first_archaeologized: 2026-09-14
+status: COMPLETED (initial)
+commit: 75c1aaba928d8b1a9b32266081487e4863215f9c
+skill_version: knowledge-archaeology v3.2
+runs:
+  - run_id: ARCH-2026-09-14-001
+    mode: initial
+    commit: 75c1aaba928d8b1a9b32266081487e4863215f9c
+    date: 2026-09-14
+    summary: "7 deterministic checks, no LLM; SHA-256 hash-chain audit; canary honeypot; fail-closed hot path"
+quality_metrics:
+  tests: "57 passed / 9 skipped (1.44s)"
+  ek_count: 14
+  ko_count: 4
+  candidates: 4
+  cross_project: "KO-01/02/03 2-project corroborated (guardian + aigis, baseline from local ARCH-2026-09-13-001 package; aigis PR pending merge)"
+baseline:
+  project: aigis
+  run: ARCH-2026-09-13-001
+  note: "aigis corpus PR not merged yet (branch archaeology/aigis-ARCH-2026-09-13-001, commit 1ac73b2); cross-project claims reference local package"

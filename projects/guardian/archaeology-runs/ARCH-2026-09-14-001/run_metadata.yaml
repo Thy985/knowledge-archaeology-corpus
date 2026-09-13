@@ -1,0 +1,31 @@
+run_id: ARCH-2026-09-14-001
+repository: https://github.com/LegionForge/guardian.git
+project: guardian
+commit: 75c1aaba928d8b1a9b32266081487e4863215f9c
+branch: main
+repository_version: legionforge-guardian v0.1.1 (pyproject; README shows service version 4.0.0 — see C-04)
+skill_version: knowledge-archaeology v3.2
+mode: initial
+timestamp: 2026-09-14T02:00:00+08:00
+baseline: aigis (ARCH-2026-09-13-001, same-category deterministic firewall)
+quality_metrics:
+  tests: "57 passed / 9 skipped (1.44s) — unit tests all green"
+  test_skips: "9 live tests require GUARDIAN_TEST_URL real sidecar + PostgreSQL (env-dependent, not product failures)"
+  ek_count: 14
+  ek_links_coverage: "100%"
+  ko_count: 4
+  ko_aggregation_rule_coverage: "100%"
+  ko_cross_project: "KO-01/02/03 2-project corroborated (guardian + aigis)"
+  candidates: 4
+  counterexample_budget: "7/12 consumed"
+validation_result:
+  truth: "CONFIRMED (code-level); PARTIALLY_CONFIRMED (live deployment behavior not S5-tested)"
+  coverage: "PASS (all 7 checks / jwt / cache / audit chain / canary / endpoints / ci / security)"
+  flow: "PASS (7 flows traceable to app.py symbols + init.sql)"
+  abstraction: "PASS (no over-promotion; KO-01/02/03 upgraded to 2-project only with dual-repo evidence; L5 withheld)"
+  counterexample: "PASS (7/12 budget; fail-open windows explicitly attacked)"
+  epistemic: "PASS (Fact/Hypothesis separated; M-01 contradiction kept open)"
+notes:
+  - "Guardian = FastAPI sidecar (:9766) + PostgreSQL; 7 deterministic checks, no LLM"
+  - "SHA-256 hash-chain audit + canary honeypot tool are unique mechanisms"
+  - "Cross-project corroboration with aigis: hash chain / fail-closed hot path / deterministic verdict"
