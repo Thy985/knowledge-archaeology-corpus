@@ -1,0 +1,35 @@
+project: ai-protector
+slug: ai-protector
+repository: https://github.com/szesnasty/ai-protector.git
+commit_sha: 8f57f8533e0feb414348c16e6aa6b2e3621103ad
+repository_version: 0.2.8
+archaeology_date: 2026-09-15
+run_id: ARCH-2026-09-15-001
+mode: initial
+skill_version: knowledge-archaeology v3.2
+license: Apache-2.0
+category: agent-security-runtime / llm-firewall
+status: completed
+baseline:
+  - aigis: ARCH-2026-09-13-001（PR #13 open）
+  - guardian: ARCH-2026-09-14-001（PR #14 open）
+source_entry: "[cand]agent-firewall-runtime-defense-2026（雷达 #14 下一步首位，三选一实测第 3 点）"
+summary: |
+  AI agent 安全运行时——确定性防护层（No LLM in the loop · ~50ms · fully local · provable）。
+  Find（Benchmark Hub ~5070 场景）→ Protect（7 层加权防火墙 + RBAC 双门）→ Prove（客观真值 grader，94%→99%）。
+  品类对照：Aigis（内嵌检测管线）/ Guardian（sidecar 确定性检查）/ AI Protector（proxy+agent 双层 + A2 反混淆 + MODIFY 三态 + 输出侧过滤 + benchmark 可证明性）。
+quality_metrics:
+  local_tests_passed: 668           # proxy 纯逻辑 203 + agent-demo 465
+  env_limited: 400                  # DB/Redis/服务依赖（24+23+353）
+  ek_count: 39                      # 36 原考古 + 3 reconciliation 增补（EK-36/37/38）
+  ko_count: 10
+  candidates_count: 9
+  validation: CONDITIONAL PASS
+  benchmark_numbers: 项目自述 S7（99%/91%/48ms/1900+ tests）——本地仅复现 668 单元测试
+validation_summary: |
+  8 CONFIRMED / 2 PARTIALLY_CONFIRMED / 3 MISSING（已补录）/ 2 NEEDS_HUMAN_REVIEW
+  （enable_direct_endpoint 默认 True + 管理端点无认证）/ 0 DOWNGRADED / 0 OVER_GENERALIZED / 0 CONTRADICTED。
+  Reconciliation 已采纳全部 Auditor 修正。
+notes:
+  - 跨项目基线 PR #13/#14 open 未合并——对照引用来自本地 archaeology-jobs package
+  - 飞书落盘：未授权，默认不做（只 push corpus）

@@ -1,0 +1,51 @@
+# Run Metadata — ARCH-2026-09-15-001
+
+run_id: ARCH-2026-09-15-001
+job_id: ARCH-2026-09-15-001
+project: ai-protector
+repository: https://github.com/szesnasty/ai-protector.git
+commit: 8f57f8533e0feb414348c16e6aa6b2e3621103ad
+branch: main
+repository_version: 0.2.8
+skill_version: knowledge-archaeology v3.2
+mode: initial
+timestamp: 2026-09-15T02:00+08:00 ~ 2026-09-15T03:00+08:00
+baseline:
+  - aigis: ARCH-2026-09-13-001（PR #13 open）
+  - guardian: ARCH-2026-09-14-001（PR #14 open）
+source_entry: "[cand]agent-firewall-runtime-defense-2026（雷达 #14 下一步首位：Aigis/Guardian/AI Protector 三选一实测第 3 点）"
+
+quality_metrics:
+  local_tests_run:
+    proxy_service_pure_logic: 203 passed   # --noconftest 绕过 DB fixture（intent/output_filter/decision/graph/rules/policy 等）
+    agent_demo: 465 passed                  # 含 pre/post gate、RBAC、role separation、limits、trace
+    total: 668 passed
+  env_limited_tests:                         # 非产品失败，无 Postgres/Redis/服务
+    proxy_db_dependent: 24 errors
+    scan_via_proxy: 23 errors
+    scenario_358: 353 errors（本地不可复现，CI 环境 ~35s）
+  ek_count: 36                               # links 全覆盖（平均出边 ≥1）
+  ko_count: 10                               # L3×6 / L4×3 / L5×1，聚合规则 100%
+  candidates_count: 9
+  benchmark_numbers: 项目自述（S7）          # 99% JailbreakBench / 91% promptfoo / 48ms / 358 场景 99.1%——非本地实测
+  local_test_evidence: S4
+
+validation_result:
+  source_truth: PASS（10 CONFIRMED + 2 S7 自述标注）
+  coverage: PARTIAL（核心全覆盖；frontend/red_team 内部/358 场景本地未验证，已标注）
+  flow: PASS（7 类流全部回溯 file:line）
+  abstraction: PASS（10 KO 带 R1-R4；跨项目数对项目数；L5 标 pending）
+  counterexample: PASS（4 项升维候选定向反例，均未推翻但收紧边界）
+  epistemic: PASS（S7 自述 vs S4 实测分离；Candidates 保持 Hypothesis）
+  independent_validation: 见独立报告（阶段 5）
+  overall: CONDITIONAL PASS——核心机制全部代码级确认；benchmark 数字待独立复现
+
+pr_description:
+  project: ai-protector
+  run_id: ARCH-2026-09-15-001
+  archaeology summary: 防火墙品类三选一第 3 点——"provable"确定性 agent 安全运行时（7 层加权 + A2 反混淆 + 三态 + RBAC 双门 + benchmark 客观真值 grader）
+  validation summary: 668 本地测试通过；10 KO（R1-R4）；36 EK（links 全覆盖）；9 Candidates；benchmark 数字为 S7 自述
+  quality metrics: 见上
+  key findings: provable 闭环 / A2 反混淆实验驱动 / MODIFY 第三态 / NeMo 软贡献修复史 / 幻影功能 ISS-003/004
+  key disputes: C-03 "No LLM"语义边界 / C-07 1900+ vs 668 / C-06 5-layer vs 7-layer
+  skill improvement proposal: 无（本次未暴露系统性 skill 缺陷；暂不启动 Skill Evolution）
