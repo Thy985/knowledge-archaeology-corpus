@@ -1,0 +1,64 @@
+run_id: ARCH-2026-09-17-001
+repository: https://github.com/openclaw/openclaw.git
+commit: ca38979d2128d21616f815136f48d7466b803b4d
+commit_message: "test(doctor): avoid repeated bootstrap in backup matching cases (#150197)"
+commit_timestamp: 2026-09-16T11:02:37-07:00
+branch: main
+repository_version: 2026.9.4
+focus_version: 2026.9.2
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-09-17T02:00:00+08:00
+mode: initial
+
+quality_metrics:
+  evidence_count: 23
+  engineering_knowledge_count: 41
+  ek_links: all_present
+  ek_graph_average_edges: ">=1"
+  ko_count: 8
+  ko_aggregation_rules:
+    R1: 1
+    R2: 3
+    R3: 2
+    R4: 2
+  candidates: 10
+  flow_atlas_types: [Control, State, Data, Evidence, Authority, Memory, Policy]
+  tests_run_local: false
+  tests_total_in_repo: 15643
+  tests_e2e_in_repo: 864
+  independent_validation:
+    confirmed: 26
+    partially_confirmed: 7
+    downgraded: 1
+    over_generalized: 2
+    missing: 4
+    contradicted: 0
+    needs_human_review: 2
+  reconciliation:
+    added_ek: [EK-39, EK-40, EK-41]
+    ko_revised: [KO-01, KO-04]
+    flow_edges_added: 2
+    new_benchmark_cases: [B-01, B-02, B-03, B-04, B-05]
+
+validation_result:
+  truth: PASS (20 core evidence, all source-anchored)
+  coverage: PASS (permission-model focus complete; apps/packages/channels declared out-of-scope)
+  flow: PASS_WITH_FLAGS (5 flow defects flagged for independent auditor)
+  abstraction: PASS (no unsupported promotion; all generalization pending-marked)
+  counterexample: PASS (bypass/override/exception/alternate/fallback hunted; 10 candidates)
+  epistemic: PASS (Fact/Observation/Hypothesis/Pattern strictly separated)
+
+known_limitations:
+  - Repo 821MB; 15,643 tests not run locally (exceeds budget); key tests read in full
+  - Channels (20+) auth implementations, plugin ecosystem details, 8 client apps not deeply covered
+  - Focus: 2026.9.2 permission-model changes (swarm default + cross-agent session access)
+
+deliverables:
+  - snapshot_artifact.md
+  - 00_overview.md
+  - 01_project-layer.md
+  - 02_engineering-knowledge.md
+  - 03_knowledge-layer.md
+  - 04_flow-atlas.md
+  - 05_candidates.md
+  - 06_validation.md
