@@ -1,0 +1,27 @@
+project: letta-code
+slug: letta-code
+repository: https://github.com/letta-ai/letta-code.git
+version: 0.32.12
+commit: 3df2ebd6e5826b482f0124e2b02f0e4e0f1af567
+commit_message: "docs(skills): use applicability metadata in letta-guide (#4515)"
+commit_timestamp: 2026-09-17T10:40:54-07:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-09-18
+mode: initial
+run_id: ARCH-2026-09-18-001
+source_entry: 03_expansion_queue/candidates/[cand]agent-memory-2026.md (S级) + 05_scan_logs/2026-09/2026-09-18_radar-watch_scan.md §2 信号4-6（Agent Memory 密集动作）
+
+summary: >-
+  Letta（前身 MemGPT）的当前源码仓库 letta-code（TypeScript+Bun，Apache-2.0）——
+  "memory-first" stateful agent harness。记忆 = 每个 agent 一个 git 仓库 + Markdown
+  文件树（MemFS）：{CORE_MEMORY} 系统提示词投影、memory 工具自编辑（reason 必填）、
+  pre-commit frontmatter 校验、post-turn push；治理面四层（PermissionMode / 内核沙箱
+  seatbelt+bwrap / cross-agent 路径墙 / memory-confinement fail-closed）。产出
+  121 Facts / 49 EK（≥80 边）/ 9 KO / 8 Candidates / 7 类 Flow；独立验证
+  （31 CONFIRMED + 9 PARTIAL + 2 DOWN + 3 OVERGEN + 2 MISSING + 0 CONTRADICTED
+  + 1 NEEDS_HUMAN_REVIEW，已 Reconciliation 10 项）。
+  关键认知：KO-02 fail-closed 治理（无审批回退路径必须内核强制）、KO-07 治理双轨
+  （决策轨 vs 执行轨正交）、KO-03 记忆权限=路径模型（realpath 防符号链接逃逸）。
+  独立审计新增发现：bwrap ancestor-carve HAZARD、seatbelt allow-default 威胁模型、
+  mods 三源全 trusted + 主进程动态加载（NEEDS_HUMAN_REVIEW）、memfs-git-proxy URL 分离。
+  雷达假说「记忆=Markdown 仓库路线成型」获生产级实现强支持。

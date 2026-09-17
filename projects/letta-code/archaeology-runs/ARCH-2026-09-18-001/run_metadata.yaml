@@ -1,0 +1,48 @@
+---
+run_id: ARCH-2026-09-18-001
+repository: https://github.com/letta-ai/letta-code.git
+project: letta-code
+commit: 3df2ebd6e5826b482f0124e2b02f0e4e0f1af567
+branch: main
+version: 0.32.12
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-09-18T02:30:00+08:00
+mode: initial
+reconciled_at: 2026-09-18T02:55:00+08:00
+job_manifest: ../job_manifest.md
+snapshot: ../snapshot_artifact.md
+quality_metrics:
+  facts: 121
+  engineering_knowledge: 49
+  ek_edges: 80
+  ek_avg_edges_per_node: 1.63
+  ko: 9
+  patterns_l3: 6
+  cognitive_models_l4: 2
+  methodologies_l5: 1
+  candidates: 8
+  flows: 7
+  counterexamples: 27
+  validation:
+    truth: PASS
+    coverage: PASS_WITH_GAPS
+    causality: PASS
+    flow: PASS
+    abstraction: PASS
+    counterexample: PASS
+    epistemic: PASS
+validation_result:
+  status: ACCEPTED
+  blind_reconstruction: PASS
+  auditor_verdicts:
+    confirmed: 31
+    partially_confirmed: 9
+    downgraded: 2
+    over_generalized: 3
+    missing: 2
+    contradicted: 0
+    needs_human_review: 1
+  reconciliation: APPLIED
+  reconciliation_items: 10
+  regression_cases_suggested: 6
+  skill_improvement_proposals: 0
