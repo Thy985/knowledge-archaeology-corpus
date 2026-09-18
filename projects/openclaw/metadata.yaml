@@ -1,0 +1,49 @@
+project: openclaw
+slug: openclaw
+repository: https://github.com/openclaw/openclaw.git
+version: 2026.9.4
+focus_version: 2026.9.2
+commit: ca38979d2128d21616f815136f48d7466b803b4d
+commit_message: "test(doctor): avoid repeated bootstrap in backup matching cases (#150197)"
+commit_timestamp: 2026-09-16T11:02:37-07:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-09-17
+mode: initial
+run_id: ARCH-2026-09-17-001
+
+summary: >-
+  OpenClaw 是本地优先的开源 AI 助手 Gateway（MIT，Node.js/TypeScript monorepo）。
+  本次考古聚焦 2026.9.2 权限模型变更：swarm 默认开启 + 跨 agent 会话访问默认扩大
+  （visibility 省略值 agent→all、agentToAgent 省略值 false→true），以及 SECURITY.md
+  信任模型（会话可见性不是安全边界）。产出 41 EK / 8 KO / 10 Candidates / 7 类 Flow
+  / 独立验证（26 CONFIRMED + 4 MISSING + 2 OVER_GENERALIZED，已 Reconciliation）。
+
+top_findings:
+  - 默认值漂移即权限变更：升级即扩权，官方升级说明要求共享 Gateway 升级前审查
+  - 信任模型明示"会话可见性不是安全边界"，真实隔离需独立 Gateway
+  - 审计是暴露层（info/warn）不是门禁，决策责任在 operator
+  - swarm 默认开启但有界容量治理（8/50/200/600s）
+  - 子 agent 工具面 deny-wins，与主 agent 默认开放形成层级差异
+
+quality_metrics:
+  evidence: 23
+  ek: 41
+  ko: 8
+  candidates: 10
+  flows: 7
+  validation:
+    confirmed: 26
+    partially_confirmed: 7
+    downgraded: 1
+    over_generalized: 2
+    missing: 4
+    contradicted: 0
+    needs_human_review: 2
+
+reconciliation:
+  added_ek: [EK-39, EK-40, EK-41]
+  ko_revised: [KO-01, KO-04]
+  flow_edges_added: 2
+  benchmark_cases: [B-01, B-02, B-03, B-04, B-05]
+
+pr: null
