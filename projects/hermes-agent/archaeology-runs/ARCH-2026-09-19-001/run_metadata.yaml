@@ -1,0 +1,31 @@
+run_id: ARCH-2026-09-19-001
+project: hermes-agent
+repository: https://github.com/NousResearch/hermes-agent.git
+commit: fba4cb1cb3f4b65b1528fe9db8ed30aec0c69cf6
+commit_message: "fix: cache_only Ollama Cloud read no longer rewrites the disk cache"
+commit_timestamp: "2026-09-18 11:01:52 -0700"
+branch: main
+repository_version: v0.21.3
+skill_version: knowledge-archaeology v3.2
+mode: initial
+timestamp: "2026-09-19"
+quality_metrics:
+  facts: 35
+  ek: 41
+  ek_avg_out_edges: 1.5
+  ek_dangling: 0
+  ko: 9
+  ko_levels: {L2: 2, L3: 4, L4: 3}
+  aggregation_rules: {R1: 2, R2: 2, R3: 1, R4: 4}
+  flows: 7
+  candidates: 9
+  counterexamples: 22
+  coverage: "memory/skills/state/security/architecture"
+validation_result:
+  truth: PASS
+  coverage: PASS
+  flow: PASS
+  abstraction: PASS
+  counterexample: PASS
+  epistemic: PASS
+  independent_audit: PENDING_PHASE5
