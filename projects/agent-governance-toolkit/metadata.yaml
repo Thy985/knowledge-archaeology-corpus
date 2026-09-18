@@ -1,0 +1,47 @@
+# agent-governance-toolkit — Archaeology Corpus Entry
+
+## 项目定位
+微软开源 Agent 运行时治理全栈（MIT，v5.0.0，public preview）：确定性策略执行（ACS Rust 核心 + Python PolicyEngine）+ 零信任身份（Ed25519/SPIFFE/Trust Scoring 0-1000）+ 四执行环 + SRE + Compliance + Marketplace + RL 治理 + 9 语言 SDK。"Ship agents to production without losing sleep"。
+
+## 考古状态
+
+| 字段 | 值 |
+|---|---|
+| project | agent-governance-toolkit |
+| repository | https://github.com/microsoft/agent-governance-toolkit.git |
+| first_archaeology | ARCH-2026-09-16-001（initial） |
+| latest_run | ARCH-2026-09-16-001 |
+| latest_commit | b1a9f733782a282fe191566f80f2ab414791ce4f |
+| repository_version | 5.0.0 |
+| skill_version | knowledge-archaeology v3.2 |
+| source_entry | [cand]agent-firewall-runtime-defense-2026（KnowlegeMap 候选卡，四选实测第 4 点） |
+| status | COMPLETED（2026-09-16） |
+
+## 产物清单
+
+- `00_overview.md` — Overview（定位 / 关键数字 / 5 Top Findings / 边界）
+- `01_project-layer/` — 项目地图（架构 / 模块 / 生命周期 / 数据结构 / 状态 / 测试 / 配置 / 治理 / 依赖）
+- `02_engineering-knowledge/` — 38 EK（EK Graph，6 类边）
+- `03_knowledge-layer/` — 8 KO（L3×3 / L4×4 / L5×1，aggregation_rule R1-R4）
+- `04_flow-atlas/` — 七类流（Control/State/Data/Evidence/Authority/Memory/Policy）
+- `05_candidates/` — 10 Candidates（Hypothesis×6 / Cross-project×4）
+- `06_validation/` — Validation + 反例 + Reconciliation + 质量指标
+- `archaeology-runs/ARCH-2026-09-16-001/` — run_metadata + snapshot + independent validation report
+
+## 关键认知（可复用）
+
+- **KO-01** 分层防御：粗粒度前置门（ring）+ 细粒度授权（policy），被拒请求不消耗决策资源
+- **KO-02** 治理决策确定性分层：核心授权确定性（无 LLM 在批准路径），非确定性层只有"阻止权"（advisory block-only，失败默认 allow）
+- **KO-03** 信任沿委托链单调收敛（trust ceiling），子代理 ≤ 父代理，防提权
+- **KO-04** 审计可证明性：哈希链+Merkle 树防篡改 → Decision BOM 可重构 → TRACE 信任记录
+- **KO-05** 治理失败模式必须可见：fail-closed 优于 fail-open（可见性驱动修正）
+- **KO-06** 治理栈从 OS 借力（执行环/SRE/供应链/威胁建模）是 AGT 全栈参考实现选择
+
+## 连接
+
+- **AI Protector**（corpus 09-15）：确定性 vs 启发式治理对照；双门 vs ring+policy 分层
+- **Guardian / Aigis**（四选实测前 2 点，PR 待合并）：审计链/隔离 vs AGT 全栈
+- **agentevals**（corpus 09-12）：评估门禁与治理门禁是两条独立纪律
+
+## 考古日期
+2026-09-16（每日 Knowledge Archaeology Runtime SOP，cron TaskID 11659931249922）
