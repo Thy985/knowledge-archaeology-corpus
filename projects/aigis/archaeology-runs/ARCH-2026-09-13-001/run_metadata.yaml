@@ -1,0 +1,29 @@
+run_id: ARCH-2026-09-13-001
+repository: https://github.com/gaebalai/aigis-kr.git
+project: aigis
+commit: 229a2917dfa9ae881ee551c98c3c45a0f43b658d
+branch: main
+repository_version: pyaigis-kr v1.1.4
+skill_version: knowledge-archaeology v3.2
+mode: initial
+timestamp: 2026-09-13T02:00:00+08:00
+quality_metrics:
+  tests: "1711 passed / 1 failed (67.05s)"
+  test_failure: "test_i18n LC_ALL env coupling (non-product)"
+  ek_count: 16
+  ek_links_coverage: "100%"
+  ko_count: 4
+  ko_aggregation_rule_coverage: "100%"
+  candidates: 4
+  counterexample_budget: "6/9 consumed"
+  benchmark: "93.5% detection (144/154) / 0.0% FP (0/26) — project self-claim, not re-run"
+validation_result:
+  truth: "CONFIRMED (code-level); PARTIALLY_CONFIRMED (self-claimed benchmarks)"
+  coverage: "PASS (core pipeline/mcp/audit/policydsl/incident/logs/governance)"
+  flow: "PASS (7 flows traceable to symbols)"
+  abstraction: "PASS (no over-promotion; L5 withheld)"
+  counterexample: "PASS (6/9 budget; no un-attacked L3+)"
+  epistemic: "PASS (Fact/Hypothesis separated; self-claims labeled)"
+notes:
+  - "Snapshot is pyaigis-kr fork (Korea compliance channel); upstream aigis claims in README marked as project self-claim"
+  - "Repo inactive since 2026-05-18 (recorded as fact, not ranking factor)"
