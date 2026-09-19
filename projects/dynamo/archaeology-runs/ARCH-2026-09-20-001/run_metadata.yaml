@@ -1,0 +1,39 @@
+run_id: ARCH-2026-09-20-001
+project: dynamo
+repository: https://github.com/ai-dynamo/dynamo.git
+commit: 6562e7d04b04ad177459f8a5b720718de71e1a6a
+commit_message: "docs: refresh community events"
+commit_timestamp: "2026-09-19 12:17:57 +0000"
+branch: main
+repository_version: v1.6.0
+skill_version: knowledge-archaeology v3.2
+mode: initial
+timestamp: "2026-09-20"
+quality_metrics:
+  facts: 36
+  ek: 36
+  ek_edges: 76
+  ek_dangling: 0
+  ko: 9
+  ko_layers: {L2: 1, L3: 6, L4: 2}
+  aggregation_coverage: 100%
+  candidates: 9
+  flows: 7
+  counterexamples: 22
+validation_result:
+  truth: PASS (2 数值保留来源属性)
+  coverage: PASS (主题聚焦；独立审计补 MISSING×4：Guardrails 安全不变量/DC KV Relay/salt 隔离/recovery，已 Reconciliation)
+  flow: PASS (关键 Edge 全部符号级回溯；Guardrails 补入 Authority/Policy Flow 边)
+  abstraction: PASS (无错误升维；KO-06 scope 收紧)
+  counterexample: PASS (22 反例，KO 预算全覆盖)
+  epistemic: PASS (Hypothesis×4/Observation×5 明确标注)
+independent_validation:
+  confirmed: 30
+  partially_confirmed: 3
+  missing: 4
+  over_generalized: 1
+  downgraded: 0
+  contradicted: 0
+  needs_human_review: 1
+  benchmark_cases_suggested: [B-1 admit_one 绕过检测, B-2 salt 隔离, B-3 WSPT cache-aware, B-4 DC Relay fenced-not-merged]
+source_entry: 03_expansion_queue/candidates/[cand]agentic-inference-infra-2026.md（A 级，09-20 新建）+ 05_scan_logs/2026-09/2026-09-20_radar-watch_scan.md §2 信号 4-5
