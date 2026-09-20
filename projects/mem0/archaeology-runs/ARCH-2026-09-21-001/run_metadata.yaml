@@ -1,0 +1,38 @@
+run_id: ARCH-2026-09-21-001
+repository: https://github.com/mem0ai/mem0.git
+commit: a39a802bbc93e85b820078cd3c4dbaf53af25dbe
+branch: main
+repository_version: mem0ai 2.1.0
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-09-21T02:00:00+08:00
+mode: initial
+project: mem0
+
+quality_metrics:
+  facts: 41
+  engineering_knowledge: 38
+  ek_edges: 80
+  ek_free_floating: 0
+  ko_total: 9
+  ko_l3: 7
+  ko_l4: 2
+  ko_l5: 0
+  candidates: 7
+  flows: 7
+  counterexamples: 20
+  contradictions: 3
+  epistemic_confusions: 0
+
+validation_result:
+  truth: PASS
+  coverage: PASS_WITH_CANDIDATES
+  causality: PASS
+  flow: PASS
+  abstraction: PASS_WITH_TIGHTENING
+  counterexample: PASS
+  epistemic: PASS
+
+notes:
+  - 版本口径差异（pyproject 2.1.0 vs 代码 V3 PIPELINE vs 候选卡 v3.0 算法）留待 Candidate C-01
+  - 本 run 为单执行者顺序考古 + 独立审计复核（阶段 5），未产生跨 Agent 冲突
+  - 目标项目/KnowlegeMap/生产 Skill 均未修改

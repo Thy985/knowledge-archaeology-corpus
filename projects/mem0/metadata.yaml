@@ -1,0 +1,27 @@
+project: mem0
+slug: mem0
+repository: https://github.com/mem0ai/mem0.git
+version: 2.1.0
+commit: a39a802bbc93e85b820078cd3c4dbaf53af25dbe
+commit_message: "docs(cookbooks): Company Brain with Mem0 Platform + Supabase (#7309)"
+commit_timestamp: 2026-09-18T23:19:15+05:30
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-09-21
+mode: initial
+run_id: ARCH-2026-09-21-001
+source_entry: 03_expansion_queue/candidates/[cand]agent-memory-2026.md (S级核心对象) + 05_scan_logs/2026-09/2026-09-21_radar-watch_scan.md（agent-memory 托管平台记忆即服务增量：Claude Managed Agents / AWS AgentCore / Vercel eve）
+
+summary: >-
+  Mem0（"mem-zero"）是 AI agent 的长期记忆基础设施——托管平台（api.mem0.ai）+ 开源
+  SDK（mem0ai 2.1.0, Apache-2.0, Python monorepo 31,848 行）双形态。OSS 核心 =
+  LLM 抽取式记忆：对话 → V3 单遍 ADD-only 抽取（Phase 0-6 管道）→ 向量库 + SQLite
+  历史 + 实体库三库落盘 → 混合检索召回（语义 + BM25 长度自适应 sigmoid + 实体 boost
+  三信号加性融合，threshold 前置门控）。产出 41 Facts / 39 EK（≥85 边）/ 9 KO
+  （L3×7+L4×2）/ 7 Candidates / 7 类 Flow / 20 反例；独立验证（14 CONFIRMED +
+  1 PARTIAL + 0 CONTRADICTED + 0 事实错误，Reconciliation R-1~R-5）。
+  关键认知：KO-02 混合检索三信号互补（L4）、KO-04 OSS 漏斗产品化（telemetry 采样
+  + notices 远程配置 + client 匿名身份别名 + 迁移信号）、KO-03 LLM 输出防御链
+  （UUID 映射防幻觉 + hash 去重 + threshold 门 + JSON fallback）。
+  独立审计新增：enable_vision 视觉消息分支（EK-36）、AsyncMemory 同构 V3 管线注记；
+  KO-02 跨项目对照误引 dynamo 已修正。雷达假说「记忆=托管平台三巨头齐发」获
+  Mem0 平台化实现支持（OSS SDK 是平台获客层）。
