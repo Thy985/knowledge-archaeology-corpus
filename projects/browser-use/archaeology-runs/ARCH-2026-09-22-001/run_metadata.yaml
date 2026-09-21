@@ -1,0 +1,56 @@
+# run_metadata.yaml — ARCH-2026-09-22-001
+
+run_id: ARCH-2026-09-22-001
+repository: https://github.com/browser-use/browser-use.git
+project: browser-use
+commit: d8110c5ff87ccba887aaa726cdb780f2f84bef8d
+branch: main
+repository_version: 0.13.10
+skill_version: 3.2
+timestamp: 2026-09-22T02:30:00+08:00
+mode: initial
+selected_by: Daily Archaeology Job Selection (multi-factor, not star-rank)
+
+quality_metrics:
+  facts_evidence_count: 25
+  engineering_knowledge_count: 22
+  pattern_count: 6
+  cognitive_model_count: 3
+  methodology_count: 2
+  flow_atlas_flows: 7
+  candidate_count: 5
+  validation_verdict_count: 10
+
+validation_result:
+  status: PASS_WITH_CONDITIONS
+  truth_audit: PASS
+  coverage_audit: PARTIAL (beta/Rust SDK 深度未穷尽，见 06)
+  flow_audit: PASS
+  abstraction_audit: PASS_WITH_DOWNGRADES (P1→L3 边界收紧)
+  counterexample: PASS (3 反例攻击完成)
+  epistemic_audit: PASS (Fact/Observation/Hypothesis 分离)
+  independent_validation: 见 06_validation/independent_validation_report.md
+
+evidence_refs:
+  - repo/browser_use/agent/service.py
+  - repo/browser_use/agent/views.py
+  - repo/browser_use/dom/serializer/serializer.py
+  - repo/browser_use/browser/session.py
+  - repo/browser_use/browser/profile.py
+  - repo/browser_use/browser/watchdogs/security_watchdog.py
+  - repo/browser_use/browser/watchdogs/permissions_watchdog.py
+  - repo/browser_use/browser/watchdogs/captcha_watchdog.py
+  - repo/browser_use/browser/watchdogs/downloads_watchdog.py
+  - repo/browser_use/llm/models.py
+  - repo/browser_use/mcp/server.py
+  - repo/browser_use/beta/service.py
+  - repo/browser_use/sandbox/sandbox.py
+  - repo/browser_use/tools/service.py
+  - repo/browser_use/tools/views.py
+  - repo/browser_use/telemetry/service.py
+  - repo/browser_use/cli.py
+  - repo/browser_use/__init__.py
+  - repo/AGENTS.md
+  - repo/CLAUDE.md
+  - repo/README.md
+  - repo/pyproject.toml
