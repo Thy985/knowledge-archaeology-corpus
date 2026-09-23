@@ -1,0 +1,54 @@
+run_id: ARCH-2026-09-24-001
+repository: a2aproject/A2A
+repository_url: https://github.com/a2aproject/A2A.git
+commit: 43e0c874d3baba68ed84b98678d7f2268438e69f
+branch: main
+protocol_version: 1.0.1
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-09-24T02:00:00+08:00
+mode: initial
+job: "每日 Knowledge Archaeology Runtime（SOP）定时任务触发"
+job_manifest: job_manifest.md
+
+quality_metrics:
+  evidence_facts: 30
+  engineering_knowledge: 29
+  ek_graph:
+    total_edges: 44
+    avg_out_degree: 1.5
+    free_floating_ek: 0
+    aggregation_rule_coverage: 1.0
+  generalized_ko: 7
+  ko_levels: {L3: 3, L4: 4}
+  candidates: 7
+  flows: 7
+  validation:
+    verdicts_total: 20
+    confirmed: 16
+    partially_confirmed: 1
+    downgraded: 0
+    over_generalized: 1
+    missing: 2
+    contradicted: 0
+    needs_human_review: 0
+  layer_ratio: "30 facts / 29 EK / 7 KO（协议规范小库按比例缩放）"
+
+validation_result: PASS_WITH_NOTES
+validation_notes:
+  - "无 CONTRADICTED；1 项快照 RPC 计数笔误（9→11）经 Reconciliation 修正"
+  - "KO-07 为 design-intent（文档证据），维持边界标注，未升全量 L5"
+  - "错误映射（§5.4）未展开，记入 refresh_pending"
+
+refresh_pending:
+  - "docs/topics: what-is-a2a / key-concepts / enterprise-ready（3 篇未精读）"
+  - "docs/blog/announcing-1.0.md、docs/roadmap.md、docs/sdk/、specification/json/README.md"
+  - "规范 §5.4 Error Code Mappings 错误面展开"
+  - "MAINTAINERS.md / CONTRIBUTING.md（治理细节补充）"
+
+corpus:
+  slug: a2a
+  path: projects/a2a/
+  pr_pending: true
+
+skill_evolution_proposal: false
+skill_evolution_note: "本 run 未暴露系统性 skill 缺陷；协议规范库（无代码/测试）验证了 v3.2 对'文档密集型仓库'的适用性，未触发新 Proposal"
