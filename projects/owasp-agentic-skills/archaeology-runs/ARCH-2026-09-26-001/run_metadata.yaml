@@ -1,0 +1,56 @@
+run_id: ARCH-2026-09-26-001
+repository: https://github.com/OWASP/www-project-agentic-skills-top-10.git
+commit: d6f7d7d0de314f52a83a85d1828e06ab096e595c
+commit_date: 2026-08-12
+branch: main
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-09-26
+mode: initial
+project:
+  name: OWASP Agentic Skills Top 10（AST10）
+  slug: owasp-agentic-skills
+  type: security-framework（威胁分类/规范文档仓库，Jekyll Pages，无运行时）
+  protocol_version: v1.0-2026
+  license: CC-BY-SA-4.0
+
+quality_metrics:
+  ek_count: 31
+  ek_edges: 48
+  ek_avg_edges: 1.55
+  ek_orphans: 0
+  ko_count: 7
+  ko_layers: {L3: 3, L4: 3, L5: 1}
+  candidates: 8
+  flows: 7
+  verdicts:
+    CONFIRMED: 15
+    PARTIALLY_CONFIRMED: 2
+    DOWNGRADED: 1
+    OVER_GENERALIZED: 1
+    MISSING: 3
+    CONTRADICTED: 0
+    NEEDS_HUMAN_REVIEW: 0
+  validation_result: PASS_WITH_NOTES
+
+validation:
+  protocol: Blind Reconstruction（阶段A独立重读仓库 → 阶段B对比）
+  benchmark: MCP（ARCH-2026-09-25-001）协议层 vs AST10 行为层安全控制收敛对照
+  cross_project_hypotheses:
+    - C-05 身份文件=行为密钥（对照 dsh-memory-evolve/openclaw）
+    - C-06 指令-数据边界通律（对照 mcp）
+    - C-07 防御默认可绕过层级观（对照 agent-governance-toolkit）
+    - C-08 B1-B4 外推至非 coding agent
+
+reconciliation:
+  - scope: EK-08 扫描器失效断言收紧（模式扫描 vs 语义扫描）
+  - scope: KO-06 DOWNGRADED（B1-B4 限定 coding agents）
+  - add: C-09 check.py attempt_id preimage 不含 decision 的篡改盲点
+  - add: M-02 最小权限设计模式注记（skill-development-guide.md）
+  - add: M-03 量化 KPI 注记（metrics-monitoring.md）
+
+delivery:
+  corpus_branch: arch/owasp-agentic-skills-2026-09-26
+  corpus_dir: projects/owasp-agentic-skills/
+  feishu: 未执行（无用户显式授权，默认只 push corpus）
+
+status: COMPLETED
