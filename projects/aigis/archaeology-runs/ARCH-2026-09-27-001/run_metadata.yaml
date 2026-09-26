@@ -1,0 +1,52 @@
+run_id: ARCH-2026-09-27-001
+project: aigis
+repository: https://github.com/killertcell428/aigis.git
+commit: 5874cbb5186fbe98cad80b2d1095188dd5ef7a00
+branch: master
+version: 2.0.1
+skill_version: 3.2
+timestamp: "2026-09-27T00:00:00+08:00"
+mode: initial
+
+quality_metrics:
+  project_layer: 1
+  engineering_knowledge:
+    count: 37
+    with_links: 37
+    edge_types_covered: [mechanism, subsystem, causal, dependency, constraint, contrast]
+    orphan_ek: 0
+  knowledge_objects:
+    count: 7
+    aggregation_rules: {R1: 2, R2: 2, R3: 2, R4: 1}
+    all_traceable: true
+  flow_atlas:
+    flows: [control, state, data, evidence, authority, memory, policy]
+    edges_total: 38
+  candidates: 5
+  validation:
+    confirmed: 33
+    partially_confirmed: 6
+    downgraded: 2
+    over_generalized: 0
+    missing: 1
+    contradicted: 0
+    needs_human_review: 0
+    counterexamples_partial: 3
+
+validation_result:
+  status: PASS_WITH_CORRECTIONS
+  summary: >-
+    Blind Reconstruction 22 independent findings；33 CONFIRMED / 6 PARTIALLY /
+    2 DOWNGRADED（F-01 措辞、A-02 scope）/ 1 MISSING（anthropic_proxy 轻量）；
+    3 个 Counterexample 部分成立（X-02 解码误报面、X-04 SANITIZED 提升链、
+    X-06 自有编号辨识）均保留在产物中；无 CONTRADICTED。
+
+reconciliation:
+  - fix: F-01 修正 _map_action 未命中返回 "unknown"（非 tool:* 推测）
+  - fix: A-02 KO-02 降级为 Cross-project validation pending
+  - boundary: X-02 KO-01 补 decode 重扫误报边界声明
+  - boundary: X-04 KO-03 维持 Partially validated（依赖 scan 质量）
+  - add: C-05 anthropic_proxy 作为轻量遗漏补充进 01 project-layer
+  - note: CaMeL 层（enforcer/taint/store）无测试覆盖 → Candidates C-02 保留，不升维
+
+skill_improvement_proposal: none
