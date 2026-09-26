@@ -1,0 +1,31 @@
+project: e2b
+slug: e2b
+repository: https://github.com/e2b-dev/E2B.git
+version: "js-sdk/python-sdk 2.51.0"
+commit: ccaf9fc0ffe6ac39c7ec786af7608ab1de19467b
+commit_message: "[skip ci] Release new versions"
+commit_timestamp: "2026-09-18T12:06:48+00:00"
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-09-23
+mode: initial
+run_id: ARCH-2026-09-23-001
+source_entry: "KnowlegeMap 05_scan_logs/2026-09/2026-09-23_radar-watch_scan.md（第21次扫描）A级卡「E2B 沙箱 + APP」对象 + Expansion Index README 候选卡"
+
+summary: >-
+  E2B（TypeScript+Python monorepo，pnpm）——"在云端安全隔离沙箱中运行 AI 生成代码"
+  基础设施的客户端形态：发行本体是 js-sdk / python-sdk(sync+async) / code-interpreter /
+  cli，服务器运行时在 api.e2b.dev（契约由 spec/ Copybara pin 同步，禁止手改）。产出
+  32 EK（EK Graph，平均出边 2.2，游离 0%）/ 9 KO（R1-R4 聚合，平均簇 3.56）/
+  7 Candidates / 7 类 Flow。独立验证：20 CONFIRMED + 4 PARTIALLY_CONFIRMED
+  + 1 OVER_GENERALIZED(KO-02 语言相关，06 层已自我降级) + 3 MISSING + 1 CONTRADICTED
+  (EK-14"读取即抛"与实现相反，实为"读取返回 stand-in、使用即抛")，已 Reconciliation
+  全部修正。
+  关键认知：KO-01 平台秘密不落地（占位符按请求签发，SDK 永不持秘密值）、KO-03 保守
+  降级错误归因（健康探测后再断言"沙箱被杀"）、KO-05 沙箱网络面（过滤先行 +
+  fail-closed 隧道 + x-internal 声明式安全边界）、KO-02 生命周期契约前置（客户端
+  强校验 + envdVersion 版本门）。
+  独立审计新增发现：iam.ts `has` trap 语义、JWT-SVID 类型、onTimeout 未配置时
+  autoPause 省略（API 拥有默认值）、EK-19 证据路径修正
+  （packages/js-sdk/src/sandbox/commands/ 而非 commands/）。
+  新增 Benchmark case：IAM Proxy 读取 vs 使用语义；新增 Regression case：
+  EK evidence 路径存在性检查。
