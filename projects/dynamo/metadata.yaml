@@ -1,0 +1,33 @@
+project: dynamo
+slug: dynamo
+repository: https://github.com/ai-dynamo/dynamo.git
+homepage: https://dynamo.nvidia.com/
+license: Apache-2.0
+owner: NVIDIA
+latest_run: ARCH-2026-09-20-001
+status: COMPLETED
+first_archaeologized: "2026-09-20"
+last_archaeologized: "2026-09-20"
+runs:
+  - run_id: ARCH-2026-09-20-001
+    mode: initial
+    commit: 6562e7d04b04ad177459f8a5b720718de71e1a6a
+    repository_version: v1.6.0
+    skill_version: knowledge-archaeology v3.2
+    timestamp: "2026-09-20"
+    quality_metrics:
+      facts: 36
+      ek: 36
+      ek_edges: 76
+      ek_dangling: 0
+      ko: 9
+      candidates: 9
+      flows: 7
+      counterexamples: 22
+    validation: "PASS (truth/coverage/flow/abstraction/counterexample/epistemic; independent audit: 30C/3P/4M/1O/0D/0CT/1HR)"
+    source_entry: "03_expansion_queue/candidates/[cand]agentic-inference-infra-2026.md (A级, 09-20) + 2026-09-20 scan log §2 信号4-5"
+connections:
+  - hermes-agent (harness 侧 prompt cache 神圣性 ↔ 推理侧 cache 感知调度; KO-04 上下文经济学双面)
+  - letta-code (fail-closed 治理 ↔ NoEndpoints 诚实失败; KO-03 同构)
+  - tafcm (端边云联合路由设计, 09-20 scan log 下一步)
+  - dsh-memory-evolve (长会话成本测算对照)
