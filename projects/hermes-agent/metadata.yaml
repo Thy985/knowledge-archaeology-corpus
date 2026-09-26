@@ -1,0 +1,30 @@
+project: hermes-agent
+slug: hermes-agent
+repository: https://github.com/NousResearch/hermes-agent.git
+version: 0.21.3
+commit: fba4cb1cb3f4b65b1528fe9db8ed30aec0c69cf6
+commit_message: "fix: cache_only Ollama Cloud read no longer rewrites the disk cache"
+commit_timestamp: 2026-09-18T11:01:52-07:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-09-19
+mode: initial
+run_id: ARCH-2026-09-19-001
+source_entry: 03_expansion_queue/candidates/[cand]hermes-agent-2026.md (B级, 09-06 增量升 A 判断保持) + 05_scan_logs/2026-09/2026-09-19_radar-watch_scan.md §5（OpenClaw 生态聚焦）
+
+summary: >-
+  NousResearch hermes-agent（Python，v0.21.3，多前端单核心：CLI/消息网关~20平台/TUI/Desktop）
+  ——成长型个人 agent harness。核心命题：长生命周期 agent 如何在不破坏 prompt cache 的
+  前提下实现记忆持久化与自我改进。记忆 = MEMORY.md/USER.md 会话起始冻结快照进入系统提示词
+  （mid-session 写盘不改 prompt，prefix cache 完好）+ 单一 memory 工具 + 单外部 provider
+  （MemoryManager fan-out，v1/v2 checkpoint 契约）+ § 分隔学习卡片；技能 = 程序性记忆
+  （skill_manage 自主创建/编辑 + skills_guard v5 供应链信任分级 + Curator 空闲维护，
+  只归档不删除）；状态 = SQLite WAL 族（WAL 兼容回退/生产测试隔离/rewind 权威模型/
+  checkpoint shadow git）；安全 = SECURITY.md 明文唯一承重边界 OS 级隔离，in-process
+  防御明确非边界。产出 35 Facts / 41 EK（≥65 边）/ 9 KO / 9 Candidates / 7 类 Flow；
+  独立验证（28 CONFIRMED + 2 PARTIAL + 1 OVERGEN + 2 MISSING + 0 CONTRADICTED
+  + 1 NEEDS_HUMAN_REVIEW，已 Reconciliation 7 项）。
+  关键认知：KO-02 唯一承重边界原则（启发式非边界，与 letta fail-closed 沙箱哲学对照）、
+  KO-01 记忆冻结契约（cache 神圣性第一设计约束）、KO-06 改进（agent 意图驱动）与维护
+  （调度器驱动）分离、KO-07 上下文经济学。独立审计新增：skip_memory/ignore_rules 记忆
+  旁路面、#39797 执行指导工具指名教训、HERMES_STATE_DB_GUARD_BYPASS 环境变量逃逸面
+  （NEEDS_HUMAN_REVIEW）。
