@@ -1,0 +1,24 @@
+project: A2A（Agent2Agent Protocol）
+slug: a2a
+repository: https://github.com/a2aproject/A2A.git
+repository_type: protocol-spec（协议规范仓库，无运行时源码/无测试体系）
+protocol_version: 1.0.1
+commit: 43e0c874d3baba68ed84b98678d7f2268438e69f
+first_archaeology: 2026-09-24
+latest_run: ARCH-2026-09-24-001
+runs:
+  - run_id: ARCH-2026-09-24-001
+    mode: initial
+    skill_version: knowledge-archaeology v3.2
+    validation: PASS_WITH_NOTES
+quality_metrics:
+  ek_count: 29
+  ek_edges: 44
+  ko_count: 7
+  candidates: 8
+  flows: 7
+status: COMPLETED
+refresh_pending:
+  - docs/topics（what-is-a2a / key-concepts / enterprise-ready）
+  - 规范 §5.4 Error Code Mappings 错误面
+  - docs/blog / roadmap / sdk
