@@ -1,0 +1,39 @@
+project: OWASP Agentic Skills Top 10（AST10）
+slug: owasp-agentic-skills
+repository: https://github.com/OWASP/www-project-agentic-skills-top-10.git
+repository_type: security-framework（威胁分类/规范文档仓库，Jekyll Pages，无运行时）
+framework_version: v1.0-2026
+license: CC-BY-SA-4.0
+commit: d6f7d7d0de314f52a83a85d1828e06ab096e595c
+commit_date: 2026-08-12
+first_archaeology: 2026-09-26
+latest_run: ARCH-2026-09-26-001
+runs:
+  - run_id: ARCH-2026-09-26-001
+    mode: initial
+    skill_version: knowledge-archaeology v3.2
+    validation: PASS_WITH_NOTES
+quality_metrics:
+  ek_count: 31
+  ek_edges: 48
+  ko_count: 7
+  candidates: 8
+  flows: 7
+  verdicts: {CONFIRMED: 15, PARTIALLY_CONFIRMED: 2, DOWNGRADED: 1, OVER_GENERALIZED: 1, MISSING: 3, CONTRADICTED: 0}
+status: COMPLETED
+cross_project:
+  - mcp: {validated: "默认拒绝+显式授予 双原语收敛", run: ARCH-2026-09-25-001}
+  - skillfortify: {domain: skill 供应链安全治理}
+  - agent-governance-toolkit: {domain: AGT 映射 ASI01-10 治理}
+  - openclaw/dsh-memory-evolve: {domain: 身份/记忆文件安全}
+reconciliation:
+  - EK-08 扫描器失效断言收紧（模式扫描 vs 语义扫描）
+  - KO-06 DOWNGRADED（B1-B4 限定 coding agents，外推入 C-08）
+  - 新增 C-09（check.py attempt_id preimage 不含 decision 篡改盲点）
+  - 注记 M-02 最小权限设计模式（skill-development-guide.md）
+  - 注记 M-03 量化 KPI（metrics-monitoring.md）
+refresh_pending:
+  - Universal Skill Format 落地采纳率（C-01）
+  - Bilateral Receipt 平台集成（C-02）
+  - 12.4% 外部指令源口径复测（C-03）
+  - 语义扫描器绕过弹性独立基准（C-04）
