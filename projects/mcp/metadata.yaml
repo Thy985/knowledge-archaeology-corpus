@@ -1,0 +1,32 @@
+project: Model Context Protocol（MCP）
+slug: mcp
+repository: https://github.com/modelcontextprotocol/modelcontextprotocol.git
+repository_type: protocol-spec（协议规范仓库，无运行时源码/无测试体系）
+protocol_version: 2026-07-28
+commit: ab3a39c13bd23be691c2760e1c6c5c15a64582e1
+first_archaeology: 2026-09-25
+latest_run: ARCH-2026-09-25-001
+runs:
+  - run_id: ARCH-2026-09-25-001
+    mode: initial
+    skill_version: knowledge-archaeology v3.2
+    validation: PASS_WITH_NOTES
+quality_metrics:
+  ek_count: 30
+  ek_edges: 46
+  ko_count: 7
+  candidates: 8
+  flows: 7
+  verdicts: {CONFIRMED: 15, PARTIALLY_CONFIRMED: 2, DOWNGRADED: 1, OVER_GENERALIZED: 1, MISSING: 1, CONTRADICTED: 0}
+status: COMPLETED
+cross_protocol:
+  - a2a: {validated: KO-07 垂直/水平分层, run: ARCH-2026-09-24-001}
+  - openclaw: skills 兼容（SEP-2640）
+  - skillfortify: skill 供应链安全对照
+refresh_pending:
+  - patterns/cancellation.mdx 全文
+  - transports/stdio.mdx 全文
+  - streamable-http.mdx 166-740 行（SDK/反代/部署细节）
+  - client/{elicitation,roots,sampling}.mdx
+  - extensions/{apps,auth}.mdx
+  - schema.ts 320-3200 行未读段

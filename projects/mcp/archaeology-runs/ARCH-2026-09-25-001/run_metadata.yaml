@@ -1,0 +1,44 @@
+run_id: ARCH-2026-09-25-001
+project: mcp
+repository: https://github.com/modelcontextprotocol/modelcontextprotocol.git
+commit: ab3a39c13bd23be691c2760e1c6c5c15a64582e1
+branch: main
+protocol_version: 2026-07-28
+skill_version: 3.2
+timestamp: 2026-09-25T02:00:00+08:00
+mode: initial
+job_manifest: ../job_manifest.md
+snapshot_artifact: ../snapshot_artifact.md
+package:
+  overview: 00_overview.md
+  project_layer: 01_project-layer/project-layer.md
+  engineering_knowledge: 02_engineering-knowledge/ek-graph.md
+  knowledge_layer: 03_knowledge-layer/ko-layer.md
+  flow_atlas: 04_flow-atlas/flow-atlas.md
+  candidates: 05_candidates/candidates.md
+  validation: 06_validation/validation-report.md
+quality_metrics:
+  ek_count: 30
+  ek_avg_edges: 1.53
+  ek_isolated: 0
+  ko_count: 7
+  ko_by_layer: {L3: 2, L4: 5}
+  candidates_count: 8
+  flows_count: 7
+  validation_verdicts: {CONFIRMED: 15, PARTIALLY_CONFIRMED: 2, DOWNGRADED: 1, OVER_GENERALIZED: 1, MISSING: 1, CONTRADICTED: 0}
+validation_result: PASS_WITH_NOTES
+coverage_gaps:
+  - patterns/cancellation.mdx 全文未核对（V-08 PARTIAL 根因）
+  - transports/stdio.mdx 全文未核对
+  - streamable-http.mdx 166-740 行（SDK/反代/部署细节）
+  - client/{elicitation,roots,sampling}.mdx 未精读
+  - extensions/{apps,auth}.mdx 未精读
+  - schema.ts 320-3200 行中未读段
+cross_protocol:
+  validated: {KO-07 垂直/水平分层, C-07 扩展外置化 -> C-01 PARTIALLY_VALIDATED}
+  benchmark: A2A (ARCH-2026-09-24-001)
+reconciliation_notes:
+  - V-12: 客户端能力表述改为 Elicitation 唯一 Active
+  - V-14: C-07 断言强度下调为 PARTIALLY_VALIDATED
+  - V-08: Flow Atlas 补注 cancellation 细节未全文核对
+skill_improvement_proposal: false
