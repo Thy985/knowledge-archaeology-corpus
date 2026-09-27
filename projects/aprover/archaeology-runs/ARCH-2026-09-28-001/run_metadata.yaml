@@ -1,0 +1,27 @@
+run_id: ARCH-2026-09-28-001
+repository: https://github.com/agentic-prover/aprover.git
+commit: b9314c704c1142d195ae43abde4ad9e03f84aaa8
+branch: main
+version: "0.1.0"
+skill_version: v3.2
+timestamp: 2026-09-28T00:00:00+08:00
+mode: initial
+quality_metrics:
+  facts_ek_ko: {facts: 21, ek: 21, ko: 7, candidates: 5}
+  ek_graph: {avg_out_edges: 2.1, free_ek_ratio: 0.0, aggregation_coverage: 1.0}
+  flow_atlas: {flow_types: 7, ko_flow_no_conflict: true}
+  validation: {blind_audit_total: 22, confirmed: 15, partially: 4, downgraded: 1, over_generalized: 1, missing: 1, contradicted: 0, needs_human_review: 0}
+  pytest_sampled: {passed: 213, failed: 1, skipped: 2}
+validation_result:
+  status: PASS_WITH_NOTE
+  note: "EK-16 三方漂移保留(实现符合文档); KO-06 从 Principle 收紧为 L4; 无 Contradictions 残留"
+key_findings:
+  - "删除不对称性: 静默删除真实 bug=健全性损失 > 错误保留=精度损失"
+  - "AGENTIC_JUDGMENT 永不可作为唯一删除依据(只可 RETIER)"
+  - "五档证据分级 confirmed_dynamic>system_entry>bmc>likely>unlikely; realism 降档保留审计轨迹"
+  - "realism witness-pattern 确定性短路: 模式库替代 LLM 判定"
+  - "每函数隔离+__CPROVER_assume stub+3c/3b compositional 传播"
+  - "Kosaraju SCC 分层拓扑生成顺序 + dual-spec 分歧标记"
+  - "属性类免疫: (fn, property_class) VERIFIED CLEAN 后同族兄弟 CEx 排除"
+  - "实测: VibeOS 13 真实 bug(滤48不真实); llm.c 22/30 clean; pytest 1 处测试-实现-文档漂移"
+skill_improvement_proposal: false

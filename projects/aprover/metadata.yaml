@@ -1,0 +1,42 @@
+# aprover — Archaeology Corpus Entry
+
+## 项目定位
+**AProver（Agentic Prover for AI-Generated Code）**：LLM 驱动的形式化验证 agent 套件；首个 agent BMC-Agent 是 *agentic model checking* 原型——LLM agent（spec 生成/反例分类/spec 精化）+ 健全 BMC 后端（CBMC/Kani/JBMC）配对。设计原则 "agents propose, conventional tools dispose"：LLM 的每个健全性相关决策必须经传统检查（CBMC 查询/SMT 守卫/运行时复现）才能影响验证结论。参考论文 *Agentic Model Checking*（arXiv:2605.21434, 2026）。
+
+## 考古状态
+
+| 字段 | 值 |
+|---|---|
+| project | aprover |
+| repository | https://github.com/agentic-prover/aprover.git |
+| run_id | ARCH-2026-09-28-001（initial） |
+| commit | b9314c704c1142d195ae43abde4ad9e03f84aaa8 |
+| repository_version | aprover 0.1.0（4-clause BSD） |
+| skill_version | knowledge-archaeology v3.2 |
+| source_entry | [cand]agent-formal-verification-2026（G5 战略线；Dogwood 官方 repo 未定位，AProver 为该线唯一可考古仓库） |
+| status | COMPLETED（2026-09-28） |
+
+## 产物清单
+- `00_overview.md` — 考古总览（核心认知 + 三层配比 + 关键事实锚点）
+- `01_project-layer/README.md` — 项目地图（定位/架构/模块/生命周期/配置/依赖）
+- `02_engineering-knowledge/README.md` — EK Graph（21 条 EK，六类边）
+- `03_knowledge-layer/README.md` — Generalized KO（7 个，R1-R4 聚合规则）
+- `04_flow-atlas/README.md` — 七类流（Control/State/Data/Evidence/Authority/Memory/Policy）
+- `05_candidates/README.md` — 5 个未验证假说（Hypothesis/Cross-project Candidate）
+- `06_validation/README.md` — Validation 报告（Truth/Coverage/Flow/Abstraction/Counterexample/Epistemic + Contradictions + Reconciliation）
+- `06_validation/independent-audit.md` — Independent Blind Validation（22 判定 + 3 成功 + 3 错误 + 遗漏 + Benchmark case）
+- `archaeology-runs/ARCH-2026-09-28-001/` — run 原始产物（job_manifest / snapshot_artifact / run_metadata）
+
+## 关键发现（五条）
+1. **删除不对称性**：从报告静默删除真实 bug = 健全性损失（假阴性），错误保留只是精度损失——健全性只要求 "no real bug silently removed"。
+2. **智能 ≠ 权威（验证语境）**：AGENTIC_JUDGMENT（LLM 判定）永不可作为唯一删除依据，只可 RETIER；删除只授权给确定性验证器（CBMC）或自验证证人（编译+精确复现）。
+3. **证据分级 = 信任分层**：confirmed_dynamic ＞ confirmed_system_entry ＞ confirmed_bmc ＞ likely ＞ unlikely；realism 审计降档保留审计轨迹，confirmed_dynamic 免疫降档（main.assertion.N 例外）。
+4. **确定性短路替代 LLM**：realism witness-pattern（未初始化库/jv stub-disconnect/NULL-guard/USB-serial 框架不变量）在 LLM 前确定性判定，省往返且防 LLM 创造性合理化人为产物。
+5. **实测**：VibeOS 37 模块 13 真实 bug（滤 48 不真实）；llm.c 22/30 函数 clean（首次 BMC 应用于真实 ML 训练程序）。
+
+## 关键争议
+- EK-16：测试-实现-文档三方漂移（agentic 模式 realism 默认值）——实现符合 README，测试未同步；保留为工程观察。
+- KO-06 原拟 Principle，盲验证收紧为 L4 Cognitive Model（3 项目收敛：AProver/Aigis/Tafcm，仍需更多领域实例）。
+
+## Skill Improvement Proposal
+无（本期未发现系统性 skill 缺陷）。
