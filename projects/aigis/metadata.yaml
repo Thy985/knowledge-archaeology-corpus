@@ -1,21 +1,25 @@
 # aigis — Archaeology Corpus Entry
 
 ## 项目定位
-确定性、零依赖的 AI Agent 运行时防火墙：每次工具调用前跑 L1-L7 检测管线（正则/语义/解码/CaMeL taint/沙箱/安全规约/FSM），产出可解释 allow/deny + HMAC 签名防篡改审计日志；覆盖 MCP rug-pull、记忆投毒、间接注入、外泄通道；带 12 合规模板（本 fork 聚焦韩国 PIPA/ISMS-P/금융위）。本条目考古的是 **pyaigis-kr fork**（gaebalai/aigis-kr，v1.1.4），能力文档指向原版 Aigis 架构。
+确定性、零依赖的 AI Agent 运行时防火墙：每次工具调用前跑检测管线，产出可解释 allow/deny + HMAC 签名防篡改审计日志；覆盖 MCP rug-pull、记忆投毒、间接注入、外泄通道；带合规模板。**本条目含两个考古 Run，对象不同**：
+
+- **ARCH-2026-09-13-001（fork）**：`pyaigis-kr fork`（gaebalai/aigis-kr，v1.1.4，韩国 PIPA/ISMS-P/금융위 聚焦，早期镜像，能力文档指向原版架构）。
+- **ARCH-2026-09-27-001（主仓库）**：`killertcell428/aigis`（pyaigis v2.0.1，HEAD 5874cbb5）——主仓库真身（fork 是早期镜像）。v2.0.1 检测管线为 **L1-L4**（regex→语义→主动解码重扫→CaMeL 能力访问控制），战略收缩为"让 Claude Code 等自主 agent 通过日本企业内部安全审查"（経産省 AI 事业者指南/ISO 27001/NIST AI RMF/OWASP LLM Top 10 映射，trust pack 从实时配置生成 EN/JA 审批包）。
 
 ## 考古状态
 
-| 字段 | 值 |
-|---|---|
-| project | aigis |
-| repository | https://github.com/gaebalai/aigis-kr.git |
-| first_archaeology | ARCH-2026-09-13-001（initial） |
-| latest_run | ARCH-2026-09-13-001 |
-| latest_commit | 229a2917dfa9ae881ee551c98c3c45a0f43b658d |
-| repository_version | pyaigis-kr v1.1.4（零核心依赖） |
-| skill_version | knowledge-archaeology v3.2 |
-| source_entry | [cand]agent-firewall-runtime-defense-2026（KnowlegeMap 雷达 #10 建卡/#11 增量/#12 连续三日第一验证优先级） |
-| status | COMPLETED（2026-09-13） |
+| 字段 | 值（fork run） | 值（主仓库 run） |
+|---|---|---|
+| project | aigis | aigis |
+| repository | https://github.com/gaebalai/aigis-kr.git | https://github.com/killertcell428/aigis.git |
+| run_id | ARCH-2026-09-13-001（initial） | ARCH-2026-09-27-001（initial，主仓库首次） |
+| commit | 229a2917dfa9ae881ee551c98c3c45a0f43b658d | 5874cbb5186fbe98cad80b2d1095188dd5ef7a00 |
+| repository_version | pyaigis-kr v1.1.4（零核心依赖） | pyaigis v2.0.1（运行时零依赖） |
+| skill_version | knowledge-archaeology v3.2 | knowledge-archaeology v3.2 |
+| source_entry | [cand]agent-firewall-runtime-defense-2026（雷达 #10/#11/#12） | 同一雷达卡（主仓库核验：fork 为早期镜像） |
+| status | COMPLETED（2026-09-13） | COMPLETED（2026-09-27） |
+
+> latest_run = ARCH-2026-09-27-001（主仓库）。两个 Run 产物并存于 `archaeology-runs/`，不覆盖。
 
 ## 产物清单
 
@@ -26,7 +30,8 @@
 - `04_flow-atlas/` — 七类流（Control/State/Data/Evidence/Authority/Memory/Policy）
 - `05_candidates/` — 4 Candidates（2 Hypothesis / 1 Tentative / 1 L3 候选）
 - `06_validation/` — Validation + 反例 + Reconciliation + 质量指标
-- `archaeology-runs/ARCH-2026-09-13-001/` — run_metadata + snapshot + independent validation
+- `archaeology-runs/ARCH-2026-09-13-001/` — fork run：run_metadata + snapshot + independent validation
+- `archaeology-runs/ARCH-2026-09-27-001/` — 主仓库 run：完整包（00 Overview / 01 Project Layer / 02 EK Graph 37 条 / 03 KO 7 个 / 04 Flow Atlas 七类流 / 05 Candidates 5 项 / 06 Validation）+ run_metadata + snapshot + job_manifest
 
 ## 关键认知（可复用）
 
@@ -35,12 +40,26 @@
 - **KO-03** 不可抵赖性是设计目标也是测试断言——没有测试的防篡改只是愿望
 - **KO-04** 安全工具的依赖面即其攻击面（零依赖 + MCP trust score + 对抗循环）
 
+### 主仓库 run（ARCH-2026-09-27-001）核心认知增量
+
+- **KO-01（主）** 编码/变体攻击的防御必须"先还原再匹配"（归一化→解码→重扫全量）
+- **KO-02（主）** 信任分层：宿主静态权限门 + hook 动态策略门 + 审计第三轨（条件规则只能活在能评估条件的层）
+- **KO-03（主）** taint 先于授权：UNTRUSTED 数据无条件禁止驱动控制流工具（即使有 grant）——⚠️ Partially validated（CaMeL 层无测试覆盖）
+- **KO-04（主）** 防篡改审计 = 签名 + 覆盖含签名字段的哈希链，且审计失败不反噬决策
+- **KO-05（主）** 诚实性设计：自有合规编号明示非官方、不利基准照实呈现
+- **KO-06（主）** 战略测量纪律：错误 KPI 使路线图漂移（54★ vs 1000 目标）；退出清单与目标清单同等重要
+- **KO-07（主）** 发布时序硬约束防级联烧号（PyPI v2.0.0/v1.1.1→v1.1.3 教训）
+
 ## 连接
 
 - **agentevals**（已考古）：评测门禁 vs 运行时防火墙——Agent 工程两翼，可构造"确定性 guardrail + 评测门禁"联合基准
 - **deepseek-harness / opencode**（已考古）：Agent 运行时宿主，是 Aigis 类防火墙的部署目标
 - **rampart / skillfortify**（已考古）：同类防线，本条目提供品类基准点
 - **C-01**：确定性检测与 LLM judge 互补性假说（跨项目验证 pending）
+- **C-02（主 run）**：CaMeL 层零测试覆盖→"实现存在但行为未验证"（跨项目候选）
+- **C-03（主 run）**：确定性检测（No-LLM-judge）的威胁面边界（语义级攻击检出率未量化）
+- **C-04（主 run）**：auto-improvement 6h 自动改仓库对质量的长期影响
+- **C-05（主 run）**：trust pack"自有编号"策略在真实安全审查中的效果
 
 ## 考古日期
-2026-09-13（每日 Knowledge Archaeology Runtime SOP，cron TaskID 11659931249922）
+2026-09-13（fork run）；2026-09-27（主仓库 run，每日 Knowledge Archaeology Runtime SOP，cron TaskID 11659931249922）
