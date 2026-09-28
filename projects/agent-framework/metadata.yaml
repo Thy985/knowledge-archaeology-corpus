@@ -1,0 +1,43 @@
+# agent-framework — Archaeology Corpus Entry
+
+## 项目定位
+Microsoft Agent Framework：构建/编排/部署 AI agents 与多代理系统的生产级框架（MIT）。Python core 1.19.0 + C# 1.23.0 双栈；Agent Harness（循环/审批/文件/记忆/模式/todo/后台）、Workflow DAG、五编排模式（Sequential/Concurrent/GroupChat/Handoff/Magentic）、FIDES 确定性提示注入防御、CodeAct（Hyperlight 沙箱）、Cosmos 原生记忆。
+
+## 考古状态
+
+| 字段 | 值 |
+|---|---|
+| project | agent-framework |
+| repository | https://github.com/microsoft/agent-framework.git |
+| run_id | ARCH-2026-09-29-001（initial） |
+| commit | 95e711a6280d0ed7bafa5bafb8ff38eba4cffd3e |
+| repository_version | core 1.19.0 / dotnet 1.23.0 |
+| skill_version | knowledge-archaeology v3.2 |
+| source_entry | [cand]agent-harness-control-plane + 雷达 2026-09-29（Agent Harness 主线，当日活跃，生产级大仓） |
+| status | COMPLETED（2026-09-29） |
+
+## 产物清单
+- `00_overview.md` — 考古总览（核心认知 + 三层配比 + 关键事实锚点）
+- `01_project-layer/README.md` — 项目地图（定位/结构/模块/生命周期/测试/配置/治理/依赖/ADR）
+- `02_engineering-knowledge/README.md` — EK Graph（46 条 EK，六类边）
+- `03_knowledge-layer/README.md` — Generalized KO（8 个，R1-R4 聚合规则）
+- `04_flow-atlas/README.md` — 七类流（Control/State/Data/Evidence/Authority/Memory/Policy + Flow→KO 交叉校验）
+- `05_candidates/README.md` — 5 个未验证假说
+- `06_validation/README.md` — Validation 报告（Truth/Coverage/Flow/Abstraction/Counterexample/Epistemic + 质量指标）
+- `06_validation/independent-audit.md` — Independent Blind Validation（12 CONFIRMED + 3 MISSING 补强 + Benchmark case）
+- `archaeology-runs/ARCH-2026-09-29-001/` — run 原始产物（job_manifest / snapshot_artifact / run_metadata / package）
+
+## 关键发现（五条）
+1. **确定性审批循环**：ToolApprovalMiddleware 是会话内审批状态机（函数调用预算 + 自动批准队列 + 二次审批 + pending 逃生舱），循环直到全部工具调用被批准或转交人类。
+2. **FIDES 标签即权威**：Integrity/Confidentiality 标签三级传播（内嵌 > source_integrity > 输入/默认），untrusted 内容物理隔离（变量间接）+ 隔离执行（quarantine）——提示注入防御是确定性信息流控制，不是 prompt 工程（ADR 0024）。
+3. **记忆注入是安全决策**：Cosmos 用户摘要以 untrusted user 角色注入（非 instructions），防存储提示注入（poisoned summary 不得成为持久高优先级指令）。
+4. **循环受控坚持**：max_iterations 安全上限先于语义谓词短路 + fresh_context session 快照重置 + 结构化停止谓词（todos/后台任务）。
+5. **CodeAct 沙箱边界**：模型写可执行代码在 Hyperlight 沙箱执行，模型代码相对宿主 untrusted；"后端若无匹配信任模型的隔离能力则非合适 CodeAct 后端"（ADR 0038）。
+
+## 关键争议
+- ADR 0024（FIDES）status=proposed 但 security.py 已完整实现——设计意图领先于 ADR 定稿。
+- quarantine_client 为全局单例（security.py|3331-3364），多租户部署隔离风险（C-03）。
+- 独立盲重建 3 处 MISSING 补强已 reconciliation（from_dict 防别名 / streaming fresh_context / preserve_batch），0 CONTRADICTED。
+
+## Skill Improvement Proposal
+无（本期未发现系统性 skill 缺陷）。
