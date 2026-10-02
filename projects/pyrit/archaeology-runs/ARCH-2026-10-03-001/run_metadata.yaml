@@ -1,0 +1,58 @@
+# run_metadata.yaml — ARCH-2026-10-03-001
+
+run_id: ARCH-2026-10-03-001
+repository: https://github.com/microsoft/PyRIT
+commit: 38d7e1121bacca15299bcc22992066a6f5d73e8d
+branch: main
+version: 1.2.0.dev0
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-10-03T02:10:00+08:00
+mode: initial
+project_slug: pyrit
+source_entry: KnowlegeMap candidates/ai-offensive-toolchain (A级)
+
+# Quality Metrics
+quality_metrics:
+  facts_evidence: 108
+  engineering_knowledge: 47          # 含 2 条 [D] 项目局部；+2 Reconciliation 新增(EK-46/47)
+  ek_avg_out_edges: 1.8
+  ek_isolated_ratio: 0.043           # 2/47
+  ko_count: 8
+  ko_aggregation_rule_coverage: 1.0  # 8/8
+  ko_layers: {L3: 4, L4: 4, L5: 0}
+  flow_atlas: {flows: 7, edges: 33}
+  flow_ko_cross_check: {passed: 5, contradictions: 0}
+  candidates: {project_hypotheses: 10, cross_project: 5}
+  validation:
+    truth: PASS
+    coverage: PASS_WITH_LIMITATIONS   # converter 内部算法/datasets 内容/auth 细节未深挖
+    flow: PASS
+    abstraction: PASS
+    counterexample: PASS
+    epistemic: PASS
+    blind_reconstruction_agreement: 1.0
+    contradictions: 0
+    counterexamples_retained: 3
+
+# Validation Result
+validation_result: PASS
+validation_notes: |
+  六项审计通过。coverage 缺口显式声明：converter（16,460 行）内部变换算法、datasets 内容、
+  auth（2,045 行）细节未逐条深挖，不影响本考古核心命题（组件化攻击架构/判定链/记忆/扩展机制）。
+  反例 C-01~C-03 与假说 H-01~H-09、跨项目 X-01~X-05 全部保留，无弱化证据换全绿。
+
+# Reconciliation
+reconciliation:
+  merged_corrections:
+    - "E-01 EK-17 fallback comparable 细化为同证据+同类别+同期望三重校验"
+    - "E-02 EK-26 补充 RetryCollector ContextVar 注入细节 (strategy.py:335-343)"
+    - "E-03 新增 EK-46 异常执行上下文诊断链 (strategy.py:355-378)"
+    - "遗漏4 新增 EK-47 ObjectiveTargetConversationLifecycle (attack_strategy.py:95-130)"
+  scope_tightened: |
+    KO-03/KO-04/KO-07/KO-08 定位 L3（模式级）而非 L4——单项目证据不足以支撑稳定关系级升维；
+    analytics/embedding 标 [D] 项目局部而非 EK 主题。
+  pipeline_order_confirmed: true
+
+# Skill Evolution
+skill_evolution_triggered: false
+skill_evolution_reason: 未发现系统性 skill 缺陷（EK Graph/聚合规则/盲重建流程在本次考古中运行正常）
