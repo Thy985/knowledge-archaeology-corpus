@@ -1,0 +1,52 @@
+run_id: ARCH-2026-10-04-001
+repository: https://github.com/browser-use/browser-harness
+project: browser-harness
+commit: afbcc381b963040c19627d788e40c7e7663171ee
+branch: main
+commit_date: 2026-09-07T13:13:31-07:00
+commit_subject: "Merge pull request #757 from warun7/fix/video-export-nested-output"
+version: 0.1.13
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-10-04
+mode: initial
+job_manifest: ../job_manifest.md
+snapshot_artifact: ../snapshot_artifact.md
+
+package:
+  00_overview: package/00_overview.md
+  01_project_layer: package/01_project_layer.md
+  02_engineering_knowledge: package/02_engineering_knowledge.md
+  03_knowledge_layer: package/03_knowledge_layer.md
+  04_flow_atlas: package/04_flow_atlas.md
+  05_candidates: package/05_candidates.md
+  06_validation: package/06_validation.md
+
+quality_metrics:
+  facts: 100+
+  engineering_knowledge: 47
+  ek_l1: 12
+  ek_l2: 35
+  ek_avg_edges: 2.3
+  reconciliation_merges: 8
+  ek_46_dialog_state_machine: true
+  ek_47_debug_clicks: true
+  ek_isolated: 0
+  ko_total: 8
+  ko_rules: {R1: 2, R2: 2, R3: 1, R4: 3}
+  ko_avg_cluster_size: 5.5
+  aggregation_rule_coverage: 1.0
+  flows: 7
+  counterexamples_attacked: 13
+  blind_reconstruction: "no CONTRADICTED; 1 downgrade (CM-01 wording tightened)"
+
+validation_result:
+  truth: PASS
+  coverage: PASS
+  flow: PASS
+  abstraction: PASS (no over-generalization; all L3+ marked cross-project pending)
+  counterexample: PASS (budget met)
+  epistemic: PASS (Hypothesis not presented as Fact; C-01..07 kept in Candidates)
+  contradictions: []
+  counterexamples_preserved: true
+
+independent_validation: independent-audit/report.md
