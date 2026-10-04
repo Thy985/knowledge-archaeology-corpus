@@ -1,0 +1,46 @@
+# run_metadata — ARCH-2026-10-05-001
+
+run_id: ARCH-2026-10-05-001
+repository: https://github.com/microsoft/Webwright.git
+project: webwright
+mode: initial
+commit: bc26750af3ad166d982f23d101ef8971a3a2fce5
+branch: main
+commit_date: 2026-08-03T15:00:26-07:00
+version: 0.1.0
+skill_version: 3.2
+timestamp: 2026-10-05T00:00:00+08:00
+selection:
+  source_entry: "[cand]webwright-2026.md"
+  priority: A
+  reason: "Novelty（浏览器 agent 第三条独立路线：browser-use=LLM 决策层 / browser-harness=CDP 连接层 / Webwright=终端/脚本层）；skill_factory 与用户 Skills 体系同构；Benchmark 数字强（OM2W 86.7% / Odysseys 60.1% / WebArena reuse 55→70%）；连接 E2E-CLI/campus_order；与 browser-use/browser-harness/deepseek-harness/opencode Corpus 对照价值"
+quality_metrics:
+  facts: "100+（隐含于 48 EK 证据引用，均可回溯 file:symbol）"
+  engineering_knowledge: 48
+  ek_graph:
+    avg_edges_per_ek: "≥1（96 条 links/48 EK）"
+    free_floating_ek: 0
+    edge_types_covered: "mechanism 24 / subsystem 14 / causal 13 / dependency 10 / constraint 14 / contrast 6"
+    aggregation_coverage: "8/8（100%）"
+  ko: 8
+  ko_aggregation: "R1 机制簇×2（KO-02,KO-08）/ R2 因果链簇×2（KO-03,KO-07）/ R3 不变量簇×2（KO-04,KO-06）/ R4 主题簇×2（KO-01,KO-05）"
+  ko_avg_cluster_size: 5.5
+  flows: 7
+  candidates: 7
+  tests_read: "14 文件关键断言（test_evolve 全读 + test_build_init/test_route/test_learned_example 等）"
+  source_lines: "src 6552 / tests 1899（wc -l 实测）"
+validation_result:
+  truth: "6 CONFIRMED + 1 PARTIALLY_CONFIRMED（step_limit 15 vs 配置 100）"
+  coverage: "核心全覆盖；未细读清单见 06 §3"
+  flow: "7 流逐 Edge 回读核对"
+  abstraction: "8 KO 全部维持原层级（无降级）"
+  counterexamples: "8/8 KO 均有 ≥3 反例攻击且已并入模型"
+  epistemic: "无 Hypothesis 冒充 Fact；Candidates 与 KO 严格区分"
+  blind_reconstruction: "3 个重建物全部与包内结论一致"
+  contradictions_retained: true
+  counterexamples_retained: true
+independent_validation:
+  status: pending  # 阶段⑤，输出 independent-audit/report.md
+reconciliation:
+  status: pending  # 阶段⑥，写入 corpus projects/webwright/
+skill_improvement_proposal: false

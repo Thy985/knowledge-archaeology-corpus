@@ -1,0 +1,64 @@
+# metadata — knowledge archaeology corpus entry
+# project: webwright ｜ run: ARCH-2026-10-05-001 ｜ skill: knowledge-archaeology v3.2
+
+project: webwright
+repository: https://github.com/microsoft/Webwright.git
+run_id: ARCH-2026-10-05-001
+mode: initial
+archaeology_date: 2026-10-05
+commit:
+  sha: bc26750af3ad166d982f23d101ef8971a3a2fce5
+  branch: main
+  date: 2026-08-03T15:00:26-07:00
+  subject: "Add Web Skill Factory: self-evolving library of verified, code-native web skills (#62)"
+version: 0.1.0
+skill_version: 3.2
+selection:
+  source_entry: "[cand]webwright-2026.md"
+  priority: A
+  reason: "Novelty（浏览器 agent 第三条独立路线：browser-use=LLM 决策层 / browser-harness=CDP 连接层 / Webwright=终端/脚本层）；skill_factory 与用户 Skills 体系同构；Benchmark 数字强（OM2W 86.7% / Odysseys 60.1% / Webarena reuse 55→70%）；连接 E2E-CLI/campus_order；与既有 Corpus 对照价值"
+
+layers:
+  project_layer: 01_project-layer/project_layer.md
+  engineering_knowledge: 02_engineering-knowledge/ek_graph.md   # 48 EK，EK Graph 六类边
+  knowledge_layer: 03_knowledge-layer/knowledge_layer.md        # 8 KO（R1×2/R2×2/R3×2/R4×2）
+  flow_atlas: 04_flow-atlas/flow_atlas.md                        # 7 类流
+  candidates: 05_candidates/candidates.md                        # 7 条未验证假说
+  validation: 06_validation/validation_report.md + 06_validation/independent_validation_report.md
+
+quality_metrics:
+  engineering_knowledge: 48
+  ko: 8
+  ek_graph:
+    avg_edges_per_ek: "≥1（96 links/48 EK）"
+    free_floating_ek: 0
+    aggregation_coverage: "8/8（100%）"
+  flows: 7
+  candidates: 7
+  validation:
+    truth: "6 CONFIRMED + 2 PARTIALLY_CONFIRMED（step_limit、require_self_reflection_success 配置覆盖语义）"
+    independent: "4 CONFIRMED + 3 PARTIALLY_CONFIRMED + 0 DOWNGRADED + 0 OVER_GENERALIZED + 2 MISSING（已声明）+ 0 CONTRADICTED + 0 NEEDS_HUMAN_REVIEW"
+    counterexamples: "8/8 KO 均有 ≥3 反例攻击且已并入模型"
+    contradictions_retained: true
+    counterexamples_retained: true
+
+reconciliation:
+  applied:
+    - R1: "02 EK-17 精度修正（require_self_reflection_success 代码默认 False / 配置 true）"
+    - R2: "02 EK-25 事实补全（webwright 主 solve 不写 agent_response.json；主场景=trajectory exit message）"
+    - R3: "03 KO-02 scope 收紧（默认记忆在文件系统；持久会话为例外层）"
+    - R4: "06 Truth 表增行（self_reflection 默认值与 step_limit 同构）"
+  contradicted: 0
+  downgraded: 0
+  over_generalized: 0
+  needs_human_review: 0
+
+benchmarks:
+  om2w_300: "86.7% (gpt-5.4) — README 自报"
+  om2w_hard100: "Opus 4.7 80.5% vs gpt-5.4 76.6% — README 自报"
+  odysseys_200: "60.1% (gpt-5.4, avg 76.1 steps) — README 自报"
+  webarena_reuse: "55%→70% (+15pp) — README 自报"
+  independent_reproduction: false  # 第三方复现未执行（C-07）
+
+skill_improvement_proposal: false
+corpus_pr: "待建（分支 arch/webwright-2026-10-05）"
