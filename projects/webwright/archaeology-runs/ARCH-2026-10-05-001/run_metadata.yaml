@@ -30,7 +30,7 @@ quality_metrics:
   tests_read: "14 文件关键断言（test_evolve 全读 + test_build_init/test_route/test_learned_example 等）"
   source_lines: "src 6552 / tests 1899（wc -l 实测）"
 validation_result:
-  truth: "6 CONFIRMED + 1 PARTIALLY_CONFIRMED（step_limit 15 vs 配置 100）"
+  truth: "6 CONFIRMED + 1 PARTIALLY_CONFIRMED（step_limit 15 vs 配置 100；Reconciliation R4 增补 require_self_reflection_success 同构行）"
   coverage: "核心全覆盖；未细读清单见 06 §3"
   flow: "7 流逐 Edge 回读核对"
   abstraction: "8 KO 全部维持原层级（无降级）"
@@ -40,7 +40,7 @@ validation_result:
   contradictions_retained: true
   counterexamples_retained: true
 independent_validation:
-  status: pending  # 阶段⑤，输出 independent-audit/report.md
+  status: completed  # 阶段⑤，见 independent_validation_report.md；判定 4 CONFIRMED + 3 PARTIALLY_CONFIRMED + 2 MISSING + 0 CONTRADICTED
 reconciliation:
-  status: pending  # 阶段⑥，写入 corpus projects/webwright/
+  status: applied  # 阶段⑥，R1-R4 已应用（见 06_validation/validation_report.md §9）
 skill_improvement_proposal: false
