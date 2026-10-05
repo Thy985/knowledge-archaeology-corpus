@@ -1,0 +1,46 @@
+project: langgraph
+slug: langgraph
+repository: https://github.com/langchain-ai/langgraph.git
+version: 1.2.13
+commit: 2d942085e214ef6b99b6f54ed4d544a7c7c5ac56
+commit_message: "fix(langgraph): fork before replaying an update checkpoint the thread moved past (#9170)"
+commit_timestamp: 2026-10-05T13:46:44-04:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-10-06
+mode: initial
+run_id: ARCH-2026-10-06-001
+source_entry: "KnowlegeMap 05_scan_logs/2026-10/2026-10-06_radar-watch_scan.md（第 34 次，无新卡）+ multiagent 候选卡代表"
+
+summary: >-
+  langgraph（Python，MIT，42,741★/7,265 forks，v1.2.13）——低层有状态多 Actor Agent 编排框架：
+  把 agent 定义为有状态图，Pregel 超步引擎 + 版本化通道 + checkpoint 线程持久化 + interrupt 人机交互。
+  核心认知：图执行引擎 = 版本化状态机（并发无需锁）；interrupt 是"可恢复的异常事件"而非暂停点；
+  checkpoint/store/serde 三接口可插拔，一致性靠契约测试锁定。企业用户 Klarna/Replit/Elastic。
+
+quality_metrics:
+  facts: 100+
+  engineering_knowledge: 48
+  ek_graph:
+    avg_edges_per_ek: 2.0
+    free_floating_ek: 0
+    edge_types_covered: "mechanism 24 / subsystem 14 / causal 13 / dependency 10 / constraint 14 / contrast 6"
+    aggregation_coverage: "8/8（100%）"
+  ko: 8
+  ko_aggregation: "R1 机制簇×2（KO-07,KO-08）/ R2 因果链簇×2（KO-02,KO-03）/ R3 不变量簇×2（KO-04,KO-06）/ R4 主题簇×2（KO-01,KO-05）"
+  flows: 7
+  candidates: 7
+  validation: "Truth 20 断言全 CONFIRMED；Blind Reconstruction ×3 一致；独立审计 5 CONFIRMED / 1 PARTIALLY_CONFIRMED / 4 MISSING / 0 CONTRADICTED；3 处补充修正已 Reconciliation"
+
+key_findings:
+  - "并发不需要锁：channel_versions 单调版本 + versions_seen 触发记账 = 无锁乐观并发（KO-04，修复史 #9142/#9165/#9170 印证脆弱性）"
+  - "interrupt 是重执行协议：恢复后节点从头重跑；resume 支持 interrupt id→值映射（精确恢复）与单值顺序匹配两种形态"
+  - "记忆三层分工：线程 checkpoint（短时全量）/ delta 增量（压缩）/ store（长时跨线程）"
+  - "可插拔一切：CheckpointSaver/BaseStore/Serializer 三接口 + checkpoint-conformance 契约测试防实现漂移"
+  - "编译期契约前置：schema→通道推导→reserved 校验→订阅校验→serde 白名单，运行期才信任状态不变量"
+
+key_controversies:
+  - "C-05：durability='exit' 模式与 interrupt 组合的恢复粒度未验证"
+  - "C-07：create_react_agent deprecated → create_agent（langchain 中间件体系）的迁移兼容性未知"
+  - "v3 stream_mode transformer mux 使调用方不可覆盖 stream_mode/subgraphs（v3 不变量）"
+
+skill_improvement_proposal: false
