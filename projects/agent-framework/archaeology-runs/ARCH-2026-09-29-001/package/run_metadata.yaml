@@ -1,0 +1,47 @@
+run_id: ARCH-2026-09-29-001
+repository: https://github.com/microsoft/agent-framework.git
+slug: agent-framework
+commit: 95e711a6280d0ed7bafa5bafb8ff38eba4cffd3e
+commit_message: ".NET: Update version for 1.23.0 release (#8806)"
+branch: main
+snapshot_timestamp: 2026-09-29T02:05:00+08:00
+skill_version: knowledge-archaeology v3.2
+mode: initial
+focus: "Agent Harness 抽象 + 多代理编排 + 原生记忆 + FIDES 确定性安全（Python 核心面，C# 同构对照）"
+language_profiles:
+  python: "core 1.19.0, ~40 集成包"
+  dotnet: "1.23.0, Microsoft.Agents.*"
+  go: "README 存根"
+quality_metrics:
+  facts: 32
+  engineering_knowledge: 46
+  ek_links_coverage: "100% (46/46, 游离 0)"
+  generalized_ko: 8
+  aggregation_rule_coverage: "100% (8/8)"
+  candidates: 5
+  pytest_sampled: "file_access 7 passed / tool_approval 7 passed"
+  flow_edges_traceable: true
+validation_result:
+  confirmed: 10
+  partially_confirmed: 1
+  downgraded: 0
+  over_generalized: 0
+  contradicted: 0
+  missing: 2
+  needs_human_review: 0
+  counterexamples_run: 8
+coverage_gaps:
+  - "C# 全量测试套件（仅对照 Harness 目录与 LoopAgent）"
+  - "Cosmos 后台抽取 cadence 具体阈值（FACT_EXTRACTION_EVERY_N 等值）"
+  - "MCP 流式审批路径（MCPSpecificApproval 未实测）"
+key_findings:
+  - "确定性审批循环：审批 = 会话内状态机（预算/队列/二次审批/逃生舱），非一次性 yes/no"
+  - "FIDES 标签即权威：untrusted 内容物理隔离 + quarantine 隔离执行，提示注入防御是信息流控制"
+  - "记忆注入是安全决策：user_summary 以 untrusted user 角色注入，防存储提示注入"
+  - "循环受控坚持：max_iterations 先短路 + fresh_context 上下文重置 + 结构化停止谓词"
+  - "CodeAct 沙箱边界：模型代码 = untrusted，后端隔离能力是硬约束（ADR 0038）"
+  - "Python/C# Harness 八模块同构（跨 SDK 契约一致）"
+key_controversies:
+  - "ADR 0024 为 proposed 状态但 security.py 已实现——设计意图领先于 ADR 定稿"
+  - "quarantine_client 为全局单例，多租户隔离风险（C-03）"
+skill_improvement_proposal: false
