@@ -1,0 +1,35 @@
+project: thinkingbox
+slug: thinkingbox
+repository: https://github.com/microsoft/thinkingbox.git
+version: 0.1.0
+commit: 892964e7226044e5463ad188da119df838f4bec1
+commit_message: "Update README with training repository details (#38)"
+commit_timestamp: 2026-10-03T16:23:47-07:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-10-08
+mode: initial
+run_id: ARCH-2026-10-08-001
+source_entry: "KnowlegeMap 03_expansion_queue/candidates/ [cand]agentic-benchmarks-2026.md（ThinkingBox 外部宣称增量）+ 2026-10-08 雷达第 36 次运行（无新卡，候选卡 38 张维持）"
+
+summary: >-
+  thinkingbox（Python ≥3.10，MIT，v0.1.0，2026-10-03 发布，95★/10 forks）——微软 MS Copilot Studio RL 团队
+  （Nicola Ferri 发起）的有状态业务工作流 agent 沙箱与评测框架，三仓库拆分
+  （thinkingbox 评测框架 + thinkingbox-data 语料/工具 + thinkingbox-training RL 后训练），
+  arXiv:2608.19741 "One Success Isn't Reliability"。核心：MCP server 即被测世界
+  （__reserved__init/geteffects/teardown 三件套协议），TestScript 用断言直接读写 TestContext
+  评分（AssertionError=失败），pass^k=(c/n)^k 有意有偏统计对抗 pass@1 幻觉，goldilocks
+  P(0.0625<p<0.9375|data)≥0.95 判定稳定区间。
+  本次考古产出 100+ Facts/56 EK（EK Graph 六类边，平均出边 2.2）/9 KO（R1×2 R2×2 R3×2 R4×3）
+  /7 类 Flow/15 Candidates（A 外部宣称隔离 C-01..06 / B 跨项目假说 C-07..10 / C 暂定 C-11..13 / D 已排除 C-14..15）。
+  关键认知：KO-01 状态真相评分（agent 行为按 effects 与 proxy 调用日志双源取证，不按叙述评分）；
+  KO-03 停止闸门（八值 finish_reason + agent turn 上限优先 + watchdog 终止）；
+  KO-05 单次成功≠可靠性（pass^k/goldilocks 统计层对抗 pass@1 幻觉，unbiased 组合数在 c<k 恒零故
+  有意改用有偏 (c/n)^k）；KO-08 工具面声明化（schema 声明≠授权，available_tools 过滤 + server_to_priority
+  同名裁决 + __reserved__server_tool fixture 后门）。
+  独立审计（盲重建 judge/llm_session_base/agg_main/config_types）10 CONFIRMED + 3 PARTIALLY_CONFIRMED
+  （EK-54 迁移语义、EK-41 兜底面、EK-39 阈值）+ 0 DOWNGRADED + 0 OVER_GENERALIZED + 4 MISSING
+  （judge legacy/compare/no_repeat 判定面、_parse_yesno 首尾边界、LLM 侧重试对照、agg runs 不一致降级）
+  + 0 CONTRADICTED + 0 NEEDS_HUMAN_REVIEW。Reconciliation 合并 6 项（EK-37/38/41/54 边界收紧、
+  新增 EK-56 judge 判定面、EK-32 补 LLM 侧重试对照）。
+  跨项目候选：C-07 状态真相评分非 MCP 环境也可行、C-08 pass^k 对偶发失败 agent 区分度、C-09 注入防护
+  三件套最小集、C-10 评测可复现性组合。Skill Evolution 未触发（无系统性 skill 缺陷证据）。
