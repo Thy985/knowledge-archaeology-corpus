@@ -1,0 +1,46 @@
+# webwright — Archaeology Corpus Entry
+
+## 项目定位
+**Webwright（microsoft/Webwright）**：Terminal-Native Web Agent —— 把"写代码控制浏览器"作为动作面（code-as-action），本地工作区（脚本+截图+日志）作为状态（workspace-as-state），浏览器只是可丢弃环境。核心主张：**你的 web agent 浏览历史是一个可重跑的 Python 文件**。参考论文《Webwright: A terminal is all you need for web agents》(Lu, Xu, Huang, Awadallah, 2026)。
+
+## 考古状态
+
+| 字段 | 值 |
+|---|---|
+| project | webwright |
+| repository | https://github.com/microsoft/Webwright.git |
+| run_id | ARCH-2026-09-30-001（initial） |
+| commit | bc26750af3ad166d982f23d101ef8971a3a2fce5 |
+| repository_version | 0.1.0（MIT） |
+| skill_version | knowledge-archaeology v3.2 |
+| source_entry | [cand]webwright-2026（Agent Harness 聚焦线；范式 Novelty + Benchmark 学习价值 + E2E-CLI 连接） |
+| status | COMPLETED（2026-09-30） |
+
+## 产物清单
+- `00_overview.md` — 考古总览（核心认知增量 + 性能锚点 + browser-use/deepseek-harness 对照）
+- `01_project-layer/README.md` — 项目地图（架构/核心抽象/生命周期/数据流/权限/测试/配置/边界）
+- `02_engineering-knowledge/README.md` — EK Graph（44 条 EK，六类边，游离 0）
+- `03_knowledge-layer/README.md` — Generalized KO（8 个，R1-R4 聚合规则 100%）
+- `04_flow-atlas/README.md` — 七类流（Control/State/Data/Evidence/Authority/Memory/Policy，全部符号可回溯）
+- `05_candidates/README.md` — 6 个未验证假说（Hypothesis/Cross-project Candidate）
+- `06_validation/README.md` — Validation 报告（Truth/Coverage/Flow/Abstraction/Counterexample/Epistemic + Reconciliation）
+- `06_validation/independent-audit.md` — Independent Blind Validation（10 判定 + 3 成功 + 3 修正 + 遗漏 + Benchmark case）
+- `archaeology-runs/ARCH-2026-09-30-001/` — run 原始产物（job_manifest / snapshot_artifact / run_metadata / 各层全文）
+
+## 关键发现（五条）
+1. **Code-as-Action**：动作空间 = 自由形式 Python/bash 脚本而非单步 DOM 操作预测；模型越强，程序化动作面越优于"一步一预测"的交互 loop（README Motivation 原证）。
+2. **验证门而非自裁**：`require_self_reflection_success=true` 时 done 被硬阻塞（五种阻塞分支），直到外部两阶段图片判定器给出 `predicted_label==1`；**执行与完成判定权分离**。
+3. **零 token 技能复用（Skill Factory）**：solve 脚本经 gate 准入 → learn/update 蒸馏为参数化程序技能 → route 三决策（run 零模型 ~40s / adapt 注入 prior / skip）；WebArena held-out 55%→70%（README 声明，Observation 级）。
+4. **双状态模型一个 loop**：workspace（磁盘态+外部门）与 live browser（会话态+模型自判）共用 DefaultAgent，差异收敛于 config；完成判定严格度随状态模型变化（KO-08）。
+5. **极简 footprint 达 SOTA 声明**：核心 loop 467 行 / Playwright env 567 行 / CLI 175 行，9 项依赖零编排框架；Online-Mind2Web 86.7% / Odysseys 60.1%（README 声明）。
+
+## 关键争议
+- 基准数字（86.7%/60.1%/55→70%）为 README 声明，本考古未实测复现（无模型 key）——标 Observation（C-05）。
+- live-browser 模式无外部门（模型自裁完成），插件模式（四宿主）门控强度静态不可证（C-06 Hypothesis）。
+- 独立 Auditor DOWNGRADED：KO-01/KO-08 完成判定结论已收紧为"门强度绑定状态模型"的显式对照。
+
+## 质量指标
+facts 31 / EK 44（links 100%、游离 0）/ KO 8（聚合 100%）/ Candidates 6 / 证据强度 S3×38+S4×5（未运行代码）/ Independent Audit：CONFIRMED 3 · PARTIALLY_CONFIRMED 2 · DOWNGRADED 1 · MISSING 2（已补）· CONTRADICTED 0。
+
+## Skill Improvement Proposal
+无（本期未发现系统性 skill 缺陷）。
