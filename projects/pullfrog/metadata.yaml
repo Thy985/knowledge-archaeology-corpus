@@ -1,0 +1,27 @@
+project: pullfrog
+repository: https://github.com/pullfrog/pullfrog
+slug: pullfrog
+status: COMPLETED
+mode: initial
+first_archaeology: ARCH-2026-10-02-001
+latest_archaeology: ARCH-2026-10-02-001
+commits:
+  ARCH-2026-10-02-001: d287f81e93e245845aa25b0916417a4216f37dad
+connections:
+  - opencode        # 同一 agent 后端家族（opencode harness）
+  - agentevals      # 对抗测试/评估主题
+  - hermes-agent    # agent 编排主题
+  - rampart         # agent 安全主题（权限分层对比）
+  - deepseek-harness # 失败驱动设计对比
+knowledge_value: A      # 安全模型完整可运行 + 30 事故锚点 + 对抗测试体系
+agent_ai_relevance: HIGH
+quality:
+  engineering_knowledge: 43
+  ko: 8
+  aggregation_rule_coverage: 1.0
+  validation: PARTIAL   # 2 DOWNGRADED + 1 CONTRADICTED(已修正) + 5 MISSING(1 补入)
+notes:
+  - 服务端(PullFrog app)/wiki/docs 不在本仓库，设计意图还原依赖代码注释
+  - models.ts(97KB) 只读结构未逐条核对
+  - docker.ts 本地/自托管运行形态未考古，refresh 候选
+  - 2 项 NEEDS_HUMAN_REVIEW：stop hook 信任落差(C-02)、Router 架构(C-06)

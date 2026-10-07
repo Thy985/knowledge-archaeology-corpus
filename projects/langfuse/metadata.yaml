@@ -1,0 +1,57 @@
+# langfuse — Archaeology Corpus Entry
+
+## 项目定位
+**Langfuse 是开源 LLM 工程平台**（v4.48.0，MIT，TypeScript monorepo，35k★）：以 OpenTelemetry GenAI 语义约定为摄取基线的 trace / evaluate / improve 一体平台——外部 OTel span 经适配层归一化为内部 Observation 模型，事件化写入 ClickHouse；eval 系统以 DecisionModel（结构化问题定义）为规格、LLM-as-judge/代码 eval 为执行体、LIVE/MANUAL + blocked 规则为治理门；worker 侧以 25+ BullMQ 队列异步执行全部耗时路径。Corpus 27 项中无 LLM 可观测性平台类，本轮填补主题空白。
+
+## 考古状态
+
+| 字段 | 值 |
+|---|---|
+| project | langfuse |
+| repository | https://github.com/langfuse/langfuse.git |
+| run_id | ARCH-2026-10-01-001（initial） |
+| commit | a48751c99841ea1f88f214af234b458aba16c5a9（main, 2026-09-30） |
+| repository_version | 4.48.0（MIT；GitHub API 标记 NOASSERTION 系检测器差异） |
+| skill_version | knowledge-archaeology v3.2 |
+| source_entry | [cand]otel-genai-observability（A 级卡）→ 直接实现仓库 langfuse/langfuse |
+| status | COMPLETED（2026-10-01） |
+
+## 产物清单
+- `00_overview.md` — 考古总览（核心认知 + 三层配比 + 关键事实锚点）
+- `01_project-layer/README.md` — 项目地图（架构/模块/生命周期/数据结构/测试/治理）
+- `02_engineering-knowledge/README.md` — EK Graph（48 条，六类边，100% links 覆盖）
+- `03_knowledge-layer/README.md` — Generalized KO 层（8 个，R1-R4 聚合规则矩阵）
+- `04_flow-atlas/README.md` — 七类流（Control/State/Data/Evidence/Authority/Memory/Policy）
+- `05_candidates/README.md` — 候选假说（6 条，C-01 已实证关闭 / C-04/C-05 证据强化）
+- `06_validation/README.md` — Validation 报告（Blind Reconstruction + 判定统计 + 12 项 Reconciliation）
+- `06_validation/independent-audit.md` — 独立 Auditor 盲重建报告（10 项 Independent Findings）
+- `archaeology-runs/ARCH-2026-10-01-001/run_metadata.yaml` — run 元数据与质量指标
+
+## 核心认知
+**"可观测性平台 = 语义适配 + 事件化存储 + 可治理的执行管道"**：Langfuse 用 OTel 适配层把异构 trace 归一为内部模型（注册表适配器 + 词表保守映射），用事件化管道保证摄取可靠（确定性采样/跨日延迟/失败可见），用 DecisionModel + 治理门让"评估"成为可暂停、可审计、可规格化的工程对象。
+
+## 关键发现（Top 5）
+1. OTel 外部语义（level 词表/类型/属性）经 ObservationTypeMapper 注册表（priority 排序）+ 词表保守映射归一化为内部 Observation 模型，未知值显式降级不掩盖
+2. eval 规格化为 DecisionModel 结构化问题集（CHOICE/SCORE/NOUL + 概率输出 + 严格答案校验写回），而非自由文本 prompt
+3. EvalRule 治理门三层：ACTIVE + blockedAt；MANUAL 绕过 live toggle 但不绕过 blocked（"可暂停的自动化"）
+4. eval 执行带 LLM 重试预算：retryable → job_executions DELAYED 120min + 确定性 executionTraceId；rate limit → BullMQ exp backoff
+5. 供应链四层治理：pnpm 5 天新依赖延迟 + allowBuilds 白名单（prisma CLI 禁 build 但 @prisma/client 允许）+ CVE 钉死 + 4 个上游未修 patchedDependencies
+
+## 质量指标
+| 指标 | 值 |
+|---|---|
+| EK / KO / Candidates | 48 / 8 / 6 |
+| EK links 覆盖率 / 平均出边 | 100% / 1.63 |
+| 游离 EK | 0 |
+| KO 聚合规则覆盖 | 100%（R1×2 / R2×2 / R3×3 / R4×2） |
+| Validation | PASSED（Blind Reconstruction；CONFIRMED 34 / PARTIALLY 7 / DOWNGRADED 1 / OVER_GENERALIZED 1 / MISSING 1 / CONTRADICTED 0）+ Auditor 独立判定 9 项 |
+| Reconciliation | 12 项修正（含新增 EK-45~48） |
+| Benchmark case | OTel GenAI 适配（KO-02）→ CONFIRMED |
+
+## 关键争议
+- Secondary 队列语义（已实证：按项目 ID 重定向分流，C-01 关闭）
+- DecisionModel 概率输出下游消费（实证：comment+metadata 面，非阈值决策，C-04 半关闭）
+- legacy observation 双轨维护成本（浅克隆无法量化；实体处理在 processEventBatch 未见，C-05 强化）
+
+## Skill Improvement Proposal
+NONE（本轮未暴露系统性 skill 缺陷）

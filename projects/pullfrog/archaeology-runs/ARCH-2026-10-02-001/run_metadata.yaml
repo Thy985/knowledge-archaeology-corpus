@@ -1,0 +1,55 @@
+run_id: ARCH-2026-10-02-001
+repository: pullfrog/pullfrog
+commit: d287f81e93e245845aa25b0916417a4216f37dad
+branch: main
+snapshot_timestamp: 2026-10-02T02:12:00Z
+skill_version: 3.2
+job:
+  id: ARCH-2026-10-02-001
+  mode: initial
+  priority: P1
+  project: pullfrog
+  slug: pullfrog
+quality_metrics:
+  project_layer: 1
+  engineering_knowledge: 43
+  ek_links: 43  # 全部带 links（6 类边）
+  generalized_ko: 8
+  aggregation_rule_coverage: 1.0
+  ko_cluster_avg_size: 4.6
+  flow_atlas: 7
+  candidates: 8
+  pending_patterns: 2
+  validation_checks: 17  # T(10)+F(6)+abstraction(8) 中的确认/局部项
+  validation_result: PARTIAL  # 2 DOWNGRADED (KO-01 局部收紧 / KO-04 降为 Hypothesis) + 1 CONTRADICTED (F6, 已修正) + 5 MISSING (C1/C3/C4/C5/C6)
+  confirmed: 14
+  partially_confirmed: 0
+  downgraded: 2
+  over_generalized: 0
+  missing: 5
+  contradicted: 1
+  needs_human_review: 2
+  blind_reconstruction: true
+  counterexample_budget: "每个 L3+ KO ≥3 定向反例；KO-01 命中 EK-20 反例→scope 收紧；其余 0 反例附搜索证据"
+evidence_references:
+  - main.ts (1102 lines, run orchestration)
+  - utils/token.ts (4-tier token model)
+  - utils/payload.ts (permission resolution)
+  - mcp/shell.ts (sandbox: 3-tier probe + FS_MOUNTS)
+  - agents/subagentToolGates.ts (mutates-derived gate)
+  - agents/claudePretoolGate.ts (PreToolUse exit-2 gate)
+  - agents/nativeFsDenies.ts (.git FS deny)
+  - agents/opencode.ts (in-process harness)
+  - agents/postRun.ts (post-run gates)
+  - utils/activity.ts (dual timeout + noise filter)
+  - utils/gitAuth.ts (ASKPASS lifecycle)
+  - mcp/git.ts (push permission chain + NOSHELL blocks)
+  - mcp/checkout.ts + toolState.ts (initialHead invariant)
+  - mcp/review.ts (diff-coverage pre-flight)
+  - test/crossagent/fsExfil.ts + tokenExfil.ts (adversarial tests)
+  - configuration.ts + action.yml (config surface)
+notes:
+  - "服务端(PullFrog app)/wiki/docs 不在本仓库，设计意图还原依赖代码注释（密度高）"
+  - "models.ts(97KB) 只读结构未逐条核对"
+  - "未运行测试（只读约束）；对抗测试正文已读，CI 真实结果不可复现"
+  - "docker.ts 本地/自托管运行形态未考古，记录为 refresh 候选"

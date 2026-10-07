@@ -1,0 +1,38 @@
+run_id: ARCH-2026-09-30-001
+repository: https://github.com/microsoft/Webwright.git
+slug: webwright
+commit: bc26750af3ad166d982f23d101ef8971a3a2fce5
+commit_message: "Add Web Skill Factory: self-evolving library of verified, code-native web skills (#62)"
+branch: main
+snapshot_timestamp: 2026-09-30T03:10:00+08:00
+skill_version: knowledge-archaeology v3.2
+mode: initial
+focus: "Terminal-Native Web Agent：code-as-action 动作面 + workspace-as-state 状态模型 + Self-Reflection 完成授权门 + Skill Factory 零 token 技能复用管道"
+language_profiles:
+  python: "0.1.0, src/webwright 8061 行（核心 loop 467 / browser env 567 / workspace env 296 / cli 175）"
+  shell: "bash 动作面（workspace 模式）"
+  yaml: "9 config 栈（base + model_* + local_browser + persistent_browser + task_showcase + crafted_cli）"
+quality_metrics:
+  facts: 31
+  engineering_knowledge: 44
+  ek_links_coverage: "100% (44/44, 游离 0, 46 条边)"
+  generalized_ko: 8
+  aggregation_rule_coverage: "100% (8/8, R1 x2 / R2 x3 / R3 x1 / R4 x2)"
+  candidates: 6
+  flow_edges_traceable: true
+  pytest_read: "14 文件 1899 行（LLM-free）——未执行（无依赖环境），静态审读"
+  benchmark_numbers: "README 声明（Observation 级，未实测复现）"
+validation_result:
+  confirmed: 3
+  partially_confirmed: 2
+  downgraded: 1
+  over_generalized: 0
+  contradicted: 0
+  missing: 2
+  needs_human_review: 0
+  counterexamples: 4
+reconciliation_notes:
+  - "step_limit 检查在 query 前（default.py:386-392），Flow Atlas 顺序已修正"
+  - "基准数字（86.7%/60.1%/55→70%）标 Observation 不升维（C-05）"
+  - "KO-01/KO-08 完成判定结论限定双模式语境"
+corpus_status: "new run, projects/webwright/ 首建；不与 26 个已有项目重复"
