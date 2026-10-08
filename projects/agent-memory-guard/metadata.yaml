@@ -1,0 +1,57 @@
+project: OWASP Agent Memory Guard
+slug: agent-memory-guard
+repository: https://github.com/OWASP/www-project-agent-memory-guard.git
+version: 0.3.3
+commit: 84030912a8c1b96e42ada98d6ba2f4d4a7d345b1
+commit_message: "chore: update download stats [skip ci]"
+commit_timestamp: 2026-10-06T12:45:44+00:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-10-07
+mode: initial
+run_id: ARCH-2026-10-07-001
+source_entry: "KnowlegeMap 03_expansion_queue/candidates/[cand]owasp-agentic-security.md（2026-10-07 增量）+ [cand]agent-memory-2026.md（2026-09-12 增量）；雷达 2026-10-07 第 35 次运行"
+
+summary: >-
+  OWASP 官方 Incubator 的运行时记忆防御中间件（ASI06 Memory Poisoning 参考实现，MITRE ATLAS
+  AML.T0080.000 引用）。Guard 插在 agent 与 memory store 之间：12 检测器（默认启用 7 个）+
+  声明式 YAML 策略（permissive/strict/tiered）+ 六类分类晋升图（untrusted 永不晋升 policy）+
+  SHA-256 完整性基线 + SecurityEvent 事件流（receipt_uri 外部审计链）+ AMSB 可判定基准 +
+  MCP server / scanner / semgrep / SARIF / GitHub Action + NIST AI RMF & EU AI Act 合规映射。
+  核心认知：记忆写入是状态变更必须过判定门；检查范围本身是安全属性（#135→#151 深度边界闭环）；
+  fail-open 必须可见（#138）；信任提升只能经显式验证边（#124 trust-aware decay）。
+
+quality_metrics:
+  facts: 100+
+  engineering_knowledge: 33
+  ek_graph:
+    avg_edges_per_ek: 2.2
+    free_floating_ek: 0
+    edge_types_covered: "mechanism / subsystem / causal / dependency / constraint / contrast（6/6）"
+    aggregation_coverage: "8/8（100%）"
+  ko: 8
+  ko_aggregation: "R1 机制簇×2（KO-04,KO-05）/ R2 因果链簇×2（KO-01,KO-07）/ R3 不变量簇×2（KO-02,KO-03）/ R4 主题簇×2（KO-06,KO-08）"
+  flows: 7
+  candidates: 8
+  validation:
+    blind_reconstruction: "9/9 CONFIRMED（Truth Auditor）"
+    independent_validation: "CONFIRMED 10 / PARTIALLY_CONFIRMED 1 / DOWNGRADED 1 / MISSING 2 / CONTRADICTED 0"
+    amsb_benchmark: "unguarded 15/15 breach F0.0 / strict 4/15 D71.4 / hardened 1/15 A93.9（独立复跑）"
+
+key_findings:
+  - 默认 permissive：无参 MemoryGuard 只检测不拦截（Policy.permissive）；strict/tiered 才主动执行
+  - 默认 7 检测器套件不含 memory_persistence_injection——ASI06 延迟生效持久化指令在官方推荐 enforcing 配置（strict）下不设防（AMSB 实测 4/4 breach），hardened 才全防线（1/15）
+  - 深度边界闭环：#135 截断防 RecursionError → #151 超出深度变 size_anomaly finding（不可检查=发现而非静默）
+  - 信任梯度：untrusted 类（retrieved_fact/tool_observation）永不晋升 policy/verified；verified=True 用户 opt-in（guard.promote 门）
+  - trust-aware decay：#124 后默认仅 SYSTEM 可衰减自增强冷却（source_class 不认证主体）
+  - 诚实边界族：Snapshot.digest 永不验证（forensics only）；compliance-mapping 数字全部解析到 artifact、声明非自适应对手度量；strict/hardened 对照设计故意暴露默认配置缺口
+  - AMSB：model-free canary 判定 + benign FP 惩罚（全拒不是防御）+ critical 封顶 C/D + 自提交标记
+  - 集成：LangChain/OpenAI Agents（HITL）/AutoGen/agno/CrewAI/LlamaIndex/mem0/LangGraph + OTel + MCP + CI（GitHub Action env 防注入 #122）
+
+key_controversies:
+  - CONTRADICTION-1: README 59µs vs compliance-mapping 62µs（版本 pin 差异，保留双值）
+  - CONTRADICTION-2: 自报营销数字（14,949 downloads）与"数字附语料"科学叙事并存
+  - IF-1: KO-04 默认配置边界（strict 不含 persistence 检测器——官方对照设计明示）
+  - C-04: verified=True 单布尔晋升门可能可绕过（需攻击视角测试）
+  - C-08: regex 词形插入规避（persist-directive-evasion 实测 1/15）——regex 层对抗边界
+
+skill_improvement_proposal: false

@@ -1,0 +1,73 @@
+run_id: ARCH-2026-10-07-001
+project: OWASP Agent Memory Guard
+slug: agent-memory-guard
+repository: https://github.com/OWASP/www-project-agent-memory-guard.git
+commit: 84030912a8c1b96e42ada98d6ba2f4d4a7d345b1
+commit_message: "chore: update download stats [skip ci]"
+commit_timestamp: 2026-10-06 12:45:44 +0000
+version: 0.3.3
+skill_version: 3.2
+archaeologized_at: 2026-10-07
+mode: initial
+source_entry: KnowlegeMap candidates/[cand]owasp-agentic-security.md (2026-10-07 increment) + [cand]agent-memory-2026.md (2026-09-12 increment)
+
+summary: >
+  OWASP 官方 Incubator 的运行时记忆防御中间件（ASI06 Memory Poisoning 参考实现）。
+  12 检测器 + 声明式 YAML 策略 + 六类分类晋升图 + SHA-256 完整性基线 + SecurityEvent 事件流
+  + AMSB 可判定基准 + MCP server/scanner/GitHub Action。核心认知：记忆写入是状态变更，
+  必须过判定门；检查范围本身是安全属性；fail-open 必须可见；信任提升只能经显式验证边。
+
+quality_metrics:
+  facts: 100+
+  engineering_knowledge: 33
+  ek_graph:
+    avg_edges_per_ek: 2.2
+    free_floating_ek: 0
+    edge_types_covered: 6
+    aggregation_coverage: 1.0
+  ko: 8
+  ko_aggregation:
+    R1: 2
+    R2: 2
+    R3: 2
+    R4: 2
+  flows: 7
+  candidates: 7
+  validation:
+    blind_reconstruction: 9/9 CONFIRMED
+    contradictions: 2 (CONTRADICTION-1 latency 59vs62us version-pinned; CONTRADICTION-2 marketing vs scientific numbers)
+    counterexamples: 16 attacks, 0 overturned
+
+validation_result:
+  truth: PASS
+  coverage: PASS (gaps disclosed: docs full, analytics, templates, benchmark not re-run)
+  flow: PASS
+  abstraction: PASS (all Principles marked Cross-project validation pending)
+  counterexample: PASS (budget met)
+  epistemic: PASS
+  independent_validation:
+    confirmed: 10
+    partially_confirmed: 1
+    downgraded: 1
+    missing: 2
+    contradicted: 0
+    needs_human_review: 0
+    amsb_benchmark: "unguarded 15/15 breach F0.0 / strict 4/15 D71.4 / hardened 1/15 A93.9（本 run 独立复跑）"
+    reconciliation_applied: true
+
+key_findings:
+  - 默认 permissive：无参 MemoryGuard 只检测不拦截（Policy.permissive）；strict/tiered 才主动执行
+  - 深度边界闭环：#135 截断防 RecursionError → #151 超出深度变 size_anomaly finding（不可检查=发现）
+  - 信任梯度：untrusted 类（retrieved_fact/tool_observation）永不晋升 policy/verified；verified=True 用户 opt-in
+  - trust-aware decay：#124 后默认仅 SYSTEM 可衰减自增强冷却（source_class 不认证主体）
+  - 诚实边界：Snapshot.digest 永不验证；compliance-mapping 数字全部解析到 artifact 并声明非自适应对手度量
+  - AMSB：model-free canary 判定 + benign FP 惩罚 + critical 封顶 C/D + 自提交标记
+
+key_controversies:
+  - CONTRADICTION-1: README 59µs vs compliance-mapping 62µs（版本 pin 差异，保留双值）
+  - CONTRADICTION-2: 自报营销数字（14,949 downloads）与"数字附语料"科学叙事并存
+  - C-04: verified=True 单布尔晋升门可能可绕过（需攻击视角测试）
+  - C-03: 92.5% recall 自编语料，未独立复测（本轮未跑基准，时间盒限制）
+
+skill_improvement_proposal: false
+# 本轮未暴露系统性 skill 缺陷（EK Graph 33 条/六类边/KO 8 个 R1-R4/盲重建 9/9 全达标），不产 SIP。
