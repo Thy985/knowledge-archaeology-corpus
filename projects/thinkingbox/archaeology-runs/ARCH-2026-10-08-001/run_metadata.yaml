@@ -1,0 +1,56 @@
+run_id: ARCH-2026-10-08-001
+project: thinkingbox
+repository: https://github.com/microsoft/thinkingbox.git
+commit: 892964e7226044e5463ad188da119df838f4bec1
+branch: main
+version: v0.1.0
+license: MIT
+commit_timestamp: 2026-10-03T16:23:47-07:00
+skill_version: knowledge-archaeology v3.2
+skill_path: /home/user/.super_doubao/super-doubao-runtime/workspace/.user_skills/knowledge-archaeology/
+timestamp_utc: 2026-10-07T18:21:24Z
+timestamp_local: 2026-10-08T02:21:24+08:00
+mode: initial
+archaeologist: MainAgent (single-agent archaeology run per SOP; analyst roles executed in sequence with structural separation)
+clone_depth: 50
+commits_in_snapshot: 18
+source_entry: knowledgemap/03_expansion_queue/candidates/[cand]agentic-benchmarks-2026.md (2026-10-08 radar run #36)
+
+scope:
+  package: 00_overview / 01_project-layer / 02_engineering-knowledge / 03_knowledge-layer / 04_flow-atlas / 05_candidates / 06_validation
+  modules_fully_read: 18 python modules (testrunner, judge, rubrics_judge, session_proxy, mcp_proxy_client, agent_session, agent_user_loop, ordered_parallel_executor, config_types, chat_types, python_test_file, tag_types, hydrator, fixtures, history_loader, infer, agg_main, sbs_main, eval_utils, runtest_main, testscript_worker, user_simulated_answer, agent_session_base, tools/client/common, tools/client/worker, tools/mcp_cloud_drive, fixtures/answer_evaluator) + README + pyproject + git log
+  external_claims_not_verifiable_in_repo: thinkingbox-data 语料统计（121,680 trials × 12 模型 / 79,853 次未过可执行检查 / 67.24% 失败仍干净结束无报错 / 79.9% 失败源于工具处理 / 每任务 20 次连续执行 / pass@1 幻觉终结）——provenance=arXiv:2608.19741 论文/新闻宣称，非本仓可验证 Fact（本仓为评测框架，真实语料在独立仓库 thinkingbox-data）
+
+quality_metrics:
+  facts_collected: 100+ (evidence inline in EK/KO/Flow)
+  engineering_knowledge: 55 (EK-01..EK-55, all with links >= 1)
+  patterns: 14 (within KO aggregation evidence)
+  core_ko: 9 (KO-01..KO-09)
+  ek_graph_avg_edges: 2.2
+  orphan_ek_ratio: 0.05 (3/55 flagged as project-local, D-grade)
+  aggregation_rule_coverage: 1.0 (9/9 KO declare R1-R4 + cluster EKs + edge types)
+  fake_aggregation_subsystem_only: 0
+  epistemic_status_marked: all KO entries carry status; external claims quarantined to 05_candidates
+
+validation_result:
+  truth_audit: PASS (blind reconstruction; all EK claims re-derived from source)
+  coverage_audit: PASS with note (tests/ 34 py files + docs/ not fully line-read; sampled)
+  flow_audit: PASS (all key edges traceable to symbol/file/condition)
+  abstraction_audit: PASS (no L5 methodology claimed; L4 models bounded to project evidence, cross-project pending)
+  counterexample_hunter: 3+ per KO applied; 0 rejected
+  epistemic_audit: PASS (Fact/Observation/Hypothesis/Pattern/Model strictly separated)
+  contradictions_found: 1 (README 架构叙述 vs session_proxy 实现细节差异, resolved as documentation-vs-implementation, recorded)
+  needs_human_review: 0
+
+deliverables:
+  - job_manifest.md (stage 2)
+  - snapshot_artifact.md (stage 3)
+  - package/00_overview.md
+  - package/01_project-layer.md
+  - package/02_engineering-knowledge.md
+  - package/03_knowledge-layer.md
+  - package/04_flow-atlas.md
+  - package/05_candidates.md
+  - package/06_validation.md
+  - package/run_metadata.yaml
+  - independent_validation_report.md (stage 5, auditor)
