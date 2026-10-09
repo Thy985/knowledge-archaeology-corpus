@@ -1,0 +1,36 @@
+project: dart-agent-core
+slug: dart-agent-core
+repository: https://github.com/memex-lab/dart_agent_core.git
+version: 2.1.7
+commit: 43c11f1b9a00a554c27c8ad1839175c2dd0e4a91
+commit_message: "chore: release 2.1.7"
+commit_timestamp: 2026-10-09T11:57:08+08:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-10-10
+mode: initial
+run_id: ARCH-2026-10-10-001
+source_entry: "KnowlegeMap 03_expansion_queue/candidates/ flutter-local-llm-2026.md（2026-10-10 雷达第 38 次扫描增量 dart_agent_core/flutter_agentic/flutter_local_agent_kit；实测 pub.dev 2.1.7 > 卡上 2.0.4）"
+
+summary: >-
+  dart_agent_core（Dart SDK ^3.9.2，MIT，46★，v2.1.7，2026-10-09）——Dart/Flutter 生态
+  mobile-first/local-first agent 运行时 + agent 评测子系统一体化库：StatefulAgent 完整
+  think-act-observe 循环（工具/流式/状态持久化/技能系统/子代理/规划/上下文压缩/循环检测/MCP），
+  eval.dart 评测子系统（suite/trial/grader/transcript/record-replay/pass@k/pass^k/judge 校准/
+  suite 健康），6 平台 + WASM。两公开入口刻意解耦（AGENTS.md: "Do not pull eval primitives
+  into the main library"）。本次考古产出 60 EK（EK Graph 六类边，links 覆盖率 100%，0 游离）/
+  8 KO（R1×3 R2×2 R3×2 R4×2，平均簇规模 5.4）/7 类 Flow/9 Candidates。
+  关键认知：KO-01 类型化控制面（10 阶段 hook，控制只走 hook，观察只走 controller）；
+  KO-03 取消优先不变量（工具返回后复查 cancelToken，worker 仅共享取消逃逸）；
+  KO-05 失败不伪装成功（空响应 3 次 loopDetection、timeout/error 不喂弱 grader、
+  judge null escape hatch、worker 失败为工具结果——跨 4 子系统最一致不变量）；
+  KO-07 可复现性基础设施（systemPrompt/tools 版本历史 + record/replay + trial 盐，
+  运行时与评测共享"要测量/重放必须先版本化记录"心智）。
+  独立审计（盲重建）9 CONFIRMED + 1 PARTIALLY_CONFIRMED + 1 DOWNGRADED +
+  0 OVER_GENERALIZED + 5 MISSING + 0 CONTRADICTED + 1 NEEDS_HUMAN_REVIEW
+  （F-1 pass@k 注释声称 log-domain 防溢出、实现实为朴素连乘；F-2 RunJavaScript
+  路径前缀匹配的 ../ 越界未验证→C-09；F-3 MCP 渐进披露模板细节 PARTIAL）。
+  Reconciliation 合并：F-1 修正 EK-41 表述、F-2→C-09 入 Candidates、M-1~M-5 记 Level-2 待补。
+  跨项目候选：C-01 pass^k empirical 动机反映团队报告文化（vs thinkingbox）；
+  C-02 judge null escape hatch 是评测生态隐性规范；C-04 MCP/技能渐进披露统一原语；
+  C-08 dart_agent_core 是 corpus 中唯一 Dart agent 框架（Tafcm 直接复用对象）。
+  Skill Evolution 未触发（无系统性 skill 缺陷证据）。
