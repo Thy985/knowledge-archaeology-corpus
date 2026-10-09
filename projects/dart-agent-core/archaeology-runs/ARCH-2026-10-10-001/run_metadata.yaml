@@ -1,0 +1,37 @@
+run_id: ARCH-2026-10-10-001
+project: dart_agent_core
+repository: https://github.com/memex-lab/dart_agent_core.git
+repository_version: 2.1.7
+commit_sha: 43c11f1b9a00a554c27c8ad1839175c2dd0e4a91
+branch: main
+skill_version: knowledge-archaeology v3.2
+timestamp_utc: 2026-10-09T18:22:25Z
+mode: initial
+job_selection:
+  priority: P0
+  source_entry: KnowlegeMap 03_expansion_queue/candidates flutter-local-llm-2026.md（2026-10-10 雷达第 38 次扫描增量 dart_agent_core）
+  candidates_considered:
+    - dart_agent_core (selected, P0 initial)
+    - deepseek-harness (REFRESH_REQUIRED, deferred to later run)
+    - AgentJudgeBench (excluded: no code repo, arXiv 2608.26623 paper only)
+quality_metrics:
+  evidence_count: 60
+  ek_count: 60
+  ek_links_coverage: 100%
+  isolated_ek: 0
+  ko_count: 8
+  ko_aggregation_coverage: 100%
+  ko_avg_cluster_size: 5.4
+  candidates_count: 8
+  counterexample_attacks: 24
+  contradictions: 0
+  blind_reconstruction_matches: 4/4
+validation_result: PASS
+validation_notes:
+  - 2 Principle KO marked Cross-project validation pending (not Law)
+  - Level-2 pending: mcp_session.dart, message.dart, eval assembly, threshold constants, 39 unread test files, hash details, RunJavaScript ../ escape behavior (C-09)
+corpus_connection:
+  - thinkingbox: pass@k/pass^k/judge calibration homologous (same formulas, different documented motivation)
+  - agentevals/deepseek-harness: eval framework lineage
+  - mcp: MCP bridge layer comparison
+  - Tafcm (user Dart project): direct reuse candidate
