@@ -1,39 +1,41 @@
-# 00 Overview — microsoft/Webwright（ARCH-2026-09-30-001）
+# 00 Overview — Webwright (microsoft/Webwright)
+
+- run_id: ARCH-2026-10-05-001 ｜ commit: `bc26750af3ad166d982f23d101ef8971a3a2fce5`（2026-08-03）｜ version 0.1.0
+- skill_version: knowledge-archaeology v3.2 ｜ mode: initial ｜ 2026-10-05
 
 ## 一句话定位
-**Terminal-Native Web Agent**：把"写代码控制浏览器"作为 agent 的动作面（code-as-action），把本地工作区（脚本+截图+日志）作为状态（workspace-as-state），浏览器只是可丢弃环境。核心主张：**你的 web agent 浏览历史是一个可重跑的 Python 文件**。
+**Webwright 是微软研究院（MSR）发布的一个"零隐藏框架"网页 agent harness：给 LLM 一个终端，让它以"代码即动作"（code-as-action）方式逐条 bash/python 命令驱动本地 Playwright 浏览器完成网页任务，并强制把每个任务沉淀为一个可重跑的 Python 脚本（state=local workspace，browser=disposable，loop=write code→execute→inspect screenshots→repair）。**
 
-## 它让我们认识到了什么（核心认知增量）
-1. **动作空间≠预测单步 DOM 操作**：主流 computer-use 让模型每步预测一个点击/输入；Webwright 让模型写 Playwright 脚本、跑、看截图、修。模型变强后，前者是 harness 瓶颈，后者是 harness 的顺势升级（README Motivation）。
-2. **验证门而非自裁**：`require_self_reflection_success=true` 时，agent 的 `done=true` 被硬阻塞，直到外部图片判定器（self_reflection 两阶段：per-image Score + final Status verdict）对最终脚本的运行截图给出 `predicted_label==1`。**证明与执行分离**——agent 不能单方面宣称完成。
-3. **零 token 技能复用（Skill Factory）**：solve 留下的脚本经 gate（gold/self_verify）准入 → learn/update 蒸馏为参数化 skill → route 时可直接运行（无模型，~40s）或作为 prior 注入 prompt。WebArena held-out 55%→70%（+15pp）。技能不是"模型读的上下文"，而是"可运行的程序"。
-4. **双状态模型一个 loop**：workspace 模式（无状态、产物在磁盘、外部验证）与 live browser 模式（有状态会话、ARIA 观察、模型自判）共用同一个 DefaultAgent loop，差异全部收敛在 config 与 action_field。
+## 它让我们认识到了什么（核心命题）
+1. **代码即动作（code-as-action）是坐标预测（xy-coordinate）之外的第三条网页 agent 决策路线**：模型直接生成可执行代码而非点击坐标；code 是状态、script 是产物、workspace 是记忆。README 基准：Online-Mind2Web 86.7%（gpt-5.4）、Odysseys 60.1%（+15.6 over Opus 4.6、+26.6 over base gpt-5.4）。
+2. **技能工厂（Skill Factory）把 solve 蒸馏成可复用资产**：每个 solve 留下一段可重跑脚本，经 gate→分组→蒸馏→无模型重放验证→grade 三态入库；技能库查找在 agent loop **之外**解析并注入 prompt（fail-open）。WebArena reuse 55%→70%。
+3. **验证 = 重放（replay）**：技能入库前必须在临时目录无模型重跑训练任务，answer 文件是契约而非退出码；strict/shape 两级验证对应答案漂移与否。
+4. **可丢弃浏览器 + 持久工作区**：浏览器状态不跨 step 保持（除非显式 persistent 模式），证据（screenshots/logs/code）全部落在 workspace——网页任务的"记忆"在文件系统而非浏览器上下文。
 
-## 性能锚点（README 声明，非本考古实测）
-- Online-Mind2Web 86.7% / Odysseys 60.1%（GPT-5.4 基线 33.5%）
-- WebArena：10 retrieve 模板、3 自托管站点、gpt-5.4，reuse 提升 held-out 55%→70%
-- 核心 footprint ~1.5k LoC（skill_factory 合并前）；skill 重放 ~40s / zero tokens
+## 三层知识配比
+- Project Layer：01_project-layer.md（项目地图）
+- Engineering Knowledge：02_engineering-knowledge.md（**48 条 EK，EK Graph 六类边**）
+- Generalized Knowledge：03_knowledge-layer.md（**8 个 KO，聚合规则 R1-R4**）
+- Flow Atlas：04_flow-atlas.md（**七类流**）
+- Candidates：05_candidates.md（7 个未验证/跨项目假说）
+- Validation：06_validation.md（Truth/Coverage/Flow/Abstraction/Counterexample/Epistemic + Blind Reconstruction 记录 + Contradictions/Counterexamples 保留）
 
-## 与已有 Corpus 的连接（Benchmark 对照）
-| Corpus 项目 | 关系 |
-|---|---|
-| browser-use | 同一问题域（web agent harness）反范式对照：browser-use = observe→predict 单步动作 + DOM/AX 快照；Webwright = 写脚本→执行→修复 代码循环。README 对比表明确列出 |
-| deepseek-harness | 通用内部 harness（多 agent、会话遥测）↔ Webwright 单 agent 极简终端范式；"自愈/可编程/轻框架"理念同源（候选卡连接） |
-| opencode / a2a / mcp | 同属 2026 agent 工程主线；Webwright 的插件化（Claude Code/Codex/OpenClaw/Hermes 四宿主）与 MCP/Agent 协议生态互补 |
+## 关键数字（全部来自 README/代码原文，可回溯）
+| 项 | 值 | 来源 |
+|---|---|---|
+| Online-Mind2Web (300) | 86.7% gpt-5.4；Opus 4.7 84.7% | README §Benchmarks |
+| hard split (N=100) | Opus 4.7 80.5% vs gpt-5.4 76.6% | README §Benchmarks |
+| Odysseys (200) | 60.1% gpt-5.4，avg 76.1 steps | README §Benchmarks |
+| 对照 | +15.6 over Opus 4.6 (44.5%)；+26.6 over base gpt-5.4 (33.5%) | README §Benchmarks |
+| WebArena reuse | 55%→70%（+15pp） | README News 2026-07-21 |
+| 技能 standalone | ~40s，zero tokens | README |
+| 源码规模 | src 6552 行（skill_factory 2150） | wc -l 实测 |
+| 测试规模 | tests 1899 行，14 文件 | wc -l 实测 |
+| 轨迹对比 | Harness Local 424,026 tokens vs Codex Skill 3,291,183 | README compare_trajectory |
+| 首次发布 | 2026-05-04（~1.5k LoC） | README News |
 
-## 产物清单
-- 01 Project Layer：`package/01_project-layer/project-layer.md`
-- 02 Engineering Knowledge（EK Graph）：`package/02_engineering-knowledge/ek-graph.md`
-- 03 Knowledge Layer（KO，R1-R4 聚合）：`package/03_knowledge-layer/knowledge-layer.md`
-- 04 Flow Atlas（七类流）：`package/04_flow-atlas/flow-atlas.md`
-- 05 Candidates：`package/05_candidates/candidates.md`
-- 06 Validation & Evidence：`package/06_validation/validation.md`
-- run_metadata：`package/run_metadata.yaml`
-- Snapshot：`package/snapshot/snapshot_artifact.md`
-
-## 质量指标摘要
-facts 31 → EK 44（EK Graph 全覆盖、游离 0）→ KO 8（聚合规则 100%）→ Candidates 6；Independent Audit 判定统计见 06。
-
-## 证据边界声明
-- 基准数字（86.7%/60.1%/55%→70%）来自 README 声明，**未在本考古实测复现**（无模型 key / 站点），按 Observation 级证据处理，不可升维为 Fact。
-- 全部架构/机制/流程结论直接来自源码（agents/environments/models/skill_factory/tools/config）与测试，符号可回溯。
+## 边界声明
+- 只读考古：未修改目标仓库/KnowlegeMap/生产 Skill
+- 无 ADR 目录；决策证据 = README News/对比表 + docs/manual.md + 代码注释
+- benchmark 数字为 MSR 自报（README），独立复现性未验证（见 C-07）
+- 本包为 initial run；corpus 写入见阶段⑥
