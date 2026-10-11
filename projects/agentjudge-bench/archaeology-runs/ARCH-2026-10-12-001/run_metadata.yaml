@@ -1,0 +1,40 @@
+run_id: ARCH-2026-10-12-001
+project: agentjudge-bench
+mode: initial
+repository: https://github.com/ServiceNow/SyGra.git
+branch: scratch/agent_judge_bench
+commit: 97cca4fa07e98ee61bb3a1a2f8639778e299d50a
+commit_message: "AgentJudgeBench related files"
+commit_date: 2026-05-06 19:54:31 +0530
+skill_version: 3.2
+timestamp: 2026-10-11T18:07:11Z
+archaeologist: MainAgent (multi-agent orchestration per knowledge-archaeology v3.2)
+
+quality_metrics:
+  ek_count: 15
+  ek_links_coverage: 1.0
+  ek_isolated_ratio: 0.0
+  ko_count: 5
+  ko_aggregation_coverage: 1.0
+  ko_cluster_avg_size: 3.2
+  flows: 7
+  candidates: 6
+  counterexamples: 15
+  contradictions: 0
+  l5_count: 0
+  validation_result: PASS
+
+validation:
+  truth_auditor: PASS
+  coverage_auditor: PASS (task package 100%; sygra skeleton by dependency path)
+  flow_auditor: PASS (7/7 flows; authority caveat CURL_CA_BUNDLE noted)
+  abstraction_auditor: PASS (KO-03 downgraded to L3 Hypothesis; no L5)
+  counterexample_hunter: PASS (15 attacks, 0 empty)
+  epistemic_auditor: PASS (no status confusion; paper claims marked as claims)
+  independent_validation: see independent_validation_report.md
+
+corpus_delivery:
+  target: projects/agentjudge-bench/
+  branch: arch/agentjudge-bench-2026-10-12
+  pr_required: true
+  sip: none
