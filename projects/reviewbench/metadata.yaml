@@ -1,0 +1,38 @@
+project: ReviewBench
+slug: reviewbench
+repository: https://github.com/review-bench/ReviewBench.git
+version: "1.0.0"
+license: MIT
+commit: c17b05be9c90b85a1fc012ce39e455e2d09a7255
+commit_message: "Onboard block/review (block-review) (#71)"
+commit_timestamp: 2026-10-13T10:08:07-07:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-10-14
+mode: initial
+run_id: ARCH-2026-10-14-001
+source_entry: "[cand]reviewbench-2026.md @ KnowlegeMap 03_expansion_queue/candidates/（2026-10-14 雷达第 42 次扫描新增，GitHub 官方 10-05 Blog 发布 AI 代码审查离线基准）"
+
+summary: >-
+  ReviewBench（GitHub 官方 AI 代码审查离线评测基准，v1.0.0，MIT，TypeScript 5758 行/33 ts，
+  2026-10-13 HEAD c17b05b）——以人工多源审校的 golden findings（219 PR/219 golden/25 test）为
+  ground truth，把任意候选 review agent 的 findings 经「LLM 语义匹配 → 未匹配项 LLM 分类 →
+  评分」三步管道，产出 grounded/augmented precision-recall（Fβ 可调，macro/micro 双聚合）。
+  评测可信度方法论三环之第三环（10-12 AgentJudgeBench=judge 审计层、10-13 Transect=结果可观测层、
+  ReviewBench=基准构造本身可信）。本次考古产出 28 EK（EK Graph 六类边 42 条，平均出边 1.5，
+  0 游离）/8 KO（R1×3 R2×2 R3×2 R4×1）/7 类 Flow/6 Candidates。
+  关键认知：KO-01 LLM 输出进入计分/决策流必须经机器可执行契约（matcher JSON 严格校验、
+  classifier 缺项 throw）；KO-02 评测对象输出=不可信数据（转义 + data-not-instructions，
+  隔离被测者→judge 注入面）；KO-03 不可信输入到达文件系统前先形状校验（argv/hex-ref/nwo/
+  literal-pathspecs 四层）；KO-04 many-to-many 匹配的计分去重（covered 全算 recall /
+  claimed 只认首个未认领，防一鱼多吃刷 precision）；KO-05 评测可信度三不变量=可复现
+  （digest 镜像+checkpoint 指纹+mirror 冻结）× 独立判定（golden 保密+egress）× 防操纵
+  （label 有效性检查+注入防护）；KO-07 judge 最小权限（只读工具 + 脏 checkout 重建 +
+  diff hunk 优先）；KO-08 评测基准必须自证其偏（METHODOLOGY §8 六类威胁 + golden 由 LLM
+  生产者主导、human 仅 1.5% TP 份额）。
+  独立审计（盲重建）10 CONFIRMED + 1 PARTIALLY_CONFIRMED（EK-22 指纹不含 renderJudgeSystemPrompt）
+  + 0 DOWNGRADED + 0 OVER_GENERALIZED + 2 MISSING（classify 前 manifest↔golden 四字段
+  identity 比对 eval.ts L415-425；RB_DELETE_GOLDEN_AFTER_LOAD 与 --ingest 互斥 L689-691）
+  + 0 CONTRADICTED。Reconciliation 合并 3 处修正（R1 措辞/R2/R3 补边），不改变 KO/EK 主体。
+  跨项目候选：C-05 golden 同族 LLM 主导 → 新模型风格相似得高分假说；C-06 离线 judge 与
+  在线人类接受度收敛未闭环；C-03 digest 镜像≠模型权重可复现。
+  Skill Evolution 未触发（无系统性 skill 缺陷证据；独立 Auditor 机制按设计工作）。
