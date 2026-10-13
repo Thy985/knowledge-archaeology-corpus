@@ -1,0 +1,78 @@
+run_id: ARCH-2026-10-14-001
+repository: https://github.com/review-bench/ReviewBench.git
+commit: c17b05be9c90b85a1fc012ce39e455e2d09a7255
+branch: main
+commit_message: "Onboard block/review (block-review) (#71)"
+commit_timestamp: 2026-10-13 10:08:07 -0700
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-10-14T00:00:00+08:00
+project_slug: reviewbench
+mode: initial
+job_id: ARCH-2026-10-14-001
+source_entry: "[cand]reviewbench-2026.md @ KnowlegeMap 03_expansion_queue/candidates/"
+
+# 产物结构
+artifacts:
+  overview: 00_overview.md
+  project_layer: 01_project-layer.md
+  engineering_knowledge: 02_engineering-knowledge.md   # 28 EK, 42 edges, 0 orphan
+  knowledge_layer: 03_knowledge-layer.md               # 8 KO (L3/L4/L5, R1-R4)
+  flow_atlas: 04_flow-atlas.md                         # 7 flows
+  candidates: 05_candidates.md                         # 6 candidates
+  validation: 06_validation.md
+  independent_validation: independent_validation_report.md
+
+# 质量指标
+quality_metrics:
+  repository_scale:
+    ts_lines: 5758
+    ts_files: 33
+    total_files: 303
+    version: "1.0.0"
+  dataset:
+    manifest_prs: 219
+    test_set_prs: 25
+    golden_files: 219
+    golden_findings_full: 4632        # docs/METHODOLOGY.md §5.5
+    golden_tp_full: 2623
+    golden_tp_rate_full: "56.6%"
+    golden_findings_test: 565
+    golden_tp_test: 352
+  ek_graph:
+    ek_count: 28
+    edge_count: 42
+    avg_edges_per_ek: 1.5
+    orphan_ek: 0
+    aggregation_coverage: "100%"
+  knowledge_layer:
+    ko_count: 8
+    ko_by_level: { "L3 Pattern": 4, "L4 Cognitive Model": 3, "L4+L5": 1 }
+    aggregation_rules: { "R1 mechanism": 3, "R2 causal-chain": 2, "R3 invariant": 2, "R4 theme": 1 }
+  candidates: 6
+
+# 验证结果
+validation_result:
+  truth: { checked: 12, confirmed: 12, contradicted: 0 }
+  coverage: { gaps: 5, blocking: 0 }
+  flow: { edges_checked: 6, all_traceable: true }
+  abstraction: { confirmed: 4, partially_confirmed: 4, downgraded: 0, over_generalized: 0 }
+  counterexample: { ko_attacked: 8, ko_overturned: 0 }
+  epistemic: { honest_labeling: true }
+  verdict: PASS_WITH_SCOPE_TIGHTENING
+
+# 关键发现（摘要）
+key_findings:
+  - "评测对象输出被当作不可信数据（转义 + data-not-instructions），隔离被测者→judge 注入面"
+  - "many-to-many 语义匹配的计分去重：covered 全算 recall / claimed 只认首个未认领"
+  - "不可信 git 输入四层防御（argv / hex-ref / nwo / literal-pathspecs）"
+  - "评测可信度三不变量：可复现（digest+指纹）× 独立判定（golden 保密+egress）× 防操纵（label 检查+注入防护）"
+  - "基准自承六类威胁（METHODOLOGY §8），golden 由 LLM 生产者主导（human 仅 1.5% TP 份额）"
+  - "run 全有或全无 + digest-pinned 镜像 + mirror 冻结快照：可复现性治理完整"
+
+key_controversies:
+  - "C-03: digest-pinned 镜像 ≠ 模型权重可复现（judge/agent 背后 API 模型可能漂移）"
+  - "C-05: golden 同族 LLM 主导 → 风格相似模型的隐性加分假说"
+  - "C-06: 离线 judge 与在线人类接受度收敛未在仓库内闭环"
+  - "§4 Abstraction: 4 个 KO 因 scope 收紧标记 PARTIALLY_CONFIRMED（已并入 03）"
+
+skill_improvement_proposal: false
