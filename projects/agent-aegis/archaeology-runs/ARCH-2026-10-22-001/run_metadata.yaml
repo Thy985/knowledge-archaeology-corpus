@@ -1,0 +1,31 @@
+run_id: ARCH-2026-10-22-001
+project: agent-aegis
+repository: https://github.com/Acacian/aegis.git
+commit: 134580e37190ed9297a245eb3c902972ca9bb334
+branch: main
+version: 1.0.0
+skill_version: knowledge-archaeology v3.2
+mode: initial
+priority: P0
+timestamp: 2026-10-22 02:45:00+08:00
+quality_metrics:
+  ek_count: 19
+  ek_links_coverage: 1.0
+  ek_avg_out_edges: 1.8
+  ek_dangling: 0
+  ko_count: 5
+  ko_aggregation_coverage: 1.0
+  candidates_count: 7
+  flow_count: 7
+  evidence_references: 55
+  ek_count_reconciled: 19
+validation_result:
+  status: auditor_done
+  contradicted: 0
+  needs_human_review: 0
+  auditor_verdict: 11 CONFIRMED / 1 PARTIALLY / 0 CONTRADICTED
+  benchmark_cases:
+  - BC-AEGIS-1
+  - BC-AEGIS-2
+source_entry: 03_expansion_queue/candidates/[cand]agent-aegis-governance-2026.md +
+  07_radar_watch/current_focus.md（周五对比池）
