@@ -1,0 +1,18 @@
+slug: mxc
+project: mxc
+repository: https://github.com/microsoft/mxc.git
+status: COMPLETED
+archaeology_runs:
+  - run_id: ARCH-2026-10-24-001
+    mode: initial
+    commit: ffecec04357747d6649714f473436dfb77111be8
+    skill_version: knowledge-archaeology v3.2
+    timestamp: 2026-10-24
+    validation: 11 CONFIRMED / 1 PARTIALLY / 0 CONTRADICTED
+connected_projects:
+  - strands-box
+  - dogwood
+  - deepseek-harness
+  - openclaw
+  - agent-aegis
+  - archon
