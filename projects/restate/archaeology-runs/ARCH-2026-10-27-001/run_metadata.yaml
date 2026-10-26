@@ -1,0 +1,24 @@
+run_id: ARCH-2026-10-27-001
+repository: https://github.com/restatedev/restate.git
+commit: db4b02e26171e3b35367144d27741dc7b56c04dd
+commit_message: "HEAD@selection (2026-10-26 push; v1.8.2-dev workspace)"
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-10-27T00:00:00+08:00
+mode: initial
+quality_metrics:
+  evidence_anchors: ">40 (code/doc, file:line)"
+  ek_count: 24
+  ek_avg_edges: 2.0
+  ek_free_floating: 0
+  aggregation_coverage: "100%"
+  ko_count: 8
+  ko_layers: "L3x3 L4x4 L5x1"
+  ko_pending_cross_project: 7
+  flow_classes: 7
+  flow_edges: 22
+  candidates: 7
+validation_result:
+  status: PENDING（阶段⑤盲重建）
+  independent_validation: PENDING
+reconciliation: PENDING（阶段⑥）
+license_note: "BUSL-1.1 — non-OSI; Public Restate Platform Service prohibited; 4y → Apache-2.0"
