@@ -1,0 +1,26 @@
+run_id: ARCH-2026-10-30-001
+repository: https://github.com/dapr/dapr-agents.git
+project: dapr-agents
+slug: dapr-agents
+commit: 1fd68b3695f6b2fe89fa8739c30e9628e4633b94
+commit_message: "fix(deps): bump locked dependencies with open high and critical advisories (#933)"
+commit_timestamp: 2026-10-27T21:45:29+00:00
+version: v1.1.0 (PyPI, 2026-10-30)
+skill_version: knowledge-archaeology v3.2
+mode: initial
+job_id: ARCH-2026-10-30-001
+priority: P0
+source_entry: "[cand]dapr-agents-distributed-runtime-2026.md (validated)"
+timestamp: 2026-10-30T00:00:00+08:00
+quality_metrics:
+  ek_count: 20
+  ek_avg_edges: 2.35
+  ek_isolated: 0
+  ko_count: 7
+  ko_rules: {R1: 2, R2: 2, R3: 1, R4: 2}
+  ko_levels: {L3: 2, L4: 4, L5: 1}
+  flow_edges: 28
+  candidates: 6
+  test_code_ratio: 0.81
+validation_result: PASSED_WITH_RECONCILIATION (IVR: 12 CONFIRMED / 1 PARTIALLY_CONFIRMED / 0 CONTRADICTED / 4 MISSING; EK-D03 工具双路径边界与 EK-D05 uuid5 确定性已合入)
+coverage: PARTIAL (storage 三族 / document / observability / ext 集成)
