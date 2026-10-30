@@ -1,0 +1,54 @@
+# Agent Substrate — Archaeology Project Metadata
+
+## Project
+project: agent-substrate
+project_slug: agent-substrate
+repository: https://github.com/agent-substrate/substrate.git
+repository_version: main@542eca1e
+commit_sha: 542eca1e348e80001dcca48789e9433a84eeb214
+branch: main
+module: go.ate.dev/substrate
+license: Apache-2.0
+archaeology_date: 2026-10-31
+
+## Run
+run_id: ARCH-2026-10-31-001
+mode: initial
+priority: P0
+skill_version: v3.2
+source_entry: "KnowlegeMap current_focus.md 二号锚点 + 2026-10-24 radar-fallback scan 移交记录"
+
+## Quality Metrics
+quality_metrics:
+  project_layer_count: 1
+  engineering_knowledge_count: 41        # 40 原始 + 1 Reconciliation 新增（EK-41 .agents/skills）
+  generalized_ko_count: 7
+  candidates_count: 5
+  flow_atlas_count: 7
+  ek_with_links_ratio: 1.0
+  isolated_ek_ratio: 0.0
+  aggregation_rule_coverage: 1.0
+  counterexamples: 6
+  ko_downgrades: 0
+
+## Reconciliation
+reconciliation:
+  source: 06_validation/independent_validation_report.md
+  applied_fixes:
+    - "新增 EK-41（.agents/skills AI 治理技能套件：detect-flaky-tests/post-draft-review/triage-issues 等——IVR MISSING 发现）"
+    - "snapshot_artifact .py 口径注记（79 全部 / 76 非 vendor / 3 vendor）"
+    - "KO-02 收窄表述（CE-2：DeadlineExceeded 依语义分类而非错误码字面）"
+    - "KO-05 收窄表述（CE-6：双重授权 GCS Met / S3 Future）"
+  coverage_gaps:
+    - "memborrow 跨 worker 内存借用细节（→C-3）"
+    - "atelet resetActorDirs 逐文件实现（security.md 自标 In Progress，EK-34 部分实现）"
+    - "benchmarking 集群级实测结果（→C-5）"
+
+## Validation
+validation_result:
+  verdict: ACCEPT
+  original: PASS (6 validators)
+  independent: "CONFIRMED 24 / PARTIALLY_CONFIRMED 4 / MISSING 2（memborrow 细节 + .agents/skills 未覆盖→已补 EK-41）/ CONTRADICTED 0"
+  counterexamples_kept: 6   # CE-1..CE-6（CE-2/CE-6 收窄表述）
+  needs_human_review: 1     # KO-07 跨项目对照（dapr-agents）作为通用原则需 owner 确认
+  skill_improvement_proposal: false
