@@ -53,5 +53,5 @@ validation:
 
 skill_improvement_proposal: false
 feishu_delivery: false  # 未获用户显式授权，默认不做
-corpus_pr: "创建中（见阶段⑥结果）"
+corpus_pr: "https://github.com/Thy985/knowledge-archaeology-corpus/pull/60"
 ```
