@@ -1,0 +1,63 @@
+# Run Metadata — ARCH-2026-11-01-001
+
+```yaml
+run_id: ARCH-2026-11-01-001
+date: 2026-11-01
+project: restate
+slug: restate
+repository: https://github.com/restatedev/restate.git
+commit_sha: c30b4bced95c1934d12628f6438872a1bffb1c26
+commit_message: "[CI] Use $/ for is-latest-release in homebrew workflow"
+branch: main
+commit_time: 2026-10-31T00:27:58+0100
+version: 1.8.2-dev
+rust_toolchain: "1.98.1 (edition 2024)"
+license: "BSL 1.1 (Business Source License 1.1; Change Date: 4 years after release → Apache-2.0)"
+scale: "1271 .rs / 367,514 lines / 20 .proto / 43 crates / 25MB"
+mode: initial
+priority: P0
+skill_version: knowledge-archaeology v3.2
+source_entry: "KnowlegeMap 03_expansion_queue/candidates/[cand]durable-execution-category-mainstreaming-2026-10.md（Restate 定位 + Replit 采用 + 9 向对照表）"
+job_manifest: /home/user/.doubao/agent_mode/workspace/archaeology-jobs/ARCH-2026-11-01-001/job_manifest.md
+snapshot_artifact: /home/user/.doubao/agent_mode/workspace/archaeology-jobs/ARCH-2026-11-01-001/snapshot_artifact.md
+
+quality_metrics:
+  project_layer: 1
+  engineering_knowledge: 44
+  generalized_ko: 9
+  candidates: 6
+  ek_with_links: "44/44 (100%)"
+  isolated_ek: 0
+  avg_out_edges_per_ek: 2.1
+  aggregation_rule_coverage: "100% (9/9 KO)"
+  counterexamples: "9 KO attacked (≥1 each); 3 wording narrowed"
+  ko_downgrades: 1
+
+validation:
+  truth_auditor: "PASS (8/8 assertions CONFIRMED, all file:line traceable)"
+  coverage_auditor: "PASS (2 gaps → C-4/C-6; 2 partial → C-2/C-3)"
+  flow_auditor: "PASS (7 flows, key edges traceable to symbols)"
+  abstraction_auditor: "PASS (KO-09 wording narrowed; no structural over-generalization)"
+  counterexample_hunter: "PASS (CE: workflow idempotency special case; controlled sharding toggle; shared queue throughput)"
+  epistemic_auditor: "PASS (Hypothesis/Fact strictly separated; no S5 claims)"
+
+validation_result: PASS
+contradictions:
+  - "license: snapshot initial record Apache-2.0 → actual BSL 1.1 (fixed in snapshot + package)"
+  - "InvocationTargetType::IdempotencyId ingress variant vs types 3-variant enum → C-1 open (IVR attack point)"
+  - "idempotent sharding dual path (controlled toggle on/off) → KO-03 narrowed"
+key_findings:
+  - "durable journal (journal_v2) as core: every step persisted, resume from last completed entry"
+  - "idempotency as explicit state machine (handle_duplicated_requests by InvocationStatus)"
+  - "suspend/resume: resolve-first, else SuspendedEvent + vqueue suspend"
+  - "Bifrost durable interconnect: loglet append offset = durable committed"
+  - "VQueue keyed scheduling: Sha256-based queue id, exclusive handlers get dedicated queues"
+  - "metadata versioned kv with Precondition (None/DoesNotExist/MatchesVersion)"
+  - "storage migration as first-class citizen: PersistedFeatures + VersionBarrierCommand"
+skill_improvement_proposals: false
+```
+
+## 备注
+- 本 run 为 initial 考古（无历史 Corpus 结果可对比）。
+- 静态考古（无 Docker）：无编译、无集成测试运行；运行时行为断言上限 S4。
+- Skill Evolution：本轮未暴露系统性 skill 缺陷，不生成 Improvement Proposal。
