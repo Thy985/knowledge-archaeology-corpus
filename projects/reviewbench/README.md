@@ -1,37 +1,33 @@
-# ReviewBench 项目考古索引
+# ReviewBench — Knowledge Archaeology Index
 
-**一句话定位**：GitHub 官方 AI 代码审查离线评测基准——以人工多源审校的 golden findings 为 ground truth，经 LLM 语义匹配→分类→评分三步管道，用 grounded/augmented precision-recall 可复现比较任意 review agent。
+## 一句话定位
+GitHub 官方（Copilot 团队，2026-10-05 发布）的 **AI 代码审查离线评测基准**：219 个真实 PR（25 个代表性测试集）的 golden findings 为 ground truth，以 grounded/augmented 双指标衡量候选审查 agent 的 precision & recall。
 
-- **考古日期**: 2026-10-14
-- **版本**: 1.0.0（commit `c17b05b`）
-- **Skill Version**: knowledge-archaeology v3.2
-- **run_id**: ARCH-2026-10-14-001
-- **数据集**: corpus/manifest.json 219 PR + test set 25 + golden 219（full 4632 findings / 2623 TP / 56.6%）
+## 考古结论（核心）
+- **评测可信度 = 标签来源分层**：grounded（人类验证 golden 标签）vs augmented（classifier 补充判定）双指标，显式承认 golden set 非穷尽（KO-01）
+- **反偏差是基准可信度大前提**：多源 producer（human/ccr/LLM/tool）+ 分布抽样 + Threats to Validity 显式披露（KO-02）
+- **评测者与参赛者权威分离**：fresh container per PR、镜像 digest pin、offline 结果不可提交 leaderboard、3-runs 均值（KO-03）
+- **LLM-judge 必须校准**：classifier hill-climb human dev set + 96.6% TP/FP agreement + 47 findings 人工修正（KO-04）
 
 ## 产物清单
+| 目录 | 内容 |
+|---|---|
+| 00-knowledge-inventory/ | Overview（三条主线 + 质量快照） |
+| 01-project-layer/ | 项目地图（架构/模块/数据结构/生命周期/双 adapter） |
+| 02-engineering-knowledge/ | EK Graph（30 条 EK，六类边） |
+| 03-knowledge-layer/ | Generalized KO（6 个，R1-R4 聚合规则） |
+| 04-flow-atlas/ | 七类流（Control/State/Data/Evidence/Authority/Memory/Policy） |
+| 05-candidates/ | 7 个未验证假说（含跨项目） |
+| 06-validation/ | Validation 报告 + 独立审计 + Reconciliation |
+| archaeology-runs/ARCH-2026-10-17-001/ | run 级产物（manifest/snapshot/metadata） |
 
-| 层 | 文件 | 内容 |
-|----|------|------|
-| 00 | `00_overview.md` | 一句话定位 + 考古元信息 + 核心发现预览 + 认知状态声明 |
-| 01 | `01-project-layer/project_layer.md` | 模块地图/运行流程/核心数据结构/生命周期/配置/权限治理/依赖/边界 |
-| 02 | `02-engineering-knowledge/ek_graph.md` | 28 EK（EK Graph 六类边 42 条，0 游离；含 Reconciliation 修正 R1-R3） |
-| 03 | `03-knowledge-layer/knowledge_layer.md` | 8 KO（R1×3/R2×2/R3×2/R4×1 + 升维检查） |
-| 04 | `04-flow-atlas/flow_atlas.md` | 七类流（Control/State/Data/Evidence/Authority/Memory/Policy） |
-| 05 | `05-candidates/candidates.md` | 6 Candidates（C-01~C-06，全部 Hypothesis/未验证） |
-| 06 | `06-validation/validation_report.md` | 六 Auditor + 盲重建 + 反例预算制 + §9 Reconciliation |
-| 06 | `06-validation/independent_validation_report.md` | 独立 Auditor 盲重建（10 CONFIRMED/1 PARTIAL/2 MISSING） |
-| runs | `archaeology-runs/ARCH-2026-10-14-001/` | job_manifest / snapshot_artifact / run_metadata / independent_validation_report |
+## 考古日期/版本
+- 考古日期：2026-10-17
+- 目标 commit：`6e37127defb2da675d4b59da61cf38d12ded1ad8`（main, 2026-10-16）
+- Skill 版本：knowledge-archaeology v3.2
+- Run ID：ARCH-2026-10-17-001
 
-## 关键认知（速览）
-
-1. **评测可信度三不变量**（KO-05）：可复现（digest-pinned 镜像 + checkpoint 指纹隔离 + mirror 冻结快照）× 独立判定（golden 可删盘保密 + egress 白名单）× 防操纵（label 有效性检查 + 注入防护）——正式榜单评测必须三者齐备。
-2. **被测者输出 = 不可信数据**（KO-02）：findings 文本转义 + 显式"data-not-instructions"，候选 agent 无法操纵自己的评分。
-3. **匹配→计分去重**（KO-04）：covered 全算 recall、claimed 只认首个未认领 golden——防"一个发现认领多个金标刷 precision"。
-4. **评测基准必须自证其偏**（KO-08）：golden 由 LLM 生产者主导（human 仅 1.5% TP 份额），METHODOLOGY §8 自列六类威胁；任何发布型基准都应附 Threats to Validity。
-
-## Corpus 连接
-
-- **AgentJudgeBench（PR #41）/ Transect（PR #42）**：评测可信度方法论三环同周考古（judge 审计层 / 结果可观测层 / 基准构造层）
-- **deepseek-harness / agentevals / thinkingbox / dart-agent-core**：评测框架与评测方法论线
-- **promptfoo**：validated 锚点（提示词评测对照）
-- **opencode / hermes-agent / mcp**：Agent 运行时线（ReviewBench 是被测对象侧视角，正好对照）
+## 状态
+- initial 考古（projects/ 首次收录 reviewbench）
+- 独立验证：CONFIRMED 20 / PARTIALLY_CONFIRMED 2 / MISSING 3 / NEEDS_HUMAN_REVIEW 1 / CONTRADICTED 0
+- 未产生 Skill Improvement Proposal（无系统性 skill 缺陷）
