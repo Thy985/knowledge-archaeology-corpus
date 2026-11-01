@@ -1,0 +1,18 @@
+project: pipelock
+slug: pipelock
+run_id: ARCH-2026-10-16-001
+repository: https://github.com/luckypipewrench/pipelock.git
+commit: 8ade100ce6fc48f565e916c12b462e006d699a27
+version: v3.7.0
+mode: initial
+archaeology_date: 2026-10-16
+skill_version: knowledge-archaeology v3.2
+quality_metrics:
+  engineering_knowledge: 40
+  core_ko: 8
+  candidates: 8
+  flow_edges: 28
+  counterexample_coverage: "8/8"
+  validation: "CONFIRMED 9 / PARTIALLY 1 / MISSING 3 (reconciled) / NEEDS_HUMAN_REVIEW 2"
+status: COMPLETED
+next_refresh_hint: "refresh when v3.8+ breaking changes land or when enterprise/fleet receipt authority is authorizable for archaeology"

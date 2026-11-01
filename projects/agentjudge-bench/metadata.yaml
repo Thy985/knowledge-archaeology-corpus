@@ -1,0 +1,57 @@
+project: agentjudge-bench
+slug: agentjudge-bench
+repository: https://github.com/ServiceNow/SyGra.git
+branch: scratch/agent_judge_bench
+commit: 97cca4fa07e98ee61bb3a1a2f8639778e299d50a
+commit_message: "AgentJudgeBench related files"
+commit_timestamp: 2026-05-06T19:54:31+05:30
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-10-12
+mode: initial
+run_id: ARCH-2026-10-12-001
+source_entry: "KnowlegeMap 03_expansion_queue/candidates/[cand]agentjudge-bench-2026.md（A 级：arXiv 2608.26623，2026-08-27，3,808 条 BFCL 风格轨迹；2026-10-10 雷达发现；代码实测位于 ServiceNow/SyGra scratch/agent_judge_bench 分支）"
+
+summary: >-
+  AgentJudgeBench（arXiv 2608.26623）——一个"评测评测者"的 LLM-as-Judge 可靠性基准：
+  在 3,808 条 BFCL 风格 agent tool-calling 轨迹上，用确定性程序化 judge（四维符号打分 Eqs1-3）
+  作为 ground truth，系统量化 6 个 LLM judge（20B→frontier）与真值对齐度（Eq4: 1-|Δ|）
+  随 3 档难度 × 6 种 DAG 拓扑 × 5 个生成器 × 有无 GT 条件的衰减规律。
+  代码实现 = ServiceNow/SyGra 的 scratch/agent_judge_bench 分支：
+  tasks/agentic_bfcl_judge_eval/（run_judge/run_generate/prepare_*/analyze_results + 6 graph_config*.yaml）
+  + sygra 骨架（LangGraph StateGraph 图运行时）。实验规模 3,808×3×5×6×2=321,648 evaluations。
+  本次考古产出 15 EK（EK Graph 六类边，links 覆盖率 100%，0 游离）/ 5 KO
+  （R1×1 R2×1 R3×1 R4×2，平均簇规模 3.2）/ 7 类 Flow / 7 Candidates / 独立盲审计
+  （CONFIRMED 15 / PARTIALLY_CONFIRMED 4 / MISSING 2 / 其余 0）。
+  关键认知：KO-01 程序化锚定（评测可信 = 可复算真值 + 对齐度量，评测者先被评测）；
+  KO-02 提示词是校准器（默认分档 1.0/0.5 + 结构化 rubric 是可操作校准旋钮，Cross-project pending）；
+  KO-03 无 GT 信息降级（schema-as-truth + 宽容默认，Hypothesis）；
+  KO-04 GT 污染控制（derangement 探针，探针与被探针隔离）；
+  KO-05 评测基础设施分层（任务/图/运行解耦，条件靠命名约定治理——约定有缺陷）。
+  关键发现：analyze_results.py glob（4 层）与 BaseTaskExecutor 实际输出（3 层）不兼容，
+  默认复现流程 analyze 匹配不到文件（C-07，独立审计确认）。
+  关键争议：无 Contradictions；程序化 judge 语义盲区（C-01）、C3 derangement 语义相关性未控（C-02）。
+  未产生 Skill Improvement Proposal（无系统性 skill 缺陷）。
+
+quality_metrics:
+  ek_count: 15
+  ek_links_coverage: 1.0
+  ek_isolated_ratio: 0.0
+  ko_count: 5
+  ko_aggregation_coverage: 1.0
+  ko_cluster_avg_size: 3.2
+  flows: 7
+  candidates: 7
+  counterexamples: 15
+  contradictions: 0
+  l5_count: 0
+  validation_result: PASS
+
+validation:
+  independent:
+    confirmed: 15
+    partially_confirmed: 4
+    downgraded: 0
+    over_generalized: 0
+    missing: 2
+    contradicted: 0
+    needs_human_review: 0
