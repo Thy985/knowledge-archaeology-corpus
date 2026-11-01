@@ -1,19 +1,18 @@
-project: mxc
 slug: mxc
+project: mxc
 repository: https://github.com/microsoft/mxc.git
-latest_run: ARCH-2026-10-19-001
-mode: initial
-version_archaeologized: 1.0.1
-commit: fda29ac63bc306b7f97f3b86b4b63d44f7f40cf2
-skill_version: 3.2
 status: COMPLETED
-runs:
-  - ARCH-2026-10-19-001
-connections:
-  - deepseek-harness      # sandbox/approval seam（应用层插件治理）
-  - agent-governance-toolkit  # 无状态策略引擎（服务端治理）
-  - rampart               # 终局证据分离 / 不可变版本化 schema（治理范式对照）
-  - omnigent              # Agent 框架（执行边界消费方）
-  - tafcm                 # 用户项目（Linux Bubblewrap 后端 / JSON 策略）
-  - teammind              # 用户项目（workload+组织双层策略）
-  - campus_order          # 用户项目（OpenClaw 已接入 MXC）
+archaeology_runs:
+  - run_id: ARCH-2026-10-24-001
+    mode: initial
+    commit: ffecec04357747d6649714f473436dfb77111be8
+    skill_version: knowledge-archaeology v3.2
+    timestamp: 2026-10-24
+    validation: 11 CONFIRMED / 1 PARTIALLY / 0 CONTRADICTED
+connected_projects:
+  - strands-box
+  - dogwood
+  - deepseek-harness
+  - openclaw
+  - agent-aegis
+  - archon

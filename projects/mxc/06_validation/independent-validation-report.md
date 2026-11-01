@@ -1,69 +1,72 @@
-# Independent Validation Report — ARCH-2026-10-19-001（MXC）
+# Independent Validation Report — ARCH-2026-10-24-001（MXC）
 
-> Auditor 盲重建：不把考古结果当事实来源，独立重读仓库建立 Independent Findings 后对比。禁止修改原考古产物（本报告独立成文，修正经 Reconciliation 阶段落地）。
+> Auditor 盲重建：不引用考古结果，独立重读仓库建立 Findings 后对比。禁止修改原考古产物（修正经 Reconciliation 落地）。
 
-## 判定统计（10 项独立抽查 + 7 项 Findings）
+## 判定统计（12 项独立抽查）
 
 | 判定 | 数量 | 涉及 |
 |---|---|---|
-| CONFIRMED | 12 | EK-M01/M02/M04/M06/M08/M09/M12/M13/M14/M15/M16/M19（+ 抽查的 M20） |
-| PARTIALLY_CONFIRMED | 3 | EK-M05 / EK-M07 / EK-M17（需补充细节，见下） |
-| OVER_GENERALIZED | 2 | EK-M03（时间限定）/ EK-M05（kill_for_timeout 语义） |
-| MISSING | 1 | Bubblewrap --die-with-parent 精确动机（EK 家族缺一条） |
-| CONTRADICTED | 0 | — |
-| NEEDS_HUMAN_REVIEW | 1 | C-M01（组织 Intune 策略合并，未见引擎实现） |
+| CONFIRMED | 11 | A#1/A#2/A#3/A#5/A#6/A#7/A#8/A#9/A#10/A#11/A#12 |
+| PARTIALLY_CONFIRMED | 1 | A#4（FilesystemIntent 枚举名细节） |
+| MISSING | 1 | Proxy 语义细节（EK-M10 需补 "ProcessContainer 代理 require ingress allow" 的方向性解释） |
+| DOWNGRADED / OVER_GENERALIZED / CONTRADICTED / NEEDS_HUMAN_REVIEW | 0 | — |
 
-## 独立抽查（Blind Reconstruction 证据）
+## 独立抽查证据（12 项）
 
-| # | 抽查事实 | 独立证据（文件:行） | 判定 |
+| # | 抽查事实 | 独立证据 | 判定 |
 |---|---|---|---|
-| 1 | experimental 是调用方函数参数非 JSON 字段 | mod.rs:117-119 `pub fn spawn_one_shot_json(request_json, experimental: bool)`；state_aware.rs:113/266/336/398 均从 `parsed.request().experimental_enabled` 读取 | CONFIRMED |
-| 2 | NetworkAction 默认 Deny | policy/network.rs:24-30 `#[default] Deny` | CONFIRMED |
-| 3 | config_parser 硬编码 experimental_enabled=false | state_aware.rs:427-430 "config_parser hardcodes `experimental_enabled: false` for every state-aware request"；experimental="in-process equivalent of the executor's `--experimental` flag" | CONFIRMED（强化 EK-M08） |
-| 4 | 审计事件仅走诊断 sink | logger.rs:387-390 log_audit_event "written when (and only when) a diagnostic sink is attached"；audit.rs:1-25 双 sink 语义 | CONFIRMED（强化 EK-M07） |
-| 5 | 契约版本精确匹配，无语义比较 | mxc_contract/version.rs:4-42 "No semantic version ranges or normalization"; parse_exact 精确拼写 | CONFIRMED |
-| 6 | PathCanonical 三态 + fail-closed | filesystem_canonical.rs:17-31 Unknown≠Absent，"callers can **fail closed** when deniedPaths" | CONFIRMED（强化 EK-M15） |
-| 7 | network_proxy serde(skip) | policy_identity.rs:50、259-260（注释+代码双重确认） | CONFIRMED |
-| 8 | Bubblewrap 默认 unshare 全家 + die-with-parent | bwrap_command.rs:416-441 `--unshare-user/pid/ipc/uts/net` + `--die-with-parent` | CONFIRMED |
-| 9 | kill_for_timeout 默认 = kill | sandbox_process.rs:264-282 默认实现 `self.kill()`；wait 注释 "Do not read TimedOut as a tree kill without checking the backend" | PARTIALLY_CONFIRMED（见 E-1） |
-| 10 | dispatch 未来扩展（实验性后端路由进引擎） | dispatch.rs:21 "in a later increment, will also route through this engine" | OVER_GENERALIZED 风险（见 E-2） |
+| 1 | 三轴分离权威表 | versioning.md:16-19（四行决策权威表） | CONFIRMED |
+| 2 | closed JSON 拒绝 unknown field | config_parser.rs:2005-2016（"unknown field `experimental`" 三路断言：JSON/base64/exact） | CONFIRMED |
+| 3 | deny wins over allow | network_rules.rs:676-679（"Denies precede allows so an explicit deny overrides a broader allow"） | CONFIRMED |
+| 4 | FS fail-closed trigger | filesystem_object.rs:88-96（Absent vs **Unknown**；"This is the fail-closed trigger when deniedPaths are present"） | **PARTIALLY**（E-1） |
+| 5 | 后端注册 10 项 + ProbeCoverage 强制声明 | backend_registry.rs:14（"Declaring this is mandatory…"）+ :34（BACKENDS[10]） | CONFIRMED |
+| 6 | experimental_enabled 门 | run.rs:54-55,66,156,186（backend_unavailable before host resolution） | CONFIRMED |
+| 7 | 双 learning capability 语义分离 | logging-access-denied.md:22-37（"must not be conflated" + deny-and-record/audit + Weakened 标注） | CONFIRMED |
+| 8 | IsolationSession 缺 network 必须拒绝 | tests/policy/sdk-v1/invalid/isolation-session-without-network.json（errorCode malformed_request + "requires an explicit network policy"） | CONFIRMED |
+| 9 | telemetry 未知值 Blocked | telemetry.md:37（"anything else — **Blocked** (fail closed)"） | CONFIRMED |
+| 10 | WSLc 双态 | policy.md:146（"only all-deny isolated or all-allow bridged"） | CONFIRMED |
+| 11 | sandboxId 前缀推断后端 | policy.md:159-160（"infer the backend from its prefix"）+ :191 示例 | CONFIRMED |
+| 12 | 测试文化代码化 | AGENTS.md:77（"do not invent evidence"）+ 行为覆盖段 | CONFIRMED |
 
 ## 3 个成功（Auditor 支持性强化）
 
-### S-1 · "配置不能自我授权"是双层防御（CONFIRMED 强化）
-- **独立发现**: 不只引擎层 `require_experimental_optin` gate——**JSON 解析器层硬编码 `experimental_enabled: false`**（state_aware.rs:427-430），实验性只能由宿主进程在解析后显式设置。EK-M08 的"experimental 是参数非字段"得到第二层证据
-- **影响**: EK-M08 建议补入解析器层防御细节
+### S-1 · closed JSON 拒绝有三路断言（CONFIRMED 强化）
+- **发现**: config_parser.rs 对同一 unknown-field 错误同时断言 JSON 直读 / base64 编码 / parse_exact 三条路径（2008-2015）——契约校验深度超单路径
+- **影响**: EK-M02 强化——closed 契约在 FFI/base64 路径同样被测试钉死
 
-### S-2 · 审计是"廉价惰性"的（CONFIRMED 强化）
-- **独立发现**: log_audit_event 仅在诊断 sink（--log-file / MXC_DIAG_CONSOLE）附着时写（logger.rs:387-390），无 sink 时是廉价空操作——审计基础设施不引入恒定开销
-- **影响**: EK-M07 建议补"无 sink 时不产生记录"
+### S-2 · invalid 金标准带 messageContains（CONFIRMED 强化）
+- **发现**: invalid/isolation-session-without-network.json 声明 errorCode（malformed_request）+ messageContains（"requires an explicit network policy"）——策略拒绝有机器可校验错误契约
+- **影响**: EK-M11 强化——拒绝非静默，且错误契约可断言
 
-### S-3 · --die-with-parent 是"时间线逃逸"防御（CONFIRMED 强化）
-- **独立发现**: bwrap_command.rs:432-437 SECURITY 注释揭示精确动机——`--unshare-pid` 单独不够：**bwrap forks，新命名空间 pid1 是子进程而非我们 spawn 的进程**，无该标志时后台化后代可在超时 kill 后存活并继续运行在已拆除的网络强制之外
-- **影响**: 建议补一条 EK（Bubblewrap 时间线逃逸防御），与 EK-M06 kill_for_timeout 族互为表里
+### S-3 · experimental 门在 3 处独立执行（CONFIRMED 强化）
+- **发现**: run.rs:66（run 路径）:156（另一路径）:186（backend_unavailable map）三处检查 experimental_enabled
+- **影响**: EK-M06 强化——门不是单点，跨执行路径复验
 
 ## 3 个错误/风险点（Auditor 主动攻击）
 
-### E-1 · EK-M05 "kill_for_timeout 语义独立"过度概括（OVER_GENERALIZED）
-- **攻击**: 默认实现就是 `self.kill()`（sandbox_process.rs:273-276）；且 wait 注释明示 "Do not read `TimedOut` as a tree kill without checking the backend"——树级终止范围因后端而异（Unix 进程组 / Windows job object / state-aware adapter 只确认前台进程，后代留给沙箱生命周期拥有者）
-- **修正**: EK-M05 补充：kill_for_timeout 默认=kill；超时终止的树范围是后端实现契约，不是全局保证
+### E-1 · FilesystemIntent 枚举名（PARTIALLY_CONFIRMED）
+- **攻击**: EK-M04 说"按 denied 处理"——代码实际是 `FilesystemIntent::Unknown` variant（filesystem_object.rs:88-96）：Absent（cleanly missing 安全跳过）vs **Unknown**（权限拒/unreachable mount/I/O error → fail-closed trigger）
+- **核实**: "denied" 是文档层说法；实现层 trigger 是 Unknown（无法判定身份即拒绝）
+- **修正**: EK-M04 表述改为"路径身份无法确定（Unknown）即 fail-closed 触发——Absent 才安全跳过"
 
-### E-2 · EK-M03 "后端选择唯一所在地"需时间限定（OVER_GENERALIZED）
-- **攻击**: dispatch.rs:21 文档预告 "in a later increment, will also route through this engine"——实验性后端的 run-to-completion 将来会路由进引擎
-- **修正**: EK-M03 限定"当前版本（1.0.1）"；未来扩展不影响主体（今天唯一实现点成立）
+### E-2 · Proxy 方向性语义补强（MISSING 细节）
+- **攻击**: EK-M10 未解释 ProcessContainer 为何需要 ingress allow
+- **核实**: policy.md（"For ProcessContainer, a proxy requires network.ingress.default: 'allow'"）——代理端点是 host-loopback 直连，因此代理语境下 ingress 必须放行 loopback 方向
+- **修正**: EK-M10 补方向性因果（proxy=host-loopback 目标 → ingress allow 是配套而非矛盾）
 
-### E-3 · EK 家族缺 Bubblewrap 时间线逃逸条目（MISSING）
-- **攻击**: 无 EK 单独记录 `--die-with-parent` 的失败模式动机（超时 kill 后后台后代逃逸）
-- **修正**: Reconciliation 新增 EK-M21（Bubblewrap 时间线逃逸防御）
+### E-3 · "SDK 不构成配置权威"的迁移语境（MISSING 细节）
+- **攻击**: EK-M01 未点名 native-ingress 迁移
+- **核实**: versioning.md（"The native-ingress section identifies the deprecated binding exceptions that remain while the migration is staged"）——"无另一套权威"是目标态，存在 deprecated 例外
+- **修正**: EK-M01 补"native-ingress deprecated 例外（迁移暂存期）"
 
-## 遗漏与 Coverage 声明
-- **未独立深读**（沿用考古覆盖声明）: LXC/Seatbelt/IsolationSession runner 内部、host/（wxc_host_prep/plm）、.NET/Node SDK 包装层
-- **NEEDS_HUMAN_REVIEW**: C-M01（组织 Intune 双层策略合并优先级——README 主张 vs 引擎无实现；需 Owner 或后续轮次在 host/ 目录验证）
-- **Benchmark case（供 skill CI Gold Record）**:
-  - BC-MXC-1: "策略指纹 = allow-list 投影 + 穷举 destructure + 凭据排除 + 残余披露文档化接受"——可审计且不泄露的策略身份基准样例
-  - BC-MXC-2: "--die-with-parent = 时间线逃逸防御"——沙箱超时 kill 后的后代逃逸失败模式样例
+## 遗漏（MISSING → 补）
+- **Registry 契约数量与状态位**: ContractStatus Published/Development 双态 + ContractDescriptor（version/status/schema_id/schema_path）——EK-M14 补契约注册数据结构细节
+
+## Benchmark case（供 skill CI Gold Record）
+- **BC-MXC-1**: closed JSON unknown-field 三路断言（config_parser.rs 可复跑）
+- **BC-MXC-2**: deny wins over allow（network_rules.rs EgressPlan 单测可复跑）
+- **BC-MXC-3**: IsolationSession 缺 network 拒绝契约（tests/policy/sdk-v1/invalid 金标准，errorCode+messageContains 双断言）
 
 ## 结论
-- 主 Package 核心结论全部 CONFIRMED（0 CONTRADICTED）
-- 3 项 PARTIALLY_CONFIRMED / 2 项 OVER_GENERALIZED / 1 项 MISSING 已在 Reconciliation 阶段落地修正（见 06_validation/reconciliation.md）
-- 审计修正不删除 EK（EK 不得因形成 KO/修正而消失）；全部修正可反向追溯独立证据
+- 12 项抽查 11 CONFIRMED / 1 PARTIALLY；0 CONTRADICTED；主 Package 核心机制全部确认
+- 修正项：PARTIALLY×1（EK-M04）+ MISSING×3（EK-M10/EK-M01/EK-M14）→ Reconciliation 落地

@@ -1,42 +1,48 @@
-# 05 · Candidates — MXC 未验证假设（严格区分 Hypothesis/Observation）
+# Candidates — MXC 未确认内容（Hypothesis / Cross-project pending）
 
-> 不能确认的内容留在候选，不冒充知识。每条含证据缺口与验证路径。
+> 与 KO 严格区分：以下全部是**不能确认**的内容，不写成已验证知识。
 
-## C-M01 · 双层策略（workload + 组织 Intune 叠加）的强制优先级（Hypothesis）
-- **假设**: 组织策略（Intune 管理面）叠加/覆盖 workload 声明，且强制优先级由管理面决定
-- **当前证据（Observation）**: README 明示 "policies enforced by the developer **or organization**"；`docs/containment-policy/README.md` 提到 workload + organization 两层
-- **缺失证据**: 本次考古未见 Intune 策略下发/合并/优先级冲突的**代码实现**（引擎侧仅有单层 workload 策略消费路径）；未能定位策略合并模块
-- **验证路径**: 检索 host/ 目录（wxc_host_prep）、docs/ 中 organization policy 下发文档；或 Intune MXC policy CSP 定义
-- **Epistemic**: Hypothesis（强烈指示但无引擎证据）
+## C-M01 · Learning Mode 最小权限自助闭环（Hypothesis）
+- **主张**: plm denials.json + compatibility adjusted-config generator 完成后，用户可"记录 → 自动生成 → 审阅 → 应用"最小权限策略，无需手工枚举路径
+- **当前证据**: plm readme（denials.json + "compatibility adjusted-config generator" + "Review generated policy before using it"）；logging-access-denied.md（"the machinery that collects and surfaces the resulting denial events is layered on top in later work"——**明确标注后续工作**）
+- **缺失证据**: 生成→应用闭环的端到端实现/测试；非 Windows 平台支持
+- **验证路径**: 检查 plm 生成器与 policy 应用链路 + sdk-v1 金标准测试
 
-## C-M02 · 学习模式三态（Enforcement/Learning/Permissive）的运行时状态机（Observation→Hypothesis）
-- **Observation**: `captureDenials.mode: block|allow` 已实现（policy.md:135）；DenialAnalyzer/ETW 解码已实现
-- **Hypothesis**: "Learning（阻断+记录）与 Permissive（允许+记录）是两个独立运行时姿态"——源码中 learning_mode 是捕获+分析组件，未看到运行时"允许一切但记录"的独立执行姿态枚举
-- **验证路径**: 检索 wxc_test_driver / mxc_diagnostic_console 对 mode 的消费；或 README 三运行模式文档对照 engine 代码
+## C-M02 · MicroVM/Hyperlight 是隔离谱系终态（Hypothesis）
+- **主张**: MicroVM（Nanvix）/Hyperlight 提供"最强隔离"，未来默认后端的演进方向
+- **当前证据**: backend_registry.rs NotDetected("no hypervisor-presence detector yet; see the follow-up items in docs/development/plans/backend-support-probe-api.md")——experimental + 无 probe
+- **缺失证据**: 性能/兼容性/生产就绪度
+- **验证路径**: backend-support-probe-api 计划落地 + 运行时验证
 
-## C-M03 · "agent 不能成为自身安全权威"是产品层原则而非引擎层机制（Observation）
-- **Observation**: 该句出现在 README 产品定位，引擎层未发现自证性机制（如禁止 agent 读取自身策略的代码 gate）
-- **推断**: 这是**架构立场**（策略由宿主进程传入，agent 进程内不可改），而非运行时防御
-- **验证路径**: 对照 dsh（sandbox/approval seam）与 AGT（无状态引擎）——MXC 的强制点在 OS 边界
+## C-M03 · MXC 生态集成用法的策略生成闭环（Hypothesis）
+- **主张**: Copilot/OpenClaw/Codex 等接入方会用 Learning Mode 生成各自最小权限策略
+- **当前证据**: 官方博客生态矩阵（仓库外）；本仓库无集成示例
+- **缺失证据**: 仓库内证据（samples/ 未见集成代码）
+- **验证路径**: 观察生态接入 commit（openclaw 已考古 corpus，可对照）
 
-## C-M04 · MicroVM/WindowsSandbox 学习模式尚未实现（Observation）
-- **Observation**: 注册表标 MicroVm/WindowsSandbox 为 experimental 且 probe_coverage 为 NotDetected（"no hypervisor-presence detector yet"）；`denials` 学习路径在 Windows ETW + Bubblewrap/LXC 语境
-- **缺失证据**: 未发现 MicroVM 后端的 DenialAnalyzer 实现
-- **验证路径**: 检索 backends/nanvix-microvm 的 capture 支持
+## C-M04 · FS deny/grant 交互 backend-specific 的语义一致性（Hypothesis）
+- **主张**: 各后端对 deniedPaths vs readwritePaths 冲突的裁决不一致，存在跨后端行为差异
+- **当前证据**: policy.md（"Enforcement and interactions with grants are backend-specific"——**官方承认 backend-specific**）
+- **缺失证据**: 各后端冲突裁决的具体差异清单；无跨后端一致性测试
+- **验证路径**: 逐后端策略冲突矩阵测试
 
-## C-M05 · 遥测 ETW provider 的跨进程安全边界（Hypothesis）
-- **假设**: MXC 的 ETW telemetry（Windows）注册于调用进程，provider 回调生命周期与库加载绑定
-- **当前证据（Observation）**: mxc_engine/mod.rs 明确 dlopen 生命周期契约（provider 引用计数 + Drop 释放）
-- **缺失证据**: 若调用方崩溃/强杀，provider 是否泄漏注册（非本仓库可验证——需运行观察）
-- **验证路径**: Windows 宿主集成测试
+## C-M05 · 进程内 SDK 嵌入 vs 独立 executor 的威胁模型差异（Hypothesis）
+- **主张**: SDK 嵌入应用进程（in-process）与 wxc-exec 独立进程的隔离强度/攻击面不同，威胁模型应分开声明
+- **当前证据**: README（"SDK dependency that builds into your app" + "Non-SDK consumption: executor binaries"）；无威胁模型文档区分
+- **缺失证据**: 威胁模型文档；攻击面对比
+- **验证路径**: 查 docs 威胁模型/审计文档
 
-## C-M06 · 跨项目假说：执行边界指纹化（Cross-project Candidate）
-- **假说**: 沙箱系统的"每次运行的策略指纹"（MXC PolicyHash）与 RAMPART 的"不可变版本化 schema 决策门"是同一治理模式的两种实现——**可审计执行 = 身份 + 契约 + 证据三件套**
-- **当前证据**: MXC（PolicyHash + 版本化 JSON 契约 + 审计事件）vs RAMPART（trace schema 兼容性门 + 版本化决策）——单项目各一
-- **验证路径**: AGT（无状态策略引擎）第三方对照；若 AGT 也有 request fingerprinting，则升为 Pattern
-- **Epistemic**: Cross-project Candidate（不是已验证 Principle）
+## C-M06 · WSLc portMappings 仅 TCP 的演进方向（Hypothesis）
+- **主张**: UDP 映射是后续需求，1.0 契约暂不支持
+- **当前证据**: policy.md（"portMappings（array of windowsPort / containerPort…protocol: TCP only）" + "Provision port mappings are not available in 1.0"）
+- **缺失证据**: roadmap 中对 UDP 的承诺
+- **验证路径**: dev 契约 1.1.0-alpha schema 检查
 
-## C-M07 · 路径规范化跨平台统一（Observation→Hypothesis）
-- **Observation**: Windows 有全别名 canonicalization（GetFinalPathNameByHandleW）；Bubblewrap 有 resolve_through_symlinks（canonicalize_allowing_absent_tail 注释明确镜像它）
-- **Hypothesis**: "所有后端共享同一路径规范化不变量"——当前是平台各自实现，抽象层（PathCanonical 三态）是共享模型
-- **验证路径**: LXC/Seatbelt 后端的路径处理对照（本次未逐一深读）
+## C-M07 · 跨项目假说：契约三轴 vs 统一 Authority（Cross-project Hypothesis）
+- **主张**: MXC"契约/运行时/授权三轴分离"与 strands-box"三 PEP 共享唯一 PDP（Three views of one authority）"是**同一治理模式的两端**：前者在 SDK 入口面分离决策，后者在执行点统一决策
+- **当前证据**: MXC versioning.md 权威表；strands-box box/AGENTS.md:292（10-23 run）
+- **缺失证据**: 两项目间无直接证据桥——分离 vs 统一何者更优未验证
+- **验证路径**: 需要第三项目（如 deepseek-harness 权限预设）对照；**未验证前不得写成 Principle**
+
+## Candidates 统计
+- 7 条（C-M01~C-M07）；全部标 Hypothesis / Cross-project pending；无一条冒充已验证知识

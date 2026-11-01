@@ -1,50 +1,62 @@
-# 03 · Knowledge Layer — MXC KO（KO-M01~M05）
+# Knowledge Layer — MXC Generalized KO（L3/L4，6 条）
 
-> 每个 KO 声明 aggregation_rule（R1-R4）+ 簇内 EK + 簇成立论证。全部 Cross-project validation pending（单项目证据，不冒充已验证 Principle）。
+> 每个 KO 声明 aggregation_rule（R1-R4 簇）+ 解释范围扩大论证；L3 Pattern / L4 Cognitive Model；无 L5 硬凑。
+> 未跨项目验证的原则一律标 `Cross-project validation pending`。
+
+## KO-M01 · fail-closed 是链条不是口号（L3 Pattern · R2 因果链簇）
+- **aggregation_rule**: R2 因果链簇——EK-M02(closed JSON)→EK-M18(后端拒绝未支持策略)→EK-M03(网络默认 deny)→EK-M04(FS fail-closed)→EK-M13(telemetry fail-closed)；沿 causal/mechanism 边成链
+- **簇内 EK**: EK-M02/M03/M04/M13/M18
+- **解释范围扩大**: 单项目机制集合 → "每个可失败点显式闭合"的模式；对照 strands-box（DenyReason::PolicyPending/InternalFault + 引擎 pin）跨项目证据
+- **反例（预算内）**: permissiveLearningMode 显式弱化 deny-by-default（EK-M08，audit 模式即例外）；Seatbelt profileOverride 绕过生成策略（EK-M12）——**反例说明 fail-closed 是默认态而非不变量**
+- **epistemic**: Pattern（跨项目对照 strands-box 成立；MXC 内部 S4 测试验证）
+
+## KO-M02 · 契约/运行时/授权三轴分离（L4 Cognitive Model · R3 不变量簇）
+- **aggregation_rule**: R3 不变量簇——EK-M14(三轴权威表)+EK-M05(注册表)+EK-M06(experimental 门)+EK-M07(引擎路由) 汇聚到同一不变量："哪个契约被接受"≠"哪个后端运行"≠"主机能强制什么"
+- **簇内 EK**: EK-M05/M06/M07/M14
+- **一句话稳定关系**: **契约合法性、运行时授权、主机强制是三个独立决策面——任何一面都不能授权另一面**
+- **解释范围扩大**: 从 MXC 版本化治理 → 一般系统（schema 版本 vs 实验特性 vs 平台能力）
+- **反例**: dev 契约可变（1.1.0-alpha 无 notice 变化）vs published 不可变——可变/不可变是同一三轴内的状态位而非反例
+- **epistemic**: Cognitive Model（`Cross-project validation pending`——需第二项目验证）
+
+## KO-M03 · 能力边界诚实（L3 Pattern · R4 主题簇）
+- **aggregation_rule**: R4 主题簇——EK-M10(proxy 限制)+EK-M11(IsolationSession 强制全 allow)+EK-M12(Seatbelt 逃生门)+EK-M16(WSLc 双态)：同一主题"后端能力差异"，覆盖互补维度
+- **簇内 EK**: EK-M10/M11/M12/M16
+- **模式**: **不能强制就拒绝，不静默假装**——IsolationSession 显式要求三全 allow（空 network 拒绝）、WSLc 拒绝混合姿态、Seatbelt 显式逃生门、proxy 明示"不能保证任意直连被拦"
+- **解释范围扩大**: 隔离/沙箱选型的通用纪律——能力不足的后端必须显式声明而非默认假装安全
+- **epistemic**: Pattern（MXC 内多后端一致验证）
+
+## KO-M04 · Learning→Enforcement 渐进路径（L3 Pattern · R1 机制簇）
+- **aggregation_rule**: R1 机制簇——EK-M08(双 capability)+EK-M09(DenialAnalyzer)+EK-M19(策略发现) 共享"先观察后强制"机制且跨 ≥2 子系统（policy 输入 / capture / 分析）
+- **簇内 EK**: EK-M08/M09/M19
+- **模式**: deny-and-record（containment 不变，仅记录）→ 分析有界去重 → 生成最小权限候选（plm denials.json + compatibility generator）——渐进放权的安全路径
+- **解释范围扩大**: 最小权限落地的通用流程（对照 Evaluation 周"执行观测"方法）
+- **epistemic**: Pattern
+
+## KO-M05 · 单一引擎路由 + 显式扩展成本（L4 Cognitive Model · R2 因果链簇）
+- **aggregation_rule**: R2 因果链簇——EK-M07(resolve_runner 收敛)→EK-M05(ProbeCoverage 强制声明)→EK-M06(experimental 门)：扩展→声明→门控的因果链
+- **簇内 EK**: EK-M05/M06/M07
+- **一句话稳定关系**: **让"加一个后端"的决策成本显式化（必须声明探测覆盖、必须过实验门），比事后审计更省力**
+- **解释范围扩大**: 插件/驱动/后端的注册模式一般化
+- **epistemic**: Cognitive Model（`Cross-project validation pending`）
+
+## KO-M06 · 治理代码化（L4 Cognitive Model · R4 主题簇）
+- **aggregation_rule**: R4 主题簇——EK-M17(测试文化)+EK-M18(架构不变量)+EK-M20(单一契约) 覆盖"开发者协作如何被文件化约束"
+- **簇内 EK**: EK-M17/M18/M20
+- **一句话稳定关系**: **把评审标准（行为覆盖、不发明证据、复用正常路径、拒绝未支持策略）写进仓库文件，让 agent/协作者被同一组不变量约束**
+- **解释范围扩大**: 对照 agent-aegis（AGEF/AGP 自述标准）与 strands-box（AGENTS.md 权限矩阵）——治理文件是跨项目可比较的"自我约束证据面"
+- **反例**: 文档约束无强制（AGENTS.md 是 guideline 非 lint）——"代码化"是文化非机制
+- **epistemic**: Cognitive Model（跨项目证据：strands-box/agent-aegis 对照，`Cross-project validation pending`）
 
 ## KO 聚合规则矩阵
+| KO | 规则 | 簇内 EK | 边类型 | 可命名 | 可回溯 |
+|----|------|---------|--------|--------|--------|
+| KO-M01 | R2 | M02/M03/M04/M13/M18 | causal/mechanism | ✅ | ✅ |
+| KO-M02 | R3 | M05/M06/M07/M14 | constraint | ✅ | ✅ |
+| KO-M03 | R4 | M10/M11/M12/M16 | subsystem/contrast | ✅ | ✅ |
+| KO-M04 | R1 | M08/M09/M19 | mechanism | ✅ | ✅ |
+| KO-M05 | R2 | M05/M06/M07 | causal | ✅ | ✅ |
+| KO-M06 | R4 | M17/M18/M20 | subsystem/mechanism | ✅ | ✅ |
 
-| KO | 层 | aggregation_rule | 簇内 EK | 边类型 | 解释范围扩大论证 |
-|---|---|---|---|---|---|
-| KO-M01 | L4 | **R1 机制簇**（身份/可审计性机制跨独立子系统出现） | M01/M02/M07 | mechanism | "每次运行的身份可独立审计"是跨平台一致属性：Linux Bubblewrap 与 Windows ProcessContainer 都发 PolicyHash + 审计 |
-| KO-M02 | L4 | **R2 因果链簇**（策略→校验→执行→审计闭环） | M01→M19→M06→M02 | causal | 完整策略生命周期故事：身份锚定→校验 gate→执行→审计落盘 |
-| KO-M03 | L4 | **R1 机制簇**（"配置不能自我授权"跨实验性/遥测出现） | M08/M13 | mechanism | 授权与限制分离原则在实验性后端与遥测两处独立实现 |
-| KO-M04 | L3 | **R3 不变量簇**（文件系统策略以路径规范化为不变量） | M15/M16 | constraint | 所有后端共享"路径必须规范化"的安全不变量 |
-| KO-M05 | L3 | **R4 主题簇**（契约治理互补维度） | M17/M18/M20 | subsystem | 版本化/精确窗口/非 SDK 消费覆盖"契约如何发布与消费"整体 |
-
-## KO 明细
-
-### KO-M01 · 运行身份可审计：策略身份与审计记录解耦于执行（L4, R1）
-- **一句话**: 每次沙箱运行都产生独立于执行结果的规范化策略身份（PolicyHash）与结构化审计记录——身份不是执行副作用，而是策略的指纹
-- **簇内**: EK-M01（PolicyHash allow-list 投影 + 穷举）+ EK-M02（闭合枚举审计）+ EK-M07（sink 隔离）
-- **反例攻击**: ①"哈希无密钥=预言机"→项目明示接受但排除全部敏感输入（M01 文档 §Residual disclosure）；②"审计会被篡改"→本地诊断记录无防篡改承诺（边界在 audit.rs 文档，未超卖）
-- **Cross-project pending**: 与 RAMPART 的"终局证据分离"（KO-R01）同族——两个项目都把"证明发生了什么"与"发生了什么"解耦，但 MXC 用哈希指纹、RAMPART 用不可变版本化 schema。跨项目验证待 RAMPART/MXC/AGT 三方对照
-
-### KO-M02 · 策略生命周期闭环：身份→校验→执行→审计（L4, R2）
-- **一句话**: 策略从声明到执行再到留痕构成因果闭环，每一环都有显式 gate——校验拒绝不静默、审计记录不达调用方输出
-- **簇内**: EK-M01→EK-M19（校验分层）→EK-M06（执行双路径）→EK-M02（审计）
-- **反例攻击**: ①"dry_run 校验路径跳过"→streaming 显式拒绝 dry_run；②"后端不支持网络规则被忽略"→validator 显式 ScriptResponse::rejected
-- **Cross-project pending**: 与 agent-governance-toolkit 的"无状态策略引擎拦截每个动作"对照——MXC 是 OS 级、AGT 是应用层，机制不同但闭环形状相同
-
-### KO-M03 · 授权与限制分离：配置不能自我授权（L4, R1）
-- **一句话**: 扩展攻击面（实验性后端）与遥测采集都要求调用方显式 opt-in，策略文档本身永远不能授予自己这些权限
-- **簇内**: EK-M08（experimental 是参数非 JSON 字段）+ EK-M13（telemetry 非策略字段）
-- **反例攻击**: "有人把 experimental: true 写进 JSON 策略"→schema 无该字段（spawn_one_shot_json 的 experimental 是函数参数）；"遥测随配置开关"→policy.rs 明示 telemetry 不是策略字段
-- **Cross-project pending**: 与 dsh 的 approval seam、silver-shield 权限模型同族——"权限来源必须在被授权者之外"
-
-### KO-M04 · 路径规范化是沙箱文件系统策略的不变量（L3, R3）
-- **一句话**: 无论后端用挂载（Bubblewrap）还是 DACL（AppContainer），策略执行前路径必须被折叠到唯一规范形态，否则别名（symlink/junction/8.3）成为逃逸通道
-- **簇内**: EK-M15（canonicalize_path 全别名折叠）+ EK-M16（DACL tier 恢复）
-- **反例攻击**: "dangling symlink"→分类为 Unknown（可解析但不可解析=不清不楚拒绝）；"未创建叶"→canonicalize_allowing_absent_tail 解析最深存在祖先
-- **Cross-project pending**: 与 E2B/云沙箱、用户 E2E-CLI 路径处理对照
-
-### KO-M05 · 契约 = 不可变发布物，消费端精确匹配（L3, R4）
-- **一句话**: 沙箱配置契约像 API 一样版本化：发布即冻结、消费端精确匹配版本、实验版与发布版分离——schema 是权威源而非文档
-- **簇内**: EK-M17（版本精确匹配）+ EK-M18（min/maxSupported 窗口）+ EK-M20（独立执行器走同一契约）
-- **反例攻击**: "schema 可以就地改"→文件自述 PUBLISHED IMMUTABLE；"语义版本比较"→parse_exact 拒绝
-- **Cross-project pending**: 与 RAMPART 的 trace-compatibility 决策门、APT 生态的 schema 版本化同族
-
-## 层纪律
-- 全部 KO 标 `Cross-project validation pending`（单项目证据，无跨项目验证不升 Law）
-- L4×3（M01/M02/M03）+ L3×2（M04/M05）；无 L5（方法论需跨项目验证，未达）
-- 每个 KO 簇内 EK 可回溯（见矩阵）
+## 层级分布
+- L3: 3（KO-M01/M03/M04）；L4: 3（KO-M02/M05/M06）；L5: 0（不硬凑方法论）
+- 无"同子系统=聚合理由"的假聚合；聚合规则覆盖率 100%

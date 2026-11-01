@@ -1,83 +1,76 @@
-# 04 · Flow Atlas — MXC 七类流（HEAD fda29ac）
+# Flow Atlas — MXC 七类流（从真实代码导出）
 
-> 每条关键 Edge 可回溯 symbol/file/condition/state transition。
+> 关键 Edge 可回溯 symbol/file/condition。
 
-## 1. Control Flow（执行控制）
+## 1. Control Flow（控制流）
 ```
-v1::run / v1::spawn / v1::spawn_with_pty（lib.rs 公共入口）
-  → ContainerRequest::into_sdk_input（policy.rs → sdk_input.rs）
-  → run_typed_state_aware_request / spawn_execution_request（engine/mod.rs）
-  → resolve_runner / spawn_runner（run.rs / dispatch.rs）
-      ├─ ensure_host_supported()（非 Win/Linux/macOS → UnsupportedContainment）
-      ├─ log_policy_hash(request)（每次运行锚定策略身份）
-      └─ match containment → 具体后端 runner
-  → SandboxProcess 句柄（stdio 管道 或 PTY）
-  → wait / kill / kill_for_timeout（sandbox_process.rs）
+App Launch API → mxc-sdk v1::run/spawn → mxc_engine::resolve_runner
+  → [windows|linux|macos cfg 分支]
+    → Backend 判定：registered? experimental? host? compiled?
+      → unsupported_containment / backend_unavailable 错误路径
+    → ScriptRunner 构造 → run to completion / streaming handle
+state-aware 支流：provision → (start) → exec → stop → deprovision
+  → state_aware_dispatch::resolve_backend（sandboxId 前缀 iso:/wslc:）
 ```
-- Edge: `ContainerRequest → ExecutionRequest` 归一化是**唯一**入口（SDK 与 JSON parser 都经此）；`dry_run` 在 streaming 被显式拒绝（dispatch.rs:40-45）
-- State transition: one-shot（run/spawn）vs state-aware（Provision→Start→Execute→Stop→Deprovision，state_aware_operation.rs:43-120）
+- **关键 Edge**: run.rs resolve_runner（"single home"）；binaries 无 selection match（copilot-instructions 不变量）
 
-## 2. State Flow（状态）
+## 2. State Flow（状态流）
 ```
-StateAwareOperation（Provision/Start/Stop/Deprovision）→ Phase 映射（operation→phase）
-  → StatefulSandboxBackend::provision → ProvisionResult{sandbox_id}
-  → Start{sandbox_id} → Execute（返回 streaming handle）
-  → Stop{sandbox_id} → Deprovision{sandbox_id}
-sandbox_id = 跨阶段 join key（SandboxIdentity 审计记录每次生命周期一次）
+容器状态机（IsolationSession/WSLc）：provisioned → started → exec → stopped → deprovisioned
+创建即执行（run-to-completion）：implicit destroyOnExit=true 默认
+persistent: destroyOnExit=false + preservePolicy=false（policy 不保留跨重建？preservePolicy 独立布尔）
 ```
-- Edge: `StateAwareProvision` 变体决定 phase 与路由数据（IsolationSession/Wslc 配置）
-- 状态错误：NotProvisioned/NotStarted/AlreadyStarted/AlreadyStopped/StaleId 闭合错误码（mxc_error.rs:230-241）
+- **关键 Edge**: sandboxId 前缀（iso:/wslc:）推断后端；exec 继承 provision 网络姿态（"inherit the provisioned network posture"）；生命周期阶段字段 whitelist（policy.md phase 表）
 
-## 3. Data Flow（数据）
+## 3. Data Flow（数据流）
 ```
-SDK 类型（ContainerRequest）→ into_sdk_input → SdkStateAwareInput → ExecutionRequest（引擎内部规范化）
-JSON 路径：spawn_one_shot_json / run_state_aware_json（原始 JSON → probe_version → 解析器 → ExecutionRequest）
-  → 后端 runner（Bubblewrap: build_args → bwrap 命令参数数组）
-  → 进程 stdio 管道 / PTY
-  → ScriptResponse / ExecOutcome（stdout/stderr/exit/timeout）
+typed SDK request / raw MXC request JSON
+  → mxc_contract registry（version 注册校验）
+  → version-specific adapter（v0_9 / v1_0 / dev）
+  → shared normalization（ExecutionRequest / typed lifecycle op）
+  → mxc_engine routing + authorization
+  → backend host-capability validation → enforcement
 ```
-- Edge: `probe_version` 精确匹配版本→解析（mxc_contract/version.rs:79-83）；未知版本→UnsupportedVersion
-- 文件系统数据：canonicalize_path → PathCanonical（Canonical/Unknown/Absent 三态）——路径在进策略前规范化
+- **关键 Edge**: versioning.md convergence mermaid；"SDK policy types and generated schemas do not form another native configuration authority"；FFI 无 free-form 格式（schema.md）
 
-## 4. Evidence Flow（证据）
+## 4. Evidence Flow（证据流）
 ```
-每次运行 → log_policy_hash → mxc.PolicyHash 审计记录（策略指纹）
-后端执行 → 审计事件（mxc.ProcessExited/ProcessTimedOut/EnforcementDegraded/ConfigRejected…）
-  → Logger::log_audit_event → 仅辅助诊断 sink（--log-file / MXC_DIAG_CONSOLE）
-  → 永不达主 console/buffer sink（audit.rs:1-25）
-学习模式：捕获源（Windows ETW .etl / 未来 Linux）→ DenialAnalyzer → DeniedResource 模型
-  → process_lifetime 窗口过滤（job-observed PID+timestamp 防止无关宿主事件混入）
+workload denied access（deny-by-default）
+  → OS 返回 Access denied + [learning] OS 记录
+  → capture（Windows sealed ETW / native PSEC captureDenials / WPR plm）
+  → DenialAnalyzer（跨平台 trait）decode
+  → AnalysisResult：bounded 去重 + truncated 标志 + process-lifetime 窗口过滤 + username-redacted
+  → denials.json / denials.verbose.json（plm）→ compatibility adjusted-config generator
 ```
-- Edge: `denied_resources_truncated=true` 如实报告截断（analyze.rs:30-35）——不静默丢证据
+- **关键 Edge**: analyze.rs "preventing unrelated host [events]"（窗口过滤）；plm "host-wide ETL does not cross the privilege boundary"（权限边界在分析器侧）
 
-## 5. Authority Flow（权威）
+## 5. Authority Flow（权威流）
 ```
-策略权威 = 开发者 workload 声明 + 组织 Intune 管理策略叠加（双层策略，docs/containment-policy）
-  → JSON 契约（版本化，发布即冻结）
-  → 引擎验证（validate_common → validate_network_policy_support → validate_exec_common）
-  → 后端强制（OS 原语：Bubblewrap 挂载/AppContainer/DACL/Seatbelt）
-  → 实验性后端 gate（require_experimental_optin：调用方 opt-in，非 JSON 字段）
+谁是权威：immutable published contract（mxc_contract registry）
+  → 引擎路由授权（mxc_engine: experimental_enabled 门 / backend availability）
+  → 后端强制（host capability validation）
+管理权威：HKLM AllowTelemetry（ceiling never grant——策略可阻止不可授权）
+特权边界：elevated guardian（plm）分析于 protected scratch；host-wide 源 ETL 不跨边界
 ```
-- Edge: 权威链的**关键不变量**——"agent 不能成为自身安全权威"：策略在 workload 控制之外由 OS 独立强制；配置不能自我授权（experimental/telemetry 都是调用方参数）
+- **关键 Edge**: versioning.md 权威表四行；telemetry.md "ceiling, never a grant"；plm readme
 
-## 6. Memory Flow（记忆/持久状态）
+## 6. Memory Flow（记忆流）
 ```
-沙箱生命周期状态：sandbox_id → backend 内部对象（Job object / AppContainer profile / WSL distro）
-  → 状态文件（DACL tier 的 state-file）
-  → 生命周期操作显式管理（provision/start/stop/deprovision）
-  → DestroyOnExit 默认 true（生命周期策略 lifecycle.destroyOnExit，policy.md:43）
-无跨运行持久记忆：一次运行 = 独立容器；PreservePolicy 默认 false
+持久化容器：state-aware lifecycle（provision 返回 sandboxId 供后续 phase 引用）
+session 关联：wslc.provision.sessionId（新沙箱加入既有 session）
+exec 网络姿态记忆：exec 继承 provision posture（reject supplied policy at exec）
 ```
-- Edge: `preservePolicy: false` 默认——策略不留存（与学习模式 activity report 形成对照：报告可留存、策略本体默认不保留）
+- **关键 Edge**: policy.md lifecycle 段 + provision/exec 示例；state-aware-wslc-* 测试
 
-## 7. Policy Flow（策略/治理闭环）
+## 7. Policy Flow（策略流）
 ```
-策略声明（JSON/SDK 类型，省略=默认拒绝）
-  → schema 版本校验（probe_version 精确匹配 + min/maxSupported 窗口）
-  → 后端能力校验（validate_network_policy_support：不支持则 rejected 而非忽略）
-  → 执行（Bubblewrap: --unshare-net / --die-with-parent / --unshare-user…）
-  → 审计（PolicyHash + 事件记录）
-  → 学习模式反馈（DeniedResource → 起草最小权限策略 → Learning→Permissive→Enforcement 渐进）
+开发者声明（containment policy 三域 FS/Network/UI）
+  → 版本化契约（closed JSON 校验）
+  → 引擎路由（后端匹配策略 section 拒绝不支持的）
+  → 后端强制（backend-specific enforcement；Seatbelt profileOverride 例外）
+  → Learning 反馈：deny-and-record（不变）→ DenialAnalyzer → 最小权限候选 → 修订声明
 ```
-- Edge: `NetworkAction::default() = Deny`（network.rs:24-30）——默认拒绝是策略语言语法，不是运行时兜底
-- Edge: Bubblewrap `--die-with-parent`（bwrap_command.rs:437）——bwrap 句柄被杀时容器随之销毁（无孤儿沙箱）
+- **关键 Edge**: 三模式（Enforcement/Learning/Permissive——logging-access-denied.md 双 capability）；"Unsupported…policies are rejected…not silently applied"；policy.rs 策略发现（available_tools_policy 等枚举宿主）
+
+## Flow 真实性声明
+- 每条 Edge 均可回溯文件锚（本文件 + EK Graph 证据列）；无凭记忆 Flow
