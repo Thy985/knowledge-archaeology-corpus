@@ -1,0 +1,34 @@
+run_id: ARCH-2026-10-17-001
+project: ReviewBench
+repository: https://github.com/review-bench/ReviewBench.git
+commit: 6e37127defb2da675d4b59da61cf38d12ded1ad8
+branch: main
+commit_time: 2026-10-16 10:39:23 -0400
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-10-17
+mode: initial
+source_entry: "[cand]reviewbench-2026.md"
+priority: P0
+
+quality_metrics:
+  project_layer: 1 map (9 sections)
+  engineering_knowledge: 30 (EK Graph, 6 edge types, avg_out_edges >= 1)
+  knowledge_objects: 6 (KO-01..06, aggregation_rule R1-R4 covered 100%)
+  candidates: 7 (C-01..07, Hypothesis/Observation only)
+  flow_atlas: 7 flows (Control/State/Data/Evidence/Authority/Memory/Policy)
+  flow_edges: 24
+  validation:
+    truth: 0 errors (6 spot-checked, all PASS)
+    coverage: 2 minor misses (per-producer ablation EK, picks.md reading)
+    flow: 0 errors (static derivation, runtime not executed - no API key)
+    abstraction: 0 over-generalized (all L3+ marked cross-project pending)
+    counterexample: 6/6 KO attacked, 0 KO without counterexample
+    epistemic: 0 status confusions
+
+validation_result:
+  status: PARTIAL_PASS  # runtime judge not executed (needs API key); static evidence full
+  blind_reconstruction: executed (Truth/Coverage/Flow/Abstraction/Counterexample/Epistemic)
+  runtime_gap: judge pipeline requires LLM API key; not executed in this environment
+
+corpus_status: projects/ has no reviewbench -> initial mode correct
+feishu_delivery: not authorized, not performed (default: corpus push only)
