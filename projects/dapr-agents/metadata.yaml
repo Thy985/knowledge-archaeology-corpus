@@ -1,0 +1,43 @@
+project: dapr-agents
+slug: dapr-agents
+repository: https://github.com/dapr/dapr-agents.git
+version: 1.0.0
+commit: 8b4cc8ddbe2845248df5892fc532dd1097298be8
+commit_message: "chore(typing): check types against Python 3.11 (#837)"
+commit_timestamp: 2026-10-22T20:50:50+00:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-10-25
+mode: initial
+run_id: ARCH-2026-10-25-001
+source_entry: "KnowlegeMap candidates/[cand]dapr-agents-distributed-runtime-2026.md（2026-10-20 兜底捕获；CNCF Dapr×NVIDIA 2026-10 launch：GetStarted 10-14 / launch 10-16 / last push 10-22）——Runtime 换域（接 TeamMind）头号锚点，与已考古 harness/沙箱谱系对照"
+
+summary: >-
+  dapr-agents（Python ≥3.11，Apache-2.0，v1.0.0，2026-10-22 push，764★）——CNCF Dapr × NVIDIA
+  的分布式 Agent 运行时框架：DurableAgent 把 LLM 推理+工具调用包进 Dapr durable workflow
+  （崩溃恢复 + 不重放已完成调用），AgentRunner/HTTP+pubsub 提供入口，hooks 五态决策 +
+  lifecycle Protocol 双轨扩展，AgentApprovalConfig 双通道 HITL（超时 auto-deny 默认 fail-closed），
+  MCP auto-discovery（sidecar metadata mcp_servers 零配置），AgentMetadata schema 版本化
+  （v0.11.1→v1.0.0）+ schema-compat CI，DaprSessionStore manifest+chunk 分块持久化。
+  核心认知：durable execution 三件套（持久化点+幂等活动+确定性 ID）/ 状态三层分离
+  （execution/session/tool-history）/ 决策型与拦截型扩展点分离 / 治理代码化。
+
+quality_metrics:
+  ek_count: 20
+  ek_links_coverage: 1.0
+  ek_avg_out_edges: 2.0
+  ek_dangling: 0
+  ko_count: 6
+  ko_aggregation_coverage: 1.0
+  candidates_count: 11
+  flow_count: 7
+  evidence_references: 55
+
+validation:
+  status: passed_with_fixes
+  auditor_findings: 13 (11 CONFIRMED / 1 PARTIALLY_CONFIRMED / 1 MISSING / 0 CONTRADICTED / 0 NEEDS_HUMAN_REVIEW)
+  contradicted: 0
+  reconciliation: R-1 (EK-D18 证据锚补 orchestration_workflow 主函数 1332) / R-2 (EK-D13 定位 durable_executor.py:121) / R-3 (EK-D04 Mutate 三 slot 语义细化) / R-4 (Candidates 追加 C-D08~D11) / R-5 (metadata validation_result 更新)
+  benchmark_cases:
+    - BC-DAPR-1: tests/agents/durableagent/test_durable_agent.py + test_llm_hooks.py（重放/消息链）
+    - BC-DAPR-2: tests/agents/durableagent/test_hitl.py + test_hitl_workflow.py + test_hitl_persistence.py + test_raise_approval_event.py + test_durable_executor_approval.py（HITL 全链路）
+    - BC-DAPR-3: tests/agents/durableagent/test_durable_executor.py（executor 事件流）
