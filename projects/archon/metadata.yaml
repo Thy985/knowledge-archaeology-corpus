@@ -1,0 +1,18 @@
+project: archon
+slug: archon
+repository: https://github.com/coleam00/Archon.git
+latest_run: ARCH-2026-10-21-001
+mode: initial
+version: 0.12.1（2026-10-17 发布；CVE-2026-111322 修复后版本窗口）
+commit: 11aba360220190bd633993b9ab9c847f54923b07
+skill_version: knowledge-archaeology v3.2
+status: COMPLETED
+runs:
+  - ARCH-2026-10-21-001
+connections:
+  - box                  # OS 级外部遏制（10-20）↔ Archon 应用层治理（控制面配置）
+  - mxc                  # OS 策略隔离层（10-19）↔ 应用层 control plane
+  - agent-governance-toolkit  # 服务端无状态策略引擎 ↔ 本地 governed engine
+  - deepseek-harness     # sandbox/approval seam ↔ human gates + audit trails
+  - openclaw             # agent 运行时控制面暴露面对照
+  - rampart / pyrit      # 安全验证/威胁模型（事件集群上下文）
