@@ -1,0 +1,18 @@
+slug: strands-box
+project: strands-box
+repository: https://github.com/strands-agents/box.git
+status: COMPLETED
+archaeology_runs:
+  - run_id: ARCH-2026-10-23-001
+    mode: initial
+    commit: 8c46dacd5825ac1d11c6d1f4200f0daa657c5681
+    skill_version: knowledge-archaeology v3.2
+    timestamp: 2026-10-23
+    validation: 11 CONFIRMED / 1 PARTIALLY / 0 CONTRADICTED
+connected_projects:
+  - dogwood
+  - mxc
+  - agent-aegis
+  - deepseek-harness
+  - agent-governance-toolkit
+  - archon

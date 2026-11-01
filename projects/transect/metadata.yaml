@@ -1,0 +1,37 @@
+slug: transect
+name: Transect
+summary: 长时程 Agent 评测的可观测性/可审计性包——零成本结构扫描 + judged 标签三层校正（投票/verifier/narrator）+ 每个标签携带 provenance 与可靠性信息（Inspect Scout 生态，UK AISI 官方）
+repository: https://github.com/AI-Safety-Institute/transect.git
+homepage: https://arxiv.org/abs/2610.08364
+paper: https://arxiv.org/abs/2610.08364
+paper_v2: https://arxiv.org/pdf/2610.08364.pdf
+blog: https://www.aisi.gov.uk/blog/transect-making-large-scale-agentic-evaluations-easier-to-understand
+first_archaeology_run: ARCH-2026-10-13-001
+archaeology_date: 2026-10-13
+archaeology_commit: 75a7948257657f1c48b2fc1d2105fc2f6ab4074c
+archaeology_commit_message: "fix: report sections share one chart runtime and embed only their own tables (#63)"
+archaeology_commit_timestamp: 2026-10-07T17:16:08+01:00
+version_at_archaeology: 0.2.4
+skill_version: knowledge-archaeology v3.2
+mode: initial
+status: COMPLETED
+quality_metrics:
+  ek: 16
+  ko: 5
+  candidates: 6
+  flows: 7
+  tests: 279
+  truth_audit: "10/10 CONFIRMED, 0 contradicted"
+  independent_validation: "7 CONFIRMED / 1 PARTIALLY / 1 CONTRADICTED / 1 MISSING (reconciled)"
+key_findings:
+  - "judge 标签不可信被作为第一性设计约束：digest→判定→投票→verifier→narrator→可靠性度量的校正闭环"
+  - "每个标签携带 anchor_event_id + judge-identity 列，可深链回源头回合（溯源不变量）"
+  - "对高自洽度设防：KROLL_SUSPICIOUSLY_HIGH=0.95 amber（cache 重放/共享 prompt/名称锚定）；spot-check overturn 必 red"
+  - "自洽性 ≠ 正确性；同模型 verifier 二轮 ≠ 可重复性度量（显式 caveat）"
+  - "判定权威分层：cohort 多数投票即校正（verifier 强制 off）；narrator 永不改标签"
+  - "与 AgentJudgeBench（ARCH-2026-10-12-001）构成评测可信度双环（judge 审计层 + 结果可观测层）"
+key_controversies:
+  - "verifier overturn gate 0.6 与 random_sample 5% 为启发式阈值，无基准化验证（C-02）"
+  - "cohort α 高一致性未设防（相关 judge ≠ 精确，C-03）"
+  - "报告从未声称 phase 分割正确（narration_group_status 只描述坐标完整性，C-05）"
+skill_improvement_proposal: none

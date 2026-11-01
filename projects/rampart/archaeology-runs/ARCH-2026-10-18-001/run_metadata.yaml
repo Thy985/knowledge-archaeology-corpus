@@ -1,0 +1,60 @@
+run_id: ARCH-2026-10-18-001
+repository: https://github.com/microsoft/RAMPART.git
+commit: 0fb9cc2ff8da8cbba0537444b3f2313cf86e032f
+branch: main
+snapshot_timestamp: 2026-10-18T02:10:00+08:00
+skill_version: knowledge-archaeology v3.2
+mode: refresh
+baseline_run_id: ARCH-2026-09-04-001
+baseline_commit: 125595cb2dc53ed81ac4da0f30a7042d6951e897
+job_manifest: job_manifest.md
+snapshot_artifact: snapshot_artifact.md
+
+project:
+  name: rampart
+  slug: rampart
+  description: pytest-native safety and security testing framework for agentic AI applications (Microsoft AI Red Team)
+  priority: P0
+  refresh_reason:
+    - 09-04 考古后 6 周新增 5 个 feature 级 PR（#123/#146/#148/#185/#195）
+    - 10-15 仍有 push，增长信号明确
+    - 与 10-19 起 Harness/治理 领域衔接（agent 安全测试 = 治理落地）
+    - 与已考古 PyRIT 同生态连接
+
+refresh_delta:
+  feature_prs:
+    - {pr: 123, title: "Replace trial cloning with configurable trial populations", merged: 2026-09-03}
+    - {pr: 185, title: "Canonical versioned trace/result serializer (WS0-05 PR 1)", merged: 2026-09-23}
+    - {pr: 146, title: "Add durable terminal evaluation contract", merged: 2026-09-30}
+    - {pr: 148, title: "Add shared linear trace runner", merged: 2026-10-09}
+    - {pr: 195, title: "Add RAMPART onboarding skill", merged: 2026-10-13}
+  fix_prs: ["#179 duplicate timestamps", "#184 autouse fixture lint"]
+
+outputs:
+  - 00_overview.md
+  - 01_project-layer/01_project_map.md
+  - 02_engineering-knowledge/02_ek_graph.md
+  - 03_knowledge-layer/03_ko.md
+  - 04_flow-atlas/04_flow_atlas.md
+  - 05_candidates/05_candidates.md
+  - 06_validation/06_validation.md
+
+quality_metrics:
+  refresh_ek_count: 15
+  refresh_ko_count: 5
+  candidates_count: 6
+  ek_avg_edges: 2.2
+  free_ek_ratio: 0.0
+  aggregation_rule_coverage: 1.0
+  baseline_links: 5
+  evidence_strength: "S3-S4"
+
+validation:
+  status: PASS_WITH_CANDIDATES
+  independent_validation: 06_validation/independent-validation.md
+  contradictions: []
+  counterexamples: 5
+  notes:
+    - 全部 refresh 增量事实可回溯 HEAD 0fb9cc2 文件:行
+    - 09-04 基线 28 EK + 7 KO 抽查确认未变（未重复考古）
+    - 无 Skill Evolution 触发（未发现系统性 skill 缺陷）
