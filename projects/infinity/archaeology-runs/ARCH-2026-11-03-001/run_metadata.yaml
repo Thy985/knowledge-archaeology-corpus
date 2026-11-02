@@ -1,0 +1,48 @@
+run_id: ARCH-2026-11-03-001
+project: infinity
+repository: https://github.com/hydro-project/infinity
+commit: 1abc6fcff1f186124f924b56aa92c3a3684c90c5
+branch: main
+snapshot_timestamp: 2026-11-03T00:00:00+08:00
+skill_version: knowledge-archaeology v3.2
+mode: initial
+evidence_cap: S4
+evidence_cap_reason: "no Docker/container runtime in environment; static archaeology only (code+docs+tests+CHANGELOG+GitHub API), no runtime validation"
+deliverable_note: "default delivery = push to knowledge-archaeology-corpus; feishu delivery not authorized, skipped"
+
+quality_metrics:
+  ek_total: 50
+  ek_with_links: 50
+  ek_isolated: 0
+  ek_reconciled_from_blind_review: 5
+  ko_total: 9
+  ko_l3: 4
+  ko_l4: 5
+  ko_l5: 0
+  ko_aggregation_coverage: 1.0
+  candidates: 9
+  tests_system: 28
+  snapshots: 150
+  rust_files: 168
+  rust_lines: 57187
+  crates: 21
+  benchmark: "50k agents x 20 turns = 2M completions in 255s; 7.9GB RSS; ~154KB per idle agent (repo CHANGELOG self-reported)"
+
+validation:
+  truth: CONFIRMED (all 8 key assertions + counting assertions independently re-verified)
+  coverage: "core runtime fully covered; 4 product/adapter gaps: provider-rig, sandbox-remote isolation, mcp-bridge boundary, slack dataflow"
+  flow: PASS (all edges traceable to symbols)
+  abstraction: PASS (no downgrades; all KO marked cross-project validation pending)
+  counterexample: 27+ attack points, all internalized or documented
+  epistemic: PASS (no Hypothesis in KO; no S5 claims; contradictions preserved)
+  verdict: CONFIRMED with 4 MISSING (product layer) and 1 NEEDS_HUMAN_REVIEW (C-02)
+
+validation_report: package/06-validation/validation_report.md
+package_files:
+  - package/00-overview/overview.md
+  - package/01-project-layer/project_layer.md
+  - package/02-engineering-knowledge/ek_graph.md
+  - package/03-knowledge-layer/knowledge_layer.md
+  - package/04-flow-atlas/flow_atlas.md
+  - package/05-candidates/candidates.md
+  - package/06-validation/validation_report.md

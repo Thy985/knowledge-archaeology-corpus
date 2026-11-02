@@ -1,0 +1,71 @@
+project: infinity
+slug: infinity
+repository: https://github.com/hydro-project/infinity
+license: Apache-2.0
+language: Rust
+version: "0.2.x (v0.1.0 2026-09-03 / v0.2.0 safety bump 2026-10-22)"
+commit: 1abc6fcff1f186124f924b56aa92c3a3684c90c5
+commit_message: "fix: enable aws-config sso feature so SSO profiles work (#176)"
+commit_timestamp: 2026-10-27T22:57:26Z
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-11-03
+mode: initial
+run_id: ARCH-2026-11-03-001
+evidence_cap: S4
+evidence_cap_reason: "no Docker/container runtime in environment; static archaeology only (code+docs+tests+CHANGELOG+GitHub API), no runtime validation"
+source_entry: >-
+  KnowlegeMap 11-03 radar watch（runtime 第二周 11-02~11-08）：
+  挂起恢复派（stackless coroutine slice，await 点=工具调用，75k 并发/8GB 基准）与已考古步骤持久化派
+  （temporal/restate/dbos-transact-py/dapr-agents/substrate）构成互补对照；durare v0.5.0 卡并入
+  DBOS 兼容第 10 向、semarun 为 Python semantic-checkpoint 观察位（暂不构成深度考古对象）。
+
+summary: >-
+  infinity（Rust，Apache-2.0，★468，2026-04-13 created，2026-10-29 pushed，21 crates / 168 .rs /
+  57,187 行）——AWS×UC Berkeley Hydro 项目，"大规模并发 agent 运行时"。核心命题：stackless
+  coroutine 语义搬到 agent 执行——工具调用=挂起点，历史=continuation，slice 有界执行后完全退出，
+  等待中 agent 是纯数据（无 task/stack/连接）。三层架构：slice 三阶段（prepare_input→run_completion→
+  execute_action）+ 同步工具 loop-back + turn buffer 先 flush 后 dispatch 持久化时序 + 幂等去重
+  （processed IDs for User/SubscriptionEvent + history tail for tool results）+ FIFO per thread
+  （SQS FIFO MessageGroupId / mpsc）+ synthetic tool calls（receive_event__injected）+ deferral
+  （NoDeferral/InMemoryDeferQueue）+ compaction（>75% context，按 history index 重建）+ 错误分类
+  （ErrorClass Transient/Throttled/ContextOverflow/Fatal provider 自声明）+ 平台 4-trait
+  （ConversationStore/StateStore/InputSender/HttpClient）→ Lambda（DSQL+DynamoDB+SQS 同队列回环）
+  与 daemon（in-memory+JSON）双生产实现。benchmark（CHANGELOG 自述 S3-S4）：50k agents × 20 turns
+  = 2M completions / 255 s / 7.9 GB RSS / ≈154 KB per idle agent。
+  本次考古产出 50 EK（EK Graph 六类边，平均出边 ≥2，聚合覆盖率 100%）/ 9 KO（R1×3 R2×3 R3×1 R4×2，
+  L3×4 L4×5，9 条 Cross-project validation pending）/ 7 类 Flow / 9 Candidates（跨项目假说 C-01：
+  挂起-恢复 vs 步骤重放资源经济学；C-07：RAP vs MCP 生态）。
+  独立审计（盲重建 event_processor/tools/mod/thread/rap_tool/mcp-bridge/provider-remote/agent_scale/
+  architecture/step-mode）10 CONFIRMED + 1 PARTIALLY_CONFIRMED（MCP bridge 机制描述：实际是 McpToolSet
+  把 MCP 服务器暴露为本地 tools 而非"协议兼容直跑"）+ 4 MISSING（close_thread root 禁令 / 订阅线程
+  报告前缀 / Tool trait 6 方法+Rhai display / provider Unix socket 传输）+ 1 精确化（幂等 ID 仅覆盖
+  User+SubscriptionEvent）。Reconciliation 合并 5 项修正（EK-29 重写 + EK-46~50 补充）。核心命题全部
+  CONFIRMED，无 DOWNGRADED / CONTRADICTED。Corpus 连接：temporal/restate/dbos-transact-py/
+  dapr-agents/substrate（步骤重放派对照，Infinity=挂起-恢复派）。
+
+quality_metrics:
+  ek_total: 50
+  ek_with_links: 50
+  ek_isolated: 0
+  ko_total: 9
+  ko_l3: 4
+  ko_l4: 5
+  ko_l5: 0
+  ko_aggregation_coverage: 1.0
+  candidates: 9
+  flow_edges: 22
+  tests_system: 28
+  snapshots: 150
+  rust_files: 168
+  rust_lines: 57187
+  crates: 21
+  benchmark: "50k agents x 20 turns = 2M completions in 255s; 7.9GB RSS; ~154KB per idle agent (repo CHANGELOG self-reported)"
+
+validation:
+  truth: CONFIRMED (10 assertions + counting independently re-verified)
+  coverage: "core runtime fully covered; 4 product/adapter gaps: provider-rig, sandbox-remote isolation, mcp-bridge boundary, slack dataflow"
+  flow: PASS (all edges traceable to symbols)
+  abstraction: PASS (no downgrades; all KO marked cross-project validation pending)
+  counterexample: 27+ attack points, all internalized or documented
+  epistemic: PASS (no Hypothesis in KO; no S5 claims; contradictions preserved)
+  verdict: "CONFIRMED with 1 PARTIALLY_CONFIRMED (EK-29 MCP bridge reworded), 4 MISSING (EK-46~50 added), 1 NEEDS_HUMAN_REVIEW (C-02)"
