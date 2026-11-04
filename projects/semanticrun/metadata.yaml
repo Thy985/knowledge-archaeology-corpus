@@ -1,0 +1,47 @@
+# metadata — SemanticRun（projects/semanticrun）
+
+project: SemanticRun
+slug: semanticrun
+repository: https://github.com/vogue84/SemanticRun.git
+description: "Artifact-aware durable agent environment — semantic checkpointing & resumption runtime for AI agents"
+archaeology_date: "2026-11-05"
+first_archaeology: "2026-11-05"
+latest_run: ARCH-2026-11-05-001
+status: completed
+mode: initial
+
+# 流派定位（corpus 对照）
+genre: semantic-checkpointing
+genre_contrast:
+  event_replay: [durare, temporal, restate, dbos-transact-py, dapr-agents]
+  suspend_resume: [infinity]
+  semantic_checkpoint: [semanticrun]
+
+# 各轮考古记录（不覆盖历史，追加）
+runs:
+  - run_id: ARCH-2026-11-05-001
+    date: "2026-11-05"
+    commit: 8d99a8143e868f1760e61ba8260909e5e8b2ca29
+    version: 0.4.2
+    skill_version: knowledge-archaeology v3.2
+    evidence_ceiling: S4
+    tests: "44/44 passed"
+    validation: "11 CONFIRMED / 4 PARTIALLY_CONFIRMED / 1 DOWNGRADED / 3 MISSING / 0 CONTRADICTED / 2 NEEDS_HUMAN_REVIEW"
+    summary: "语义恢复第三派考古；核心机制全 S4；README 性能声明无证据归 Candidates；雷达误记（PyPI 10-21 更新）已校正"
+
+# 质量指标（最新 run）
+quality_metrics:
+  ek_count: 22
+  ek_link_coverage: "100%"
+  ek_isolated: 0
+  ko_count: 8
+  ko_aggregation_coverage: "100%"
+  flow_edges: 23
+  candidates: 6
+
+# 关键边界（跨 run 保留）
+open_boundaries:
+  - "approve/reject 无身份鉴权（ApprovalState 无 approver 字段）— NEEDS_HUMAN_REVIEW"
+  - "NO_PRIOR_RECORD 首重放放行（fail-open 缺口，已记录）"
+  - "README 性能声明（98% token savings / 1-8ms）无仓库内证据 — C-02"
+  - "真实模型（OpenRouter）路径未验证 — C-04（S5 缺口）"
