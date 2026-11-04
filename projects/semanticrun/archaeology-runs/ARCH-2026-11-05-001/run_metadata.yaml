@@ -1,0 +1,68 @@
+# run_metadata — ARCH-2026-11-05-001（SemanticRun）
+
+run_id: ARCH-2026-11-05-001
+project: SemanticRun
+slug: semanticrun
+repository: https://github.com/vogue84/SemanticRun.git
+commit: 8d99a8143e868f1760e61ba8260909e5e8b2ca29
+commit_date: "2026-08-04T20:23:23+04:00"
+version: 0.4.2
+skill_version: knowledge-archaeology v3.2
+mode: initial
+timestamp: "2026-11-05T02:02:53+08:00"
+executor: daily Knowledge Archaeology Runtime SOP（cron TaskID 11659931249922）
+
+# Repository Snapshot 摘要
+snapshot:
+  files: 62
+  python_lines: 4414
+  test_lines: 786
+  test_files: 14
+  tests_passed: 44
+  tests_total: 44
+  evidence_ceiling: S4
+  runtime_deps: ["pydantic>=2.0"]
+  branch: master
+
+# 质量指标（v3.1 EK Graph / v3 三层配比）
+quality_metrics:
+  ek_count: 22
+  ek_with_links: 22
+  ek_link_coverage: "100%"
+  ek_avg_out_edges: 2.2
+  ek_isolated: 0
+  ko_count: 8
+  ko_aggregation_rule_coverage: "100%"
+  ko_cluster_size_range: "3-5"
+  flow_edges: 23
+  flow_edges_verified: 23
+  candidates: 6
+  l4_models: 2            # CM-01 / CM-02（均 Cross-project validation pending）
+  l5_methodologies: 1     # M-01（项目内验证）
+  counterexample_attacks: 24   # 8 KO × 3
+  counterexample_effective: 4  # R-01 / R-03 / R-04 / R-06（均以边界注明处置，未导致 KO 降级）
+  ko_downgraded: 0
+  vendor_claims_unverified: 2  # token savings 98% / checkpoint 1-8ms·mem<4MB（归 Candidates）
+
+# Validation 结果（阶段④ 内部；阶段⑤ 独立 Auditor 另行报告）
+validation_result:
+  truth: PASS
+  coverage: PASS（13/13 高密度子系统有代表；无 Critical Knowledge Missing）
+  flow: PASS（23/23 VERIFIED）
+  abstraction: CONDITIONAL（CM-01/CM-02 保持 Cross-project validation pending）
+  counterexample: PASS（24 攻击执行；3 处 fail-open 边界以条件化知识保留）
+  epistemic: PASS（vendor 声明与实现事实分离；Hypothesis 不冒充 Fact）
+
+# 主要发现（供 corpus PR 摘要引用）
+key_findings:
+  - "语义恢复第三派（diff committed artifacts on resume）在 durable-execution corpus 中填补空白，与事件重放（durare/temporal）、挂起恢复（infinity）构成三派对照"
+  - "核心机制全部 S4 验证：同步 checkpoint 屏障 / 哈希承诺 / 分歧矩阵（机械布尔 no LLM guessing）/ ACRFence 外发重放门 / 显式策略闭环"
+  - "5/5 safe 精确含义：5 场景 × 自定义策略子集（未覆盖 intent/plan/approval/behavioral flag）；真实模型路径（S5）未验证"
+  - "3 处安全边界如实保留：NO_PRIOR_RECORD 首重放放行；read_only 分类是信任边界；approve/reject 无身份鉴权"
+  - "README 性能声明（98% token savings / 1-8ms）无仓库内证据，归 Candidates 不升 Fact"
+  - "KnowlegeMap 雷达 11-03 误记 'PyPI 10-21 更新' 被校正：semanticrun 全部 release 上传于 2026-08-04"
+
+# 争议点（供 PR 描述）
+key_controversies:
+  - "SemanticRun 是真实工程还是 README 营销？——考古结论：机制是真实工程（S4），但性能/市场声明无证据；仓库 3 个月静止、7★ 单作者，生态信号弱"
+  - "checkpoint 稀疏性（<50%）与恢复完整性之间的取舍：只读分类错误将丢失恢复点（C-01）"
