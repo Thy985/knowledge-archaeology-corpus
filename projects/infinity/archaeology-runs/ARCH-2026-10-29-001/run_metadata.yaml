@@ -1,0 +1,27 @@
+run_id: ARCH-2026-10-29-001
+repository: https://github.com/hydro-project/infinity.git
+project: infinity
+slug: infinity
+commit: 1abc6fcff1f186124f924b56aa92c3a3684c90c5
+commit_message: "fix: enable aws-config sso feature so SSO profiles work (#176)"
+commit_timestamp: 2026-10-27T20:54:48+00:00
+version: v0.2.0 (sub-crates, 2026-10-22)
+skill_version: knowledge-archaeology v3.2
+mode: initial
+job_id: ARCH-2026-10-29-001
+priority: P0
+source_entry: "[cand]aws-infinity-agent-runtime-2026-10.md"
+timestamp: 2026-10-29T00:00:00+08:00
+quality_metrics:
+  ek_count: 24
+  ek_avg_edges: 2.75
+  ek_isolated: 0
+  ko_count: 8
+  ko_rules: {R1: 2, R2: 2, R3: 1, R4: 3}
+  ko_levels: {L3: 2, L4: 5, L5: 1}
+  flow_edges: 34
+  candidates: 7
+  evidence_anchors: 45
+  test_code_ratio: 0.24
+validation_result: PASSED_WITH_RECONCILIATION (IVR: 14 CONFIRMED / 1 PARTIALLY_CONFIRMED / 0 CONTRADICTED / 5 MISSING; EK-D02 sync 分支与 EK-D03 未知工具路径已合入)
+coverage: PARTIAL (daemon session deep / UI / Bedrock provider)
