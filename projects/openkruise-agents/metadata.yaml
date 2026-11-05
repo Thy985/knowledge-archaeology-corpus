@@ -1,0 +1,81 @@
+project: openkruise-agents
+slug: openkruise-agents
+repository: https://github.com/openkruise/agents.git
+version: v0.6.0
+commit: 5715d3ef3b9f60e603fc51fa1ece8b3c08a0e033
+commit_message: "build(deps): bump zizmorcore/zizmor-action from 0.6.4 to 0.7.1 (#1195)"
+commit_timestamp: 2026-11-05T15:04:15+08:00
+branch: master
+license: Apache-2.0
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-11-06
+mode: initial
+run_id: ARCH-2026-11-06-001
+priority: A
+source_entry: "KnowlegeMap 03_expansion_queue/candidates/[cand]sandbox-lifecycle-suspend-resume-2026-11.md（CNCF blog 2026-11-03 v0.6.0；对照 Genspark SB-Box / AWS AgentCore maxLifetime）"
+
+summary: >-
+  OpenKruise Agents（Kubernetes 原生 Agent Sandbox 控制面，315★/157 forks，Go 267,683 行）——
+  以 CRD + 7 个 controller 把 Agent 沙箱建模为 9 态生命周期对象；8 个二进制分为
+  控制面（agent-sandbox-controller / sandboxset / claim / updateops / securitytokenrefresh /
+  commit / poolautoscaler）、数据面（sandbox-manager）、入口（sandbox-gateway E2B 兼容）。
+  核心认知：KO-01 不可逆动作前先持久化恢复信号（ResumeAt/Schedule/Checkpoint）；
+  KO-02 策略声明≠执行可达（PauseStrategy.Hibernate 零生产消费）；
+  KO-03 写后读用意图-观察对账（ResourceVersionExpectations/staleCache）；
+  KO-04 可重建快照 = 数据 + Pod 差异 patch + runtime 重新初始化；
+  KO-05 hook at-least-once 必须幂等；KO-06 自动化默认 fail-closed（probe 不可判定不动作）；
+  KO-07 反馈控制需覆盖创建时延的 cooldown + 死区 + 进度守卫；
+  KO-08 恢复=重入生命周期（唤醒重协商 PauseTime/ShutdownTime）；
+  KO-09 边界可检查（AGENTS 规则无自动 lint，仅到 L3）。
+  独立审计（盲重建 27 条命题）：21 CONFIRMED + 3 PARTIALLY_CONFIRMED + 2 DOWNGRADED
+  （EK-23/KO-04 快照链路完整性、KO-02 簇含 EK-32）+ 1 CONTRADICTED（EK-32 原"不可变字段"
+  实为 legacy hash 兼容）+ 4 MISSING（BuildPodTemplateDelta 写入侧、commit controller、
+  securitytokenrefresh、pool materialize/recycle）+ 1 NEEDS_HUMAN_REVIEW（覆盖率口径）
+  + 0 OVER_GENERALIZED。
+  Reconciliation 合并 4 项：EK-32 重写、EK-44 删数值推断、EK-23/KO-04 加"写入侧未证实"
+  限定并新增 C-04a、KO-02 簇 5→4 条。
+
+metrics:
+  facts: 68
+  engineering_knowledge: 46
+  knowledge_objects: 9
+  candidates: 8
+  ek_graph_edges: 100
+  ek_avg_out_degree: 2.17
+  isolated_ek: 0
+  aggregation_rule_coverage: "100% (9/9)"
+  ko_avg_cluster_size: 4.1
+  ko_L4_or_pending: 8
+  ko_L3: 1
+  cover_ratio_estimate: "~57% of pkg Go lines (rough estimate)"
+
+validation:
+  internal:
+    truth: PASS
+    coverage: PASS_WITH_LIMITATION
+    flow: PASS
+    abstraction: PASS
+    counterexample: PASS
+    epistemic: PASS
+  independent:
+    confirmed: 21
+    partially_confirmed: 3
+    downgraded: 2
+    contradicted: 1
+    missing: 4
+    needs_human_review: 1
+    over_generalized: 0
+  report: 06-validation/independent_validation_report.md
+
+reconciliation:
+  applied: true
+  items:
+    - "EK-32：revision『不可变字段』→ legacy hash 兼容（CONTRADICTED 修正）"
+    - "EK-44：删除『约 100 年』数值推断（常量定义在本仓库外）"
+    - "EK-23 / KO-04：快照差异链路降为 partial，新增 C-04a（Build 无生产调用）"
+    - "KO-02 簇：5 条 → 4 条（EK-32 移出，归版本兼容主题）"
+  file: 06-validation/reconciliation.md
+
+delivery:
+  feishu: not_authorized
+  corpus_only: true
