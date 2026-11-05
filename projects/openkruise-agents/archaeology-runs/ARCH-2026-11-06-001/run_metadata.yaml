@@ -1,0 +1,87 @@
+run_id: ARCH-2026-11-06-001
+run_date_local: "2026-11-06"
+timezone: Asia/Shanghai
+repository:
+  name: openkruise/agents
+  url: https://github.com/openkruise/agents.git
+  commit_sha: 5715d3ef3b9f60e603fc51fa1ece8b3c08a0e033
+  commit_time: "2026-11-05 15:04:15 +0800"
+  branch: master
+  release: v0.6.0
+  license: Apache-2.0
+mode: initial
+priority: A
+slug: openkruise-agents
+source_entry: "KnowlegeMap 03_expansion_queue/candidates/[cand]sandbox-lifecycle-suspend-resume-2026-11.md"
+
+skill:
+  name: knowledge-archaeology
+  version: "3.2"
+  path: /home/user/.super_doubao/super-doubao-runtime/workspace/.user_skills/knowledge-archaeology
+  modified: false
+
+scope:
+  files_total: 1069
+  go_lines_total: 267683
+  packages_covered: ["api/v1alpha1", "pkg/controller", "pkg/controller/poolautoscaler", "pkg/sandbox-manager", "pkg/sandbox-gateway", "pkg/features", "pkg/webhook", "pkg/lifecycle", "pkg/autopause", "pkg/pausedretention", "pkg/identity (partial)", "cmd"]
+  packages_not_covered: ["pkg/servers", "pkg/utils", "pkg/agent-runtime", "pkg/cache"]
+  cover_ratio_estimate: "~57% of pkg Go lines (rough, see 06_validation)"
+
+metrics:
+  facts: 68
+  engineering_knowledge: 46
+  knowledge_objects: 9
+  candidates: 8
+  ek_graph_edges: 100
+  ek_avg_out_degree: 2.17
+  isolated_ek: 0
+  aggregation_rule_coverage: "100% (9/9)"
+  ko_avg_cluster_size: 4.1
+  ko_ascended_L4: 8
+  ko_held_L3: 1
+
+quality:
+  internal_validation:
+    truth: PASS
+    coverage: PASS_WITH_LIMITATION
+    flow: PASS
+    abstraction: PASS
+    counterexample: PASS
+    epistemic: PASS
+    corrections_applied: 3
+    notes: "EK-32 因实测推翻原表述而重写；EK-44 删除未定义常量数值推断；data_model.md 同步"
+  independent_validation:
+    status: completed
+    report: ../validation/independent_validation.md
+    verdicts:
+      confirmed: 21
+      partially_confirmed: 3
+      downgraded: 2
+      contradicted: 1
+      missing: 4
+      needs_human_review: 1
+      over_generalized: 0
+
+limitations:
+  - "未执行 go test / e2e；S4 标注来自仓库测试文件内容，不是本轮运行结果"
+  - "pkg/servers、pkg/utils、pkg/agent-runtime、pkg/cache 未逐文件考古（C-07）"
+  - "PodTemplateDelta 在 resume 时被应用的代码点未逐行验证（C-04）"
+  - "无 docs/ 目录，设计意图证据有限（C-05）"
+
+artifacts:
+  - 00_overview.md
+  - 01_project_layer/
+  - 02_engineering_knowledge/
+  - 03_knowledge_layer/
+  - 04_flow_atlas/
+  - 05_candidates/
+  - 06_validation/
+  - ../job_manifest.md
+  - ../snapshot_artifact.md
+  - ../validation/independent_validation.md
+
+delivery:
+  corpus_repo: https://github.com/Thy985/knowledge-archaeology-corpus.git
+  target_dir: projects/openkruise-agents/
+  branch: arch/openkruise-agents-2026-11-06
+  feishu: not_authorized
