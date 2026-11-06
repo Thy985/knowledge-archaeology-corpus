@@ -1,0 +1,61 @@
+project: MCP Go SDK
+slug: go-sdk
+repository: https://github.com/modelcontextprotocol/go-sdk.git
+version: "v1.8.0 (latest release) / HEAD post-v1.8.0 (1.9.0 doc entries present)"
+commit: df0f29525bc6c590b6b68d9aae581ec0f21ebb3e
+commit_message: "mcp: make the ioConn frame cap independent of read boundaries (#1510)"
+commit_timestamp: "2026-11-06 23:38:14 +0800"
+skill_version: "3.2"
+archaeologized_at: "2026-11-07T02:12:33+08:00"
+mode: initial
+run_id: ARCH-2026-11-07-001
+source_entry: "KnowlegeMap 03_expansion_queue/candidates/[cand]mcp-2026-07-28-stateless.md (HEAD 7076a53)"
+summary: |
+  MCP 官方 Go SDK 的初始考古。核心发现：2026-07-28 协议无状态化不是"删掉会话"，而是把
+  会话生命周期压到单次请求（KO-02）；客户端用 discover-first + fallback 完成代际迁移（KO-01）；
+  版本事实分布在 header/_meta/握手三个平面（KO-04）；会话身份绑定是有状态路径的传输层不变量（KO-03）；
+  初始化门禁在请求路径上被注释（KO-05，fail-open）；重放依赖"不得部分重放"存储契约（KO-06）；
+  服务器主动请求被折叠为 InputRequests（KO-07）；缺口被写成 conformance baseline / rough_edges（KO-08）。
+  KO-01~KO-08，其中 KO-02/KO-05 为 L4，其余 L3；全部标 Cross-project validation pending。
+metrics:
+  facts: 53
+  engineering_knowledge: 33
+  knowledge_objects: 8
+  candidates: 7
+  flow_edges: 29
+  ek_graph:
+    edges: 43
+    average_degree: 2.61
+    orphan_ek: 0
+    aggregation_rule_coverage: "8/8"
+  repository:
+    files: 236
+    go_files: 155
+    go_lines: 69302
+    test_files: 68
+    go_version: "1.25.0"
+validation:
+  internal: "12/12 truth sample; 10/10 flow sample; 12 counterexample attacks, 5 weakened"
+  independent:
+    confirmed: 14
+    partially_confirmed: 6
+    downgraded: 1
+    over_generalized: 1
+    missing: 3
+    contradicted: 0
+    needs_human_review: 2
+  preserved: "contradictions and counterexamples retained in 06-validation/"
+reconciliation:
+  applied: true
+  added_ek: ["EK-31", "EK-32", "EK-33"]
+  corrected:
+    - "KO-02: transport session ID vs logical session ID"
+    - "EK-01: retry path before fallback"
+    - "old SSE: does not advertise >=2026-07-28"
+  not_changed:
+    - "KO-05 remains L4 with pending (single-project evidence)"
+    - "KO-08 title unchanged; boundary recorded"
+delivery:
+  corpus_path: "projects/go-sdk/"
+  feishu: "not delivered (no explicit authorization)"
+  history_preserved: true
