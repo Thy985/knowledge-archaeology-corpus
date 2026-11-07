@@ -1,0 +1,86 @@
+run_id: ARCH-2026-11-08-001
+repository: https://github.com/getzep/graphiti.git
+slug: graphiti
+mode: initial
+priority: A
+job_id: ARCH-2026-11-08-001
+commit: 747b480ec6b12ecb718f1e2bc588b20ee36ea9c2
+branch: main
+version: graphiti-core-0.31.2
+license: Apache-2.0
+primary_language: Python
+repository_size:
+  files_excluding_git: 386
+  python_files: 300
+  python_lines: 76764
+  test_files_test_prefix: 81
+  workflows: 15
+collected_at: 2026-11-08
+collected_at_utc: 2026-11-06T04:49:50Z
+skill_version: 3.2
+orchestrator: MainAgent (single-agent sequential execution of the multi-agent SOP)
+environment:
+  graph_db: none
+  docker: false
+  llm_api_key: false
+  runtime_validation: false
+  limitation: "No Neo4j/FalkorDB/Docker/API key => no integration tests, no execution; all conclusions are code-reading level (S3)."
+
+artifacts:
+  project_layer: 5 files
+  evidence_facts: 53
+  engineering_knowledge: 33
+  generalized_ko: 8
+  candidates: 7
+  flow_edges: 54
+  ek_graph:
+    nodes: 33
+    edges: 95
+    avg_out_degree: 2.88
+    isolated_ratio: 0.0
+    connected_components: 1
+    edge_type_counts:
+      causal: 20
+      contrast: 23
+      dependency: 15
+      constraint: 15
+      mechanism: 12
+      subsystem: 10
+
+quality_metrics:
+  evidence_traceability: "53/53 evidence entries carry file:line"
+  ek_evidence_coverage: "33/33 EK cite at least one evidence id"
+  ko_aggregation_rule_coverage: "8/8"
+  counterexample_budget_required: 24
+  counterexample_budget_actual: 8
+  counterexample_budget_ratio: 0.33
+  code_lines_read_estimate: 9000
+  code_coverage_ratio: 0.117
+  runtime_verified_claims: 0
+  cross_project_validation: "none pending"
+
+epistemic:
+  max_layer_reached: L3 (Pattern)
+  l5_methodology_produced: false
+  ko_high_risk_promotions_rejected:
+    - KO-04 (down Principle -> Pattern; single project/team/stack)
+    - KO-06 (down Principle -> Pattern; docs-only)
+    - KO-07 (down Principle -> Pattern; docs-only + no runtime)
+
+validation_result:
+  status: completed_with_corrections
+  independent_auditor: true
+  verdicts:
+    confirmed: 22
+    partially_confirmed: 6
+    downgraded: 3
+    over_generalized: 3
+    missing: 4
+    contradicted: 3
+    needs_human_review: 2
+  corrections_applied:
+    - search_config_count: 13 -> 16
+    - mcp_tool_count: 12 -> 13
+    - repo_scale_recomputed: "386 files / 300 py / 76764 lines / 81 test_*.py (excluding .git)"
+    - ko_downgrades: "KO-04, KO-06, KO-07 Principle -> Pattern"
+    - epistemic_wording_tightened: "EK-03, EK-10, EK-12, EK-19, EK-33"
