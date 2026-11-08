@@ -1,0 +1,118 @@
+run_id: ARCH-2026-11-09-001
+mode: initial
+slug: letta
+job_id: ARCH-2026-11-09-001
+priority: A
+
+repository:
+  url: https://github.com/letta-ai/letta.git
+  branch: archive
+  commit: 56ba9c25552605eec89de8ed3dc6394b625c1993
+  commit_time: "2026-08-13 20:08:39 -0700"
+  commit_message: "chore: deter self-promotional issue spam (#3429)"
+  version: "letta 0.16.8"
+  license: Apache-2.0
+  repository_status: deprecated_legacy_v1_server
+  note: "main 分支已退化为文档仓；本 run 考古 archive 分支，结论不代表当前 Letta 运行时"
+
+skill:
+  name: knowledge-archaeology
+  version: "3.2"
+  path: /home/user/.super_doubao/super-doubao-runtime/workspace/.user_skills/knowledge-archaeology
+
+snapshot:
+  clone_depth: 1
+  size_mb: 34
+  files_total: 1156
+  python_files: 878
+  python_lines: 248417
+  tests_python_files: 166
+  test_files: 95
+  workflows: 31
+  alembic_migrations: 167
+  enumeration_method: "python os.walk, skipping .git"
+  independently_recounted: true
+
+coverage:
+  read_scope:
+    - letta/schemas/memory.py
+    - letta/schemas/block.py
+    - letta/orm/block.py
+    - letta/orm/block_history.py
+    - letta/orm/blocks_agents.py
+    - letta/services/block_manager.py
+    - letta/services/block_manager_git.py
+    - letta/services/passage_manager.py
+    - letta/services/summarizer/
+    - letta/services/tool_executor/core_tool_executor.py
+    - letta/functions/function_sets/base.py
+    - letta/services/agent_manager.py (memory 相关段落)
+    - letta/server/rest_api/auth_token.py
+    - AGENTS.md / SECURITY.md / pyproject.toml
+  estimated_code_read_lines: 12000
+  estimated_read_ratio: 0.048
+  uncovered:
+    - letta/managers/ (22 files / 22,928 lines)
+    - letta/server/rest_api/routers/v1/ (30 files, 全量鉴权装饰器)
+    - letta/llm_api/ (27 files / 9,494 lines)
+    - letta/local_llm/ (34 files / 5,471 lines)
+    - alembic/versions/ 167 migrations（仅按文件名推断演进）
+    - letta/agents/ 执行循环（仅引用未细读）
+
+quality_metrics:
+  facts: 40
+  engineering_knowledge: 23
+  ek_edges: 30
+  ek_avg_out_degree: 1.30
+  orphan_ek: 0
+  knowledge_objects: 6
+  ko_l3: 4
+  ko_l2: 2
+  ko_l4_l5: 0
+  candidates: 6
+  flow_edges: 28
+  counterexamples_per_l3: 3
+  evidence_max_strength: S3
+  runtime_validated: 0
+  code_read_ratio: 0.048
+
+validation:
+  independent_auditor: true
+  blind_reconstruction: true
+  judgments:
+    confirmed: 10
+    partially_confirmed: 3
+    over_generalized: 2
+    contradicted: 1
+    missing: 3
+    needs_human_review: 1
+    downgraded: 0
+  reconciliation: accepted_modified
+  post_reconciliation:
+    contradicted_resolved: true
+    ko_downgraded: 1   # KO-04 L3 -> L2 Observation
+    ek_added_by_audit: 3   # EK-21/22/23
+
+artifacts:
+  package:
+    - 00_overview.md
+    - 01-project-layer/architecture.md
+    - 01-project-layer/data_model_and_lifecycle.md
+    - 01-project-layer/config_testing_governance.md
+    - 02-engineering-knowledge/evidence-index.md
+    - 02-engineering-knowledge/ek.md
+    - 02-engineering-knowledge/ek-graph.md
+    - 03-knowledge-layer/ko.md
+    - 04-flow-atlas/flow-atlas.md
+    - 05-candidates/candidates.md
+    - 06-validation/self-validation.md
+    - 06-validation/reconciliation.md
+  validation:
+    - 06-validation/independent-validation.md
+
+timestamp: "2026-11-09T00:00:00+08:00"
+notes:
+  - 所有结论为代码阅读级；环境无 Postgres/pgvector/Turbopuffer/LLM key，集成测试未执行
+  - 浅克隆无 git 历史，无法回溯修复史
+  - 未执行飞书落盘（用户未授权）
+  - 未发起 Skill Evolution（未发现系统性 skill 缺陷）
