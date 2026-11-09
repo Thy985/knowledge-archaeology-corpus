@@ -1,0 +1,111 @@
+run_id: ARCH-2026-11-10-001
+job_id: ARCH-2026-11-10-001
+project: hy-memory
+project_name: Hy-Memory 2.0
+repository: https://github.com/Tencent-Hunyuan/Hy-Memory.git
+commit: 9737431cf8965124b115f0e26cb0ff1e5cafa323
+branch: main
+mode: initial
+priority: A
+skill_version: "3.2"
+skill_path: /home/user/.super_doubao/super-doubao-runtime/workspace/.user_skills/knowledge-archaeology/SKILL.md
+timestamp: "2026-11-10T00:00:00+08:00"
+operator: Thy985
+read_only: true
+target_modified: false
+knowledgemap_modified: false
+production_skill_modified: false
+feishu_written: false
+
+source_entry:
+  - "03_expansion_queue/candidates/[cand]agent-memory-2026.md"
+  - "05_scan_logs/2026-11/2026-11-10_radar-watch_scan.md"
+
+scope:
+  covered:
+    - "hy_memory/client.py (scene routing, add/search, evolve)"
+    - "hy_memory/pipelines/writer.py (chat write, reconcile)"
+    - "hy_memory/pipelines/reader_base.py (recall layers)"
+    - "hy_memory/agent/reconciler.py (versioning)"
+    - "hy_memory/coding/{store,writer,chain_store,judge}.py"
+    - "hy_memory/models/memory.py"
+    - "memhub/apps/core/src/one_memory/{auth,user_scope,workspace_resolution}.py"
+    - "memhub/apps/core/src/one_memory/imports/grants.py"
+    - "memhub/docs/ARCHITECTURE.md"
+    - ".github/workflows/ci.yml"
+  excluded:
+    - "memhub/apps/desktop + apps/web + packages/* (frontend)"
+    - "hy_memory/pipelines/system2_agent.py (algorithm detail)"
+    - "hy_memory/pipelines/reader_base.py rerank/graph branches"
+    - "prompts/* full text"
+    - "chore/* build branches"
+
+metrics:
+  facts: 36
+  engineering_knowledge: 29
+  ek_edges: 58
+  ek_edges_dedup: 45
+  ek_avg_out_degree: 2.0
+  ek_isolated: 0
+  knowledge_objects: 7
+  ko_l2: 1
+  ko_l3: 5
+  ko_l4: 1
+  ko_l5: 0
+  candidates: 7
+  flow_edges: 47
+  lines_read: 1150
+  lines_total: 322396
+  read_ratio_percent: 0.36
+  evidence_ceiling: S3
+  vendor_metrics_in_fact_layer: false
+
+validation:
+  self_validation: PARTIAL
+  self_validation_note: "Coverage 0.36%, product layer not covered; Truth/Flow/Abstraction/Epistemic PASS or PARTIAL"
+  independent_validation:
+    confirmed: 6
+    partially_confirmed: 2
+    downgraded: 0
+    over_generalized: 0
+    missing: 2
+    contradicted: 0
+    needs_human_review: 0
+    total: 10
+    report: 06-validation/independent-validation.md
+  reconciliation:
+    accepted_revisions: 4
+    rejected_suggestions: 4
+    report: 06-validation/reconciliation.md
+
+artifacts:
+  package_root: .
+  files:
+    - 00_overview.md
+    - 01-project-layer/architecture.md
+    - 01-project-layer/data_model_and_lifecycle.md
+    - 01-project-layer/config_testing_governance.md
+    - 02-engineering-knowledge/evidence-index.md
+    - 02-engineering-knowledge/ek.md
+    - 02-engineering-knowledge/ek-graph.md
+    - 03-knowledge-layer/ko.md
+    - 04-flow-atlas/flow-atlas.md
+    - 05_candidates/candidates.md
+    - 06-validation/self-validation.md
+    - 06-validation/reconciliation.md
+    - run_metadata.yaml
+  validation:
+    - 06-validation/independent-validation.md
+  job:
+    - job_manifest.md
+    - snapshot_artifact.md
+
+skill_improvement_proposal:
+  created: false
+  reason: "No P0/P1 defect; findings are project-specific implementation details. Flag-gate check could be a future P2, not raised this run."
+
+boundaries:
+  - "Shallow clone depth=1; no git history."
+  - "No tests executed; no runtime observation."
+  - "Vendor-reported benchmarks are documentation claims only."
+  - "Numeric self-assessment was revised after Independent Validation; final values in this file."
