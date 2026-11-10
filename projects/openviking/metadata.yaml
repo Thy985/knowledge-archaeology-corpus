@@ -28,7 +28,7 @@ artifacts:
   runs: archaeology-runs/
 
 metrics:
-  evidence: 65
+  evidence: 66
   engineering_knowledge: 36
   ek_edges: 98
   knowledge_objects: 8
