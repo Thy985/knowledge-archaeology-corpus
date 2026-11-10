@@ -1,0 +1,76 @@
+project: OpenViking
+slug: openviking
+repository: https://github.com/volcengine/OpenViking.git
+license: AGPL-3.0
+language: Python + Rust
+positioning: >
+  "文件系统即记忆"的上下文数据库：以 viking:// URI 统一 skill / memory / resource
+  三类上下文，内容存 AGFS、索引存 VectorDB，检索走 intent + tier 渐进披露。
+
+archaeology:
+  first_run: ARCH-2026-11-11-001
+  mode: initial
+  priority: B+
+  commit: f7e83b2d739905b50215cd7739199a564b9b044b
+  commit_time: "2026-11-10T22:17:06+08:00"
+  branch: main
+  skill_version: "3.2"
+  run_date: "2026-11-11"
+
+artifacts:
+  overview: 00_overview.md
+  project_layer: 01-project-layer/
+  engineering_knowledge: 02-engineering-knowledge/
+  knowledge_layer: 03-knowledge-layer/
+  flow_atlas: 04-flow-atlas/
+  candidates: 05-candidates/
+  validation: 06-validation/
+  runs: archaeology-runs/
+
+metrics:
+  evidence: 65
+  engineering_knowledge: 36
+  ek_edges: 98
+  knowledge_objects: 8
+  ko_layer_distribution: {L3: 6, L4: 2, L5: 0}
+  flow_edges: 76
+  counterexamples: 24
+
+validation:
+  self: pass_with_declared_gaps
+  independent:
+    findings: 15
+    confirmed: 7
+    partially_confirmed: 3
+    downgraded: 1
+    over_generalized: 1
+    missing: 3
+    contradicted: 0
+    needs_human_review: 1
+  reconciled: true
+  corrections: 7
+
+scope:
+  excluded:
+    - crates/ (Rust lock internals; rust-unread)
+    - frontend/
+    - web-studio/
+    - examples/
+    - bot/
+    - third_party/
+    - sdk/
+    - integrations/
+    - openviking_gateway/
+  blind_spots:
+    - Rust PathLockManager atomicity
+    - embedding/semantic queue consumers
+    - gateway multi-instance routing
+    - runtime performance
+    - no S4/S5 evidence
+
+history:
+  - run_id: ARCH-2026-11-11-001
+    mode: initial
+    commit: f7e83b2d739905b50215cd7739199a564b9b044b
+    path: archaeology-runs/ARCH-2026-11-11-001/
+    note: first archaeology; supersedes nothing
