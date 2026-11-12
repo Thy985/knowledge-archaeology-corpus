@@ -1,0 +1,46 @@
+project: MemEvolve / EvolveLab
+slug: memevolve
+repository: https://github.com/bingreeky/MemEvolve.git
+branch: main
+commit_sha: 6035d5659d7a092dbfa6a87b1a32a3cee652ba54
+commit_time: 2026-05-05T17:29:28+08:00
+license: Apache-2.0
+stars: 286
+mode: initial
+priority: A-
+status: completed
+run_id: ARCH-2026-11-13-001
+skill: knowledge-archaeology
+skill_version: "3.2"
+archaeology_date: 2026-11-13
+organization: Self-Evolving Memory Systems / Agent Memory
+paper: arXiv 2512.18746 (S0-vendor only)
+summary: >
+  13 个记忆 provider 的统一接口与元进化流水线（Analyze/Generate/Create/Validate/AutoEvolve）。
+  核心差异不在存储，而在写入门控、写入形态与阶段能力；元进化的主要风险是变异事务性与验证独立性。
+layer_counts:
+  evidence: 100
+  ek: 50
+  ko: 9
+  candidates: 14
+  patterns: 16
+  flow_edges: 68
+quality:
+  ek_avg_out_degree: 2.68
+  ek_isolated_ratio: 0.0
+  ko_aggregation_rule_coverage: 1.0
+  ko_counterexamples: 27
+validation:
+  self: PARTIALLY_VALIDATED
+  independent: PARTIALLY_VALIDATED
+  findings_checked: 21
+  confirmed: 8
+  partially_confirmed: 4
+  downgraded: 3
+  contradicted: 1
+  needs_human_review: 1
+  missing: 2
+notes:
+  - 未运行评测，无 S4/S5 证据；性能数字仅作 S0-vendor。
+  - baseline 口径（11+2 vs 12+Evolver）存在冲突，待论文附录裁决。
+  - KO-06/KO-07 已由 L4 降级为 L3。
