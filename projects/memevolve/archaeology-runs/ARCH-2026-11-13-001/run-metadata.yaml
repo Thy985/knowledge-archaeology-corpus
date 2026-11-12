@@ -1,0 +1,126 @@
+run_id: ARCH-2026-11-13-001
+job_id: ARCH-2026-11-13-001
+project: MemEvolve / EvolveLab
+slug: memevolve
+mode: initial
+priority: A-
+repository: https://github.com/bingreeky/MemEvolve.git
+branch: main
+commit_sha: 6035d5659d7a092dbfa6a87b1a32a3cee652ba54
+commit_time: 2026-05-05T17:29:28+08:00
+commit_message: Update README
+license: Apache-2.0
+stars: 286
+size_kb: 83966
+pushed_at: 2026-05-05T09:29:28Z
+skill: knowledge-archaeology
+skill_version: 3.2
+timestamp: 2026-11-13T00:00:00+08:00
+executor: doubao-main-agent
+read_only: true
+target_modified: false
+
+source_entry:
+  knowledgemap_commit: fdd8ff1e22a893510a85b165629e27171f83f715
+  radar_watch: 07_radar_watch/current_focus.md
+  scan_logs:
+    - 05_scan_logs/2026-11/2026-11-12_radar-watch_scan.md
+    - 05_scan_logs/2026-11/2026-11-13_radar-watch_scan.md
+
+snapshot:
+  files_excl_git: 288
+  size_mb: 175
+  python_files: 146
+  python_lines: 33653
+  evolvelab_files: 19
+  memevolve_files: 18
+  provider_lines: 8088
+  provider_count: 13
+
+phases:
+  analyze:
+    - architecture
+    - data_model_and_lifecycle
+    - config_testing_governance
+  archaeological_domains:
+    - repository_discovery
+    - engineering_knowledge
+    - flow_atlas
+    - knowledge_layer
+    - candidates
+    - self_validation
+  independent_validation: true
+  reconciliation: true
+
+quality_metrics:
+  evidence_total: 100
+  evidence_s3: 96
+  evidence_s0_vendor: 4
+  ek_total: 50
+  ek_avg_out_degree: 2.68
+  ek_isolated_ratio: 0.0
+  ek_connected_components: 1
+  ek_edge_types:
+    contrast: 40
+    causal: 39
+    mechanism: 20
+    constraint: 16
+    dependency: 14
+    subsystem: 5
+  ko_total: 9
+  ko_l3: 9
+  ko_l4: 0
+  ko_avg_cluster_size: 4.67
+  ko_aggregation_rule_coverage: 1.0
+  ko_counterexamples: 27
+  candidates: 14
+  flow_edges:
+    control: 15
+    state: 12
+    data: 10
+    evidence: 8
+    authority: 7
+    memory: 9
+    policy: 7
+    total: 68
+
+validation:
+  self_result: PARTIALLY_VALIDATED
+  independent_result: PARTIALLY_VALIDATED
+  findings_checked: 21
+  verdicts:
+    confirmed: 8
+    partially_confirmed: 4
+    downgraded: 3
+    over_generalized: 2
+    contradicted: 1
+    needs_human_review: 1
+    missing: 2
+  reconciliation_items: 6
+  corrections_applied:
+    - R-01 persistence scope: 11 JSON + 1 py + 1 txt
+    - R-02 baseline count conflict retained as NEEDS_HUMAN_REVIEW
+    - R-03 KO-06/KO-07 downgraded L4 -> L3
+    - R-04 candidates C-11..C-14 added
+    - R-05 phase matrix wording tightened
+    - R-06 cleanup gap recorded
+  evidence_gaps:
+    - no runtime execution (S4/S5 absent)
+    - model_eval and part of FlashOAgents not covered
+    - five providers not read line-by-line
+
+skill_improvement_proposal: false
+artifacts:
+  - 00_overview.md
+  - 01_project_layer/architecture.md
+  - 01_project_layer/data_model_and_lifecycle.md
+  - 01_project_layer/config_testing_governance.md
+  - 02_engineering_knowledge/evidence-index.md
+  - 02_engineering_knowledge/ek.md
+  - 02_engineering_knowledge/ek-graph.md
+  - 03_knowledge_layer/ko.md
+  - 04_flow_atlas/flow-atlas.md
+  - 05_candidates/candidates.md
+  - 06_validation/self-validation.md
+  - 06_validation/reconciliation.md
+  - validation/independent_validation.md
