@@ -1,0 +1,86 @@
+run_id: ARCH-2026-11-14-001
+job_id: ARCH-2026-11-14-001
+project: MemMachine
+slug: memmachine
+repository: https://github.com/MemMachine/MemMachine.git
+mode: initial
+priority: A-
+source_entry: "KnowlegeMap 03_expansion_queue/candidates/[cand]agent-memory-2026.md；2026-11-10 增量 B 行：MemMachine（arXiv 2604.04853，ground-truth-preserving）"
+snapshot:
+  branch: main
+  commit_sha: 377510d436dc81c3651502f2d5e36ff245650ce7
+  commit_time: "2026-11-02T11:35:15-08:00"
+  clone_mode: shallow-depth-1
+  repo_size: 105M
+  files_excluding_git: 876
+  python_files: 496
+  python_lines: 151515
+  test_files: 121
+  test_functions_static: 2191
+skill:
+  name: knowledge-archaeology
+  version: v3.2
+  source: "https://github.com/Thy985/knowledge-archaeology-skill.git@931124c505d53fa929b0638a28ce5898ae031250"
+timestamps:
+  package_written_at: "2026-11-14T02:30:20+08:00"
+  timezone: Asia/Shanghai
+  note: "package_written_at 为实际系统时间；run_started 未单独记录，不以推测值填充"
+quality_metrics:
+  evidence_total: 92
+  evidence_s3: 90
+  evidence_s2: 2
+  evidence_s4: 0
+  evidence_s5: 0
+  ek_total: 52
+  ek_links_declared: 145
+  ek_avg_out_degree: 2.79
+  ek_isolated: 0
+  ek_isolated_ratio: 0.0
+  ek_missing_targets: 0
+  ek_edge_types:
+    causal: 54
+    contrast: 30
+    subsystem: 23
+    constraint: 18
+    dependency: 11
+    mechanism: 9
+  ko_total: 8
+  ko_aggregation_rules:
+    R1: 1
+    R2: 4
+    R3: 1
+    R4: 2
+  ko_avg_cluster_size: 6.5
+  ko_counterexamples: 24
+  flow_classes: 7
+  flow_edges: 72
+  coverage_gaps: 10
+validation:
+  self_validation: CONDITIONAL_PASS
+  independent_validation: "PASS_WITH_CORRECTIONS"
+  truth_sample: "12/12 confirmed after corrections"
+  verdicts: "CONFIRMED 13 / PARTIALLY_CONFIRMED 3 / DOWNGRADED 1 / OVER_GENERALIZED 2 / CONTRADICTED 1 / MISSING 5 / NEEDS_HUMAN_REVIEW 2"
+  corrected_items:
+    - "test function count 1347 -> 2191 (grep pattern)"
+    - "declarative threshold wording corrected"
+    - "C-06 downgraded: PG FK ON DELETE CASCADE contradicts orphan citation defect"
+  unresolved_contradictions:
+    - "README topology vs code multi-backend"
+    - "-inf only under EUCLIDEAN + no reranker"
+    - "C-06 orphan citation: contradicted by FK CASCADE; retained only as conditional hypothesis"
+  s4_s5: "0 — tests and service not executed"
+skill_improvement_proposal:
+  produced: false
+  reason: "本轮未暴露可归因于 skill 的系统性缺陷；候选缺陷属于项目实现问题"
+boundaries:
+  target_repo_read_only: true
+  knowledgemap_read_only: true
+  production_skill_read_only: true
+  corpus_write: true
+  feishu_write: false
+  max_deep_projects_per_day: 1
+notes: |
+  - 所有 line/symbol 引用指向 commit 377510d 的仓库内容。
+  - S2 证据（EV-081/082）只证明“文档声称”，不得当实现事实。
+  - 8 个 KO 全部为 L3 candidate / Observation，不是 Validated Pattern 或 Principle。
+  - C-01 是条件性缺陷（EUCLIDEAN + 无 reranker 才触发）；C-06 已被 FK CASCADE 推翻，仅保留条件性 Hypothesis。
