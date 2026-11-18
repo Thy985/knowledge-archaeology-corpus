@@ -1,0 +1,75 @@
+run_id: ARCH-2026-11-19-001
+project: PoEM
+project_full_name: Proof-of-Execution Memory
+repository: https://github.com/bithabib/ai_security.git
+commit: 4021642395daad997786cfbbd04b64924e8a46bd
+branch: main
+commit_time: "2026-08-28 23:30:36 +0900"
+mode: initial
+priority: A
+skill: knowledge-archaeology
+skill_version: "3.2"
+timestamp: "2026-11-19T02:30:00+08:00"
+scope:
+  include:
+    - farma_repro/
+    - poem-paper/ (design intent only)
+  exclude:
+    - injection_lab/
+    - injection-paper/
+license: MIT
+tracked_files: 253
+python_files: 49
+python_lines: 4712
+harness_python_lines: 2767
+
+metrics:
+  engineering_knowledge: 49
+  ek_links: 156
+  ek_average_out_degree: 3.18
+  isolated_ek: 0
+  knowledge_objects: 10
+  ko_l3: 9
+  ko_l4_candidates: 0
+  ko_l5: 0
+  ko_l2_observations: 1
+  ko_aggregation_coverage: "10/10"
+  flow_edges: 49
+  flow_classes: "7/7"
+  candidates: 14
+  cross_project_candidates: 4
+  counterexamples_recorded: 10
+  ek_to_ko_reverse_traces: "10/10"
+
+evidence:
+  code_facts: S3
+  deterministic_logic_runs: S4
+  local_performance_runs: S5
+  recorded_real_model_results: S3
+  real_model_reruns: none
+
+validation:
+  self: SELF_VALIDATED
+  independent: COMPLETE
+  independent_verdicts: "7 CONFIRMED / 2 DOWNGRADED / 1 NEEDS_HUMAN_REVIEW (KO); 11 CONFIRMED / 1 PARTIALLY_CONFIRMED (EK spot checks)"
+  verdict: ACCEPTED WITH LIMITATIONS
+
+limitations:
+  - No live-model rerun (no Ollama daemon / OpenAI key in environment); model ASR numbers are author-recorded S3, not S4/S5.
+  - No production integration code; key custody/storage/durability are deployment assumptions, not proven invariants.
+  - "attack.py and scenarios.py contain two variant definitions; experiment uses scenarios.py only."
+  - Paper's microsecond overhead claim applies at small N; measured 173.8 ms at N=100,000.
+  - "injection_lab/ is excluded as a separate research line."
+
+artifacts:
+  - package/00_overview.md
+  - package/01_project_layer.md
+  - package/02_engineering_knowledge.md
+  - package/03_knowledge_layer.md
+  - package/04_flow_atlas.md
+  - package/05_candidates.md
+  - package/06_validation/evidence-index.md
+  - package/06_validation/self-validation.md
+  - package/06_validation/independent-validation.md
+  - package/06_validation/reconciliation.md
+  - package/run_metadata.yaml
