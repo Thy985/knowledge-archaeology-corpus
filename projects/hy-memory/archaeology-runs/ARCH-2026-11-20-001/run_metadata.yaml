@@ -1,0 +1,76 @@
+run_id: ARCH-2026-11-20-001
+job_id: ARCH-2026-11-20-001
+project: Hy-Memory 2.0
+repository: https://github.com/Tencent-Hunyuan/Hy-Memory.git
+commit: d8138b501a755f662a024f7e8eb879613eabf1d3
+branch: main
+mode: initial
+priority: A
+skill_version: "3.2"
+timestamp: "2026-11-20T00:00:00+08:00"
+scope:
+  include: ["hy_memory/", "tests/", "pyproject.toml", "README.md", "docs/ design constraints"]
+  boundary_only: ["memhub/", "plugins/"]
+  excluded_from_deep_archaeology: ["memhub/ React/TypeScript application"]
+behavioral_runs: false
+behavioral_reason: "no Ollama endpoint and no OpenAI key in the execution environment; source-level archaeology only"
+
+metrics:
+  engineering_knowledge_entries: 65
+  ek_links: ">=2 per entry"
+  flow_atlas_edges: 143
+  l2_observations: 12
+  l3_kos: 9
+  l4_candidate_models: 1
+  l5_principles: 0
+  candidates: 16
+  source_files_read: 30
+  tests_run_subset: 40
+  tests_passed_subset: 40
+  tests_failed_subset: 0
+  full_non_integration_suite: inconclusive
+  full_suite_note: "pytest teardown OSError Errno 24 Too many open files; no usable summary"
+
+validation:
+  independent_auditor: true
+  ko_verdicts:
+    confirmed: 9
+    partially_confirmed: 1
+    downgraded: 0
+    over_generalized: 0
+    contradicted: 0
+    needs_human_review: 0
+  ek_spot_checks:
+    sampled: 12
+    confirmed: 10
+    partially_confirmed: 2
+    contradicted: 0
+  flow_spot_checks:
+    sampled: 8
+    confirmed: 6
+    partially_confirmed: 2
+    contradicted: 0
+  result: ACCEPTED WITH LIMITATIONS
+  reconciliation_changes:
+    - "CF-07 coding routing condition corrected to include config.coding.enable, messages input, mode != lite, and no-tool fallback"
+    - "CF-04 classifier condition corrected for input-shape and coding-config gates"
+    - "EK-24/AF-04 exact-key branch corrected to request.agent_id, not one-element agent_ids"
+    - "EK-04 softened: L5 declared, no engine write path found"
+    - "KO-06 scoped to engine; memhub not audited"
+    - "schema dedup branch and s2_evidence_count increment added to candidate notes"
+
+limitations:
+  - "no live LLM/embedding endpoint; extraction quality, reconcile accuracy and benchmark scores not measured"
+  - "memhub/ desktop app not audited module by module"
+  - "shallow clone depth 50; history-dependent claims excluded"
+  - "README benchmark figures not traced to paper tables"
+  - "full test suite inconclusive"
+
+artifacts:
+  package_dir: "archaeology-jobs/ARCH-2026-11-20-001/package"
+  job_manifest: "archaeology-jobs/ARCH-2026-11-20-001/job_manifest.md"
+  snapshot: "archaeology-jobs/ARCH-2026-11-20-001/snapshot_artifact.md"
+  validation: "archaeology-jobs/ARCH-2026-11-20-001/package/06_validation/independent_validation_report.md"
+
+skill_evolution_proposal: false
+skill_evolution_reason: "no systemic skill defect observed; corrections were content-scope fixes, not engine failures"

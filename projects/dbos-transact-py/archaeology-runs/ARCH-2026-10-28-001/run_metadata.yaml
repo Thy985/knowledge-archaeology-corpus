@@ -1,0 +1,22 @@
+run_id: ARCH-2026-10-28-001
+repository: https://github.com/dbos-inc/dbos-transact-py.git
+project: dbos-transact-py
+slug: dbos-transact-py
+commit: 47379ca717ec93ef7cd853ad7b43169c4e5cf530
+commit_message: "Serialize concurrent SQLite migrations (#923)"
+commit_timestamp: 2026-10-27T16:47:58+00:00
+version: 3.3.0aN (pdm SCM dynamic, main branch preview)
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-10-28
+mode: initial
+license: MIT (SDK); DBOS core closed-source
+quality_metrics:
+  ek_count: 24
+  ek_avg_edges: 2.38
+  ek_isolated: 0
+  ko_count: 8
+  ko_aggregation_coverage: 100%
+  flow_edges: 34
+  candidates: 7
+  evidence_anchors: "45+"
+validation_result: PASSED_WITH_RECONCILIATION (IVR: 10 CONFIRMED / 2 CONTRADICTED / 1 DOWNGRADED / 4 MISSING)

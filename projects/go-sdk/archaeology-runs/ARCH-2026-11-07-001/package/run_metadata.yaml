@@ -1,0 +1,51 @@
+run_id: ARCH-2026-11-07-001
+project: MCP Go SDK
+slug: go-sdk
+repository: https://github.com/modelcontextprotocol/go-sdk.git
+mode: initial
+priority: A
+skill_version: "3.2"
+skill_source: /home/user/.super_doubao/super-doubao-runtime/workspace/.user_skills/knowledge-archaeology/
+repository_state:
+  commit: df0f29525bc6c590b6b68d9aae581ec0f21ebb3e
+  branch: main
+  commit_timestamp: "2026-11-06 23:38:14 +0800"
+  commit_message: "mcp: make the ioConn frame cap independent of read boundaries (#1510)"
+  release_version: "v1.8.0 (latest release, 2026-09-14)"
+  head_note: "HEAD is post-v1.8.0; docs/mcpgodebug.md already contains a 1.9.0 section"
+  license: "MIT -> Apache-2.0 transition (docs CC-BY-4.0); GitHub API reports NOASSERTION"
+archaeologized_at: "2026-11-07T02:12:33+08:00"
+source_entry: "03_expansion_queue/candidates/[cand]mcp-2026-07-28-stateless.md (KnowlegeMap, HEAD 7076a53)"
+quality_metrics:
+  facts: 53
+  engineering_knowledge: 30
+  knowledge_objects: 8
+  candidates: 7
+  flow_edges: 27
+  ek_graph:
+    average_degree: 2.47
+    orphan_ek: 0
+    aggregation_rule_coverage: "8/8 (100%)"
+    ko_cluster_size_range: "3-6"
+  truth_audit_sample: "12/12 CONFIRMED"
+  flow_audit_sample: "10/10 CONFIRMED"
+  counterexample_attacks: 12
+  counterexample_weakened: 5
+  coverage:
+    in_scope: "mcp core (shared/streamable/server/client/protocol/transport/event/sse), auth/auth.go"
+    out_of_scope: "auth/authorization_code.go, auth/extauth/*, oauthex/*, internal/jsonrpc2/conn.go (structure-level only)"
+    note: "coverage is not claimed as full-repo; see C-05"
+validation:
+  internal: "PASS (with 5 downgrades recorded in counterexamples.md)"
+  independent: "see 06-validation/independent-validation.md"
+  contradictions_preserved: true
+  counterexamples_preserved: true
+lifecycle:
+  phases_completed: "1-6"
+  max_daily_projects: 1
+  read_only_target: true
+  corpus_write: "projects/go-sdk/"
+notes:
+  - "No Feishu delivery: user has not explicitly authorized it."
+  - "KnowlegeMap and knowledge-archaeology-skill were read-only; no modifications."
+  - "Historical corpus entries were not overwritten."
