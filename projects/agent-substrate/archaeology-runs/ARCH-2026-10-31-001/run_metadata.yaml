@@ -1,0 +1,57 @@
+# Run Metadata — ARCH-2026-10-31-001
+
+```yaml
+run_id: ARCH-2026-10-31-001
+date: 2026-10-31
+project: agent-substrate
+slug: agent-substrate
+repository: https://github.com/agent-substrate/substrate.git
+commit_sha: 542eca1e348e80001dcca48789e9433a84eeb214
+commit_message: "atenet/router: fail fast on FailedPrecondition instead of parking (#3472)"
+branch: main
+commit_time: 2026-10-30T16:53:38Z
+module: go.ate.dev/substrate
+go_version: "1.27.0 (toolchain go1.27.3)"
+license: Apache-2.0
+mode: initial
+priority: P0
+skill_version: knowledge-archaeology v3.2
+source_entry: "KnowlegeMap current_focus.md 二号锚点 + 2026-10-24 radar-fallback scan 移交记录"
+job_manifest: /home/user/.doubao/agent_mode/workspace/archaeology-jobs/ARCH-2026-10-31-001/job_manifest.md
+snapshot_artifact: /home/user/.doubao/agent_mode/workspace/archaeology-jobs/ARCH-2026-10-31-001/snapshot_artifact.md
+
+quality_metrics:
+  project_layer: 1
+  engineering_knowledge: 41
+  generalized_ko: 7
+  candidates: 5
+  ek_with_links: "41/41 (100%)"
+  isolated_ek: 0
+  avg_out_edges_per_ek: 2.3
+  aggregation_rule_coverage: "100% (7/7 KO)"
+  counterexamples: 6
+  ko_downgrades: 0
+
+validation:
+  truth_auditor: PASS
+  coverage_auditor: "PASS (3 scope gaps → C-3/C-4/C-5; .agents/skills → EK-41 已补)"
+  flow_auditor: "PASS (7 flows, key edges traceable)"
+  abstraction_auditor: "PASS (no over-generalization; all cross-project marked pending)"
+  counterexample_hunter: "PASS (CE-2/CE-6 narrowed wording; no structural breach)"
+  epistemic_auditor: "PASS (Fact/Observation/Hypothesis separated)"
+  independent_validation:
+    confirmed: 24
+    partially_confirmed: 4
+    downgraded: 0
+    over_generalized: 0
+    missing: 2
+    contradicted: 0
+    needs_human_review: 1
+  reconciliation:
+    added_ek: "EK-41 (.agents/skills AI 治理技能层，来自 IVR MISSING 发现)"
+    snapshot_corrections: ".py 口径注记（79 全部/76 非 vendor/3 vendor）"
+
+skill_improvement_proposal: false
+feishu_delivery: false  # 未获用户显式授权，默认不做
+corpus_pr: "https://github.com/Thy985/knowledge-archaeology-corpus/pull/60"
+```
