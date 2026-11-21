@@ -1,0 +1,38 @@
+project: durare
+slug: durare
+repository: https://github.com/SamuelXing/durare.git
+version: 0.5.0
+commit: 87ed2db147474b2cdb7f0a1ae9d80ccf49d74483
+commit_message: "fix(provider): commit a workflow's sends and stream writes with their checkpoint (#252)"
+commit_timestamp: 2026-11-01T19:58:26-08:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-11-04
+mode: initial
+run_id: ARCH-2026-11-04-001
+source_entry: "KnowlegeMap Runtime 第二周 Day3 雷达；GitHub API 确认 SamuelXing/durare（15★/2 forks/Rust/Apache-2.0+MIT/created 2026-06-10/pushed 2026-11-03/crates.io downloads 1031，v0.5.0）"
+
+summary: >-
+  durare（Rust / MIT OR Apache-2.0 / v0.5.0，2026-06-10 创建、2026-11-01 仍活跃修复）——
+  DBOS 兼容 durable-execution 嵌入式库：普通 async 函数每步 checkpoint 到
+  Postgres/SQLite/内存后端，崩溃/重启后从精确断点恢复，无服务器、无 sidecar，
+  与 DBOS Transact SDK（py/go/ts/java/rust）共享 dbos 系统 schema 并字节级互操作。
+  核心认知：KO-01 位置即历史（position 构造时分配、与执行顺序解耦，select! 乱序
+  复现修复）；KO-02 两层编排 + 单一 seam（workflow 决策 vs runtime 所有权，
+  新行为归层决策表）；KO-03 控制错误不是业务失败（RecoveryRequired/ObservationFailed
+  类型级隔离且不可被 body 消化）；KO-04 数据库即仲裁者（CAS/ON CONFLICT/CTE/
+  事务+行锁原子原语族，仲裁决定权在 DB 不在应用锁）；KO-05 事务步骤原子消除
+  at-least-once window（SQL 写与 checkpoint 同事务）；KO-06 跨 SDK 字节级兼容协议
+  （portable_json/golden strings/时间戳 BIGINT/serialization 列格式分发）；
+  KO-07 版本门控部署安全（app_version=可执行 sha-256，恢复/认领只归同版本）；
+  KO-08 确定性执行纪律（拒绝嵌套/spawned task 放置 = replay 安全前置）；
+  KO-09 动态 SQL 不变量外部强制（EVIL sweep）；KO-10 崩溃一致性测试方法论
+  （7 边界 × 精确 effect 计数，at-least-once window 恰好一步宽）。
+  独立审计（盲重建 execution.rs/postgres.rs/serialize.rs/context.rs/explicit-context.md/
+  crash_consistency/adversity/interop/security）22 CONFIRMED + 2 PARTIALLY_CONFIRMED
+  + 1 DOWNGRADED（KO-04"无锁"→"原子原语族含事务+行锁"，insert_child_workflow
+  FOR UPDATE 路径）+ 0 OVER_GENERALIZED + 2 MISSING（observation_error 观察者路径、
+  insert_child_workflow）+ 0 CONTRADICTED + 1 NEEDS_HUMAN_REVIEW（C-02 AdminServer
+  无认证 by design）。
+  Reconciliation 合并 3 项：KO-04 表述修正、EK-51 observation_error、EK-52
+  insert_child_workflow 事务+行锁仲裁。
+  Skill Evolution 未触发（本轮无系统性 skill 缺陷证据）。

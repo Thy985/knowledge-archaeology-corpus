@@ -1,0 +1,74 @@
+project: Graphiti
+slug: graphiti
+repository: https://github.com/getzep/graphiti.git
+license: Apache-2.0
+package_version: "0.31.2"
+language: Python
+scope: "graphiti_core + server + mcp_server + static test inspection"
+status: active
+first_archaeology: "2026-11-15"
+latest_run_id: ARCH-2026-11-15-001
+skill: knowledge-archaeology
+skill_version: "3.2"
+latest_commit: ed23196506eba8806fae6da831d73fcd2ad714d8
+latest_commit_time: "2026-11-14 09:12:37 +0000"
+latest_branch: main
+runtime_verified: false
+snapshot:
+  files_excluding_git: 424
+  python_files: 302
+  python_lines: 77773
+  test_files: 81
+  static_test_defs: 910
+  size_kb: 16389
+quality_metrics:
+  evidence_facts: 114
+  engineering_knowledge: 58
+  generalized_ko: 8
+  l3_patterns: 15
+  ek_link_declarations: 96
+  ek_with_link_pct: 100.0
+  ek_isolated: 0
+  ek_average_links_per_entry: 1.66
+  ko_aggregation_rule_coverage_pct: 100.0
+  ko_average_cluster_size: 5.88
+  flow_types: 7
+  flow_edges: 89
+  candidates_runtime: 20
+  cross_project_candidates: 5
+  needs_human_review: 7
+  s4_count: 0
+  s5_count: 0
+  tests_executed: 0
+validation:
+  self: PASS_WITH_LIMITATIONS
+  independent: PARTIALLY_CONFIRMED
+  independent_confirmed: 32
+  independent_partially_confirmed: 6
+  independent_downgraded: 1
+  independent_over_generalized: 1
+  independent_missing: 5
+  independent_contradicted: 3
+  independent_needs_human_review: 5
+  total_checked: 48
+tags:
+  - agent-memory
+  - temporal-graph
+  - knowledge-graph
+  - provenance
+  - invalidation
+  - neo4j
+  - multi-tenant
+related_projects:
+  - mem0
+  - memmachine
+  - letta-code
+  - agent-memory-guard
+  - dsh-memory-evolve
+runs:
+  - run_id: ARCH-2026-11-15-001
+    mode: initial
+    priority: A-
+    commit: ed23196506eba8806fae6da831d73fcd2ad714d8
+    package: archaeology-runs/ARCH-2026-11-15-001/
+    status: committed

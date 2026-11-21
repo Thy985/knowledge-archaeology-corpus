@@ -1,96 +1,80 @@
-# 00 · Overview · Hy-Memory 2.0
+# 00 Overview — Hy-Memory 2.0
 
-> Run `ARCH-2026-11-10-001` · `main@9737431cf8965124b115f0e26cb0ff1e5cafa323` · skill v3.2 · 2026-11-10
-> 证据上限：**S3（Implemented）**。本轮未执行任何测试或真实运行；所有"运行行为"均来自代码路径推断，标注为 Observation。
+- run_id: `ARCH-2026-11-20-001`
+- project: **Hy-Memory 2.0** (`Tencent-Hunyuan/Hy-Memory`)
+- repository: `https://github.com/Tencent-Hunyuan/Hy-Memory.git`
+- commit: `d8138b501a755f662a024f7e8eb879613eabf1d3` (`main`, 2026-11-18 23:54:43 +0800)
+- mode: `initial`
+- skill: production `knowledge-archaeology` v3.2
+- scope: `hy_memory/` + `tests/` + packaging/docs constraints; `memhub/` and `plugins/` only as boundaries
+- behavioral runs: none (no LLM/embedding endpoint); all findings are source-level
 
-## 1. 一句话定位
+## 1. Executive summary
 
-Hy-Memory 是一个**三场景、双系统**的 LLM Agent 记忆引擎：Chat 走 L0–L7 分层认知记忆，Working / Coding 走"会话事实 + 可复用经验"双层生产力记忆；Coding 额外挂一条**零 LLM 的代码版本演化链**。它把"记忆写入"从提示词工程推进到**可训练模型工件**（配套 30B-A3B MoE），并把产品层 MemHub 的职责严格限制在"管理面"。
+Hy-Memory is a **dual-system, three-scene agent memory engine**. The Python package is a real system, not a thin wrapper: 105,375 lines under `hy_memory/`, eight layers, five storage surfaces, a write-time LLM extraction/reconcile pipeline, a read-time multi-signal fusion path, and an explicit System 2 schema-induction pass.
 
-## 2. 它真正值得被记住的三件事
+The strongest engineering ideas in the repository are:
 
-### ① 写入策略成为模型工件，而不是 prompt 片段
-- 仓库内 `hy_memory/agent/{extractor,reconciler,abstractor,intention_detector}.py` 是 System 1 的 LLM 抽取 / 冲突消解链路；配套模型 `Hy-Memory-30B-A3B` 在 HF 独立发布（README 声明）。
-- 工程含义：**记忆质量的上限由"写入模型"决定**，而写入模型的训练目标（attributed RL）与检索层解耦。这使"换写入模型"成为一个可替换部件，而不是重写 prompt。
-- 证据：README §Papers（文档声明，S2）；`agent/reconciler.py` 的 ADD/SUPERSEDE/UPDATE/DELETE 指令协议（S3）。
+1. **Raw-first write with explicit disposal** — L1 is written before LLM extraction, then shadowed on success (even for “nothing to remember”) or deleted on confirmed failure. This is a deliberate WAL-like pattern.
+2. **Reconcile refuses a degraded fallback** — if the reconcile LLM fails, no new memory is stored; the caller must rerun. This trades availability for chain correctness.
+3. **Logical retirement everywhere** — `SHADOW` replaces hard deletion for raw turns, superseded versions, dedup losers and low-confidence nodes, preserving auditability and chain integrity.
+4. **Scene-specific memory models** — `working` uses one fact + experiences with bidirectional links; `coding` adds a zero-LLM diff chain and a business-store-authoritative scope.
 
-### ② 事实层与经验层分离：保底记忆 + 增值记忆
-- `.md` / `docs/scene_coding_usage.md` 与 `README` 声称：每个 session 恰好 1 条 `WorkingFact`（无阈值），0~N 条 `Experience`（需过"价值阈值"）。
-- 代码：`coding/store.py` 两张表 `working_fact` / `coding_memory_meta`，双向 id 链 `derived_experience_ids` ↔ `source_fact_ids`，`_crosslink` 取并集写回（`coding/writer.py:290-325`）。
-- 工程含义：**"做过什么"不允许丢，"学到什么"允许没有**。这解决了纯经验型记忆的一个常见故障——一次没有复用价值的任务会让整轮记忆消失。
+The strongest engineering risks are structural, not cosmetic:
 
-### ③ 版本链是"检索结果的附件"，不是第二个检索源
-- `coding/chain_store.py` 用 SQLite 存 `thread/round`，零 LLM、零 embedding；`observe()` 在每次写入后 best-effort 挂链（`client.py:3030-3045`）。
-- README 明确"a decorator, not a retriever"：向量层决定返回哪些 fact，链只把 fact 涉及代码的每一版（用户原话 + 真实 diff）附在下面。
-- 工程含义：**摘要必然丢信息，但检索不该因此变成两条互相竞争的通道**。链补的是抽取规范主动砍掉的那类信息（"给坐标不要贴代码"），且只在需要时展开。
+1. **Scope is layered in the data model but distributed in enforcement.** There is no single authorization gateway. Public search validates `user_ids`; the vector store can search unscoped; `get/update/delete` trust the UUID; graph tools apply different scope checks per operation.
+2. **There is no global memory transaction.** VDB, graph, business DB, history and pipeline trace commit independently. “Write succeeded” is a per-store claim.
+3. **Default-on audit turns deletion into relocation.** `history.db` stores full old/new text; deleting a memory writes its full text into history; `delete_all` does not purge prior audit rows; pipeline trace stores full prompts/responses.
+4. **Reconcile serialization is loop-local.** The per-user lock closes the single-process race but not the multi-process race.
+5. **Documentation drift misstates capability.** System 2 tool count is 10/9/8 in three places; two documented tools do not exist; layer prose says seven while the enum has eight; reader weights in the header differ from code.
 
-## 3. 三场景的边界（代码事实）
+## 2. Package contents
 
-| scene | 路由条件 | 写入管线 | 检索层 |
-|---|---|---|---|
-| `chat` | 显式 `scene="chat"`，或 messages 无 tool（O(1) 短路），或 judge 判 chat | `MemoryWriter`（L1 raw → 可选 LLM 抽取 → reconcile） | L2/L3/L4 VDB + L0 隐藏 + L6 graph |
-| `working` | 含 tool 且 judge 判 working；或显式 working + 含 tool | 与 coding **同一 pipeline / schema**，variant=working | productivity store |
-| `coding` | 含 tool 且 judge 判 coding；或显式 coding + 含 tool | 同 working + 版本演化链 | productivity store + chain 装饰 |
+| File | Content | Counts |
+|---|---|---|
+| `00_overview.md` | this document | — |
+| `01_project_layer.md` | architecture, abstractions, lifecycle, modules, failure semantics | 11 sections |
+| `02_engineering_knowledge.md` | full EK base with links and evidence | 65 EK |
+| `03_knowledge_layer.md` | L1→L5 ladder, L2 observations, L3 KOs, L4 candidate | 12 OB / 9 KO / 1 CM |
+| `04_flow_atlas.md` | seven flow classes with traceable edges | 143 edges |
+| `05_candidates.md` | unresolved hypotheses, claims, open questions | 16 candidates |
+| `06_validation/` | self-validation, independent blind reconstruction, reconciliation | see files |
+| `run_metadata.yaml` | run identity, metrics, validation result | — |
 
-**关键代码事实**：
-- `_normalize_scene` 只接受 `chat/working/coding`，非法抛 `ValueError`（`client.py:861-890`）。
-- `_scene_variant(None)` 返回 `working` 是**兼容 fallback**，真正 None 语义由三分类 judge 回填（`client.py:892-911`）。
-- 强制 `coding` 但无 tool → 回退 chat（`client.py:2955-2965`）。
-- judge 抛异常 → `is_coding=False`，静默走 chat（`client.py:2998-3005`）。
+## 3. Layer census and quality (pre-validation)
 
-## 4. 与已考古项目的对照（Memory 四点正交）
+| Metric | Value |
+|---|---:|
+| Engineering Knowledge entries | 65 |
+| EK links | ≥ 2 per entry; 65 entries, all linked |
+| Flow Atlas edges | 143 |
+| L2 observations | 12 |
+| L3 KOs | 9 |
+| L4 candidate models | 1 |
+| L5 principles | 0 |
+| Candidates | 16 |
+| Evidence-bearing files read | `client.py`, `config.py`, `models/memory.py`, `pipelines/{base,registry,writer,reader_base,system2_writer,system2_agent,system2_tools}.py`, `agent/reconciler.py`, `agent/tools/basic_profile.py`, `coding/{store,chain_store}.py`, `core/embed_service.py`, `data/{vector_store_qdrant,graph_store_kuzu,history_store,cache_sqlite}.py`, `utils/{source_filter,pipeline_observability}.py`, `reembed.py`, `tests/`, `README.md`, `pyproject.toml` |
 
-| 项目 | 写入策略 | 记忆形态 | 版本/演化 | 治理 |
-|---|---|---|---|---|
-| `mem0` | 单遍 ADD-only / 抽取 | 扁平事实 + 向量 | 弱 | 项目级 |
-| `graphiti` | 时序知识图谱 | 实体-关系-时间 | 强（时序边） | ABAC / 保留 / 审计 |
-| `letta` | Agent 自编辑 | Core/Recall/Archival 三级 | DB undo/redo | executor read_only |
-| **Hy-Memory** | **专训 30B 写入模型 + reconcile 协议** | **L0–L7 + 双层生产力 + diff 链** | **supersede 链 + 代码版本链** | **来源授权 + 用户/工作区隔离** |
+Quality positioning: this is a **broad-base, narrow-top** package. Most entries are L1/L2 facts; only nine KOs are elevated, and one L4 is explicitly marked as a candidate. No L5 principle is claimed because only one project was studied.
 
-**新增对照维度**：写入模型可替换性；"事实保底 / 经验增值"双层；版本链作为检索附件；跨应用共享（MemHub）。
+## 4. Key findings (short form)
 
-## 5. 口径警示（必须与 Fact 层隔离）
+- **Write path**: L1 provisional → extraction → reconcile → persist → shadow raw. Reconcile failure stores nothing; rollback ambiguity returns 409.
+- **Read path**: default search is zero-LLM; agentic search adds classification/rewrite; `scene=all` uses RRF; normal scoring is additive, not RRF.
+- **Scope**: three-level `user::agent::session` key, but enforcement is per entry point. `get/update/delete` are ID-only.
+- **Storage**: Chroma/Qdrant + Kuzu/Neo4j + SQLite/Postgres business + SQLite history + SQLite trace; no global transaction.
+- **System 2**: one LLM JSON call, explicit evolve, graph mutation tools with uneven scope checks.
+- **Privacy**: history and pipeline trace default on with full text; delete re-records content; no engine purge API found.
+- **Tests**: 40-test subset passed; full non-integration run inconclusive due to file-descriptor exhaustion; Neo4j isolation suite excluded by default.
 
-README / 候选卡声明的厂商指标：
-- LoCoMo 72.6%（1,527 道非 adversarial 题，开源框架第一）
-- MemoryArena 55.31（+10.2 pt）
-- CodeMemoryBench 64.2 / 35.6；SWE-ContextBench 28.3；存储占用 6.06%
-- 腾讯自选股：多跳召回 50→90、冲突消解 67→83
+## 5. Explicit limitations
 
-**这些均未在本仓库代码中复现，且题目子集 / 裁判模型与 Mem0 的 92.5 不可横比。** 本轮只把它们记为"文档声明"，不进入 Engineering Knowledge 的因果结论。
+- No live model or embedding endpoint, so extraction quality, reconcile accuracy, injection resistance and benchmark scores are not measured.
+- `memhub/` (592 Python sidecar files / 706 TS/TSX files) was not read module by module; desktop-side privacy or purge behavior may exist outside this scope.
+- The clone is shallow (50 commits); history-dependent claims (when a bug was introduced/fixed) are not made.
+- README’s self-reported benchmark figures were not traced to paper tables; they are excluded from EK/KO evidence.
+- The target repository’s tracked tree was not modified, but pytest created ignored caches which were later removed. This is recorded as a process-hygiene violation in EK-63, not hidden.
 
-## 6. 本轮覆盖与未覆盖
+## 6. Validation status
 
-**已覆盖**：
-- SDK 门面与 scene 路由、Chat 写入/读取主链路、reconcile 版本化、System 2 入口语义
-- Working/Coding 双层结构与 crosslink、版本链三条 patch 来源与隔离键
-- MemHub 管理面边界、来源授权、user/workspace 隔离、本地 API 防护
-- 测试与 CI 配置、依赖与后端矩阵
-
-**未覆盖**（显式声明）：
-- `memhub/apps/desktop`、`memhub/apps/web` 的前端实现；`memhub/packages/*` 全量（568 py / 182k 行，产品层，与"记忆引擎"相关性低）
-- `pipelines/system2_agent.py`（2,476 行）的 schema 归纳算法细节
-- `pipelines/reader_base.py` 的全部 rerank / 图扩展分支
-- 40+ `chore/*` build 分支
-- 任何运行时行为（无测试执行、无真实调用）
-
-## 7. 质量自评
-
-| 项 | 值 |
-|---|---|
-| Facts（证据条目） | 36 |
-| Engineering Knowledge | 29 |
-| EK 边 | 58 |
-| 平均出边 | 2.00 |
-| 游离 EK | 0 |
-| KO | 7（L3×5、L2×1、L4×1） |
-| L5 | 0（不强行升维） |
-| Candidates | 7 |
-| Flow Edge | 47 |
-| 精读代码 | ~1,150 行 / 322,396 行 ≈ 0.36%（聚焦主链路；未做全量通读） |
-| 证据上限 | S3 |
-| Independent Validation | CONFIRMED 6 / PARTIALLY 2 / MISSING 2（见 `06-validation/independent-validation.md`） |
-
-> 本节数字为 **Reconciliation 后的最终口径**（见 `06-validation/reconciliation.md`），与 02/04 文件一致。
-
-> 本轮是**主链路抽样考古**，不是全仓库覆盖。Coverage 的自评上限为"Memory 引擎主干 + MemHub 治理面"，不代表 `memhub` 产品层已被理解。
+Self-validation and independent blind reconstruction are recorded under `06_validation/`. The independent auditor rebuilt findings from the repository, then compared. Verdict totals and the reconciliation changes are in `06_validation/reconciliation.md` and `run_metadata.yaml`. No claim in this package should be treated as validated until that section is read.

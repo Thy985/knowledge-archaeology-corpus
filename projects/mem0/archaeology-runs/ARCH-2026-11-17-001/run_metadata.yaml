@@ -1,0 +1,113 @@
+run_id: ARCH-2026-11-17-001
+mode: refresh
+project: mem0
+slug: mem0
+repository: https://github.com/mem0ai/mem0.git
+branch: main
+commit: f1791daa86d469249c9b002f62644d58a1eb96a0
+commit_timestamp: 2026-11-06T22:23:06+05:30
+commit_message: "fix(security): upgrade @azure/msal-node to 7.x via @azure/identity 4.14.1 (CVE-2026-109461) (#7850)"
+version: "2.2.1"
+tag: v2.2.1
+tag_commit: 94c3fe9f238f3dbf29c9ce98643bd71eb13077cd
+previous_run: ARCH-2026-09-21-001
+previous_commit: a39a802bbc93e85b820078cd3c4dbaf53af25dbe
+previous_version: "2.1.0"
+skill: knowledge-archaeology
+skill_version: "3.2"
+priority: A
+source_entry:
+  - 03_expansion_queue/candidates/[cand]agent-memory-2026.md
+  - 05_scan_logs/2026-11/2026-11-17_radar-watch_scan.md
+  - projects/mem0/metadata.yaml
+started_at: 2026-11-17T00:00:00+08:00
+completed_at: 2026-11-18T23:59:00+08:00
+timestamp: 2026-11-18T23:59:00+08:00
+timezone: Asia/Shanghai
+
+repository_scale:
+  tracked_files: 1844
+  python_files: 421
+  python_loc: 126148
+  ts_files: 457
+  tsx_files: 136
+  ts_tsx_loc: 107858
+  markdown_md: 138
+  markdown_mdx: 267
+  py_test_files: 132
+  ts_test_files: 174
+  working_tree_mb: 64
+
+delta:
+  compare_base: a39a802bbc93e85b820078cd3c4dbaf53af25dbe
+  compare_head: f1791daa86d469249c9b002f62644d58a1eb96a0
+  commits: 40
+  files: 269
+  additions: 9390
+  deletions: 3708
+  vector_store_files_changed: 22
+  server_app_code_changed: false
+
+quality_metrics:
+  ek_count: 55
+  ek_links: 157
+  ek_average_out_degree: 2.85
+  ek_isolated: 0
+  ko_count: 10
+  ko_l3: 8
+  ko_l4_candidate: 2
+  ko_l5: 0
+  ko_aggregation_coverage: 1.0
+  ko_reverse_trace_coverage: 1.0
+  flow_edges: 83
+  flow_classes: 7
+  candidates: 15
+  cross_project_candidates: 5
+  human_review_items: 5
+  counterexamples: 20
+  facts_and_observations: 55
+
+tests:
+  executed:
+    - command: "pytest tests/test_client_entity_guards.py"
+      result: "66 passed"
+    - command: "pytest tests/test_client_profiles.py tests/memory/test_main.py -k 'identity or metadata or profile or entity'"
+      result: "49 passed, 27 deselected"
+    - command: "pytest tests/vector_stores/test_qdrant.py -k 'update_missing or update_existing or lock or local'"
+      result: "8 passed, 98 deselected"
+    - command: "pytest tests/test_server_auth.py"
+      result: "56 failed, 18 passed (JWT_SECRET set; no Postgres); not green"
+  not_executed:
+    - "full pytest suite"
+    - "all TypeScript tests (mem0-ts/node_modules absent)"
+    - "live HTTP server"
+    - "live Qdrant/Pinecone"
+    - "live LLM/embedder"
+
+validation:
+  self: PASS_WITH_LIMITATIONS
+  independent:
+    result: PARTIALLY_CONFIRMED
+    confirmed: 24
+    partially_confirmed: 3
+    downgraded: 1
+    over_generalized: 0
+    contradicted: 1
+    missing: 3
+    needs_human_review: 0
+  reconciliation:
+    result: ACCEPTED_WITH_LIMITATIONS
+    contradictions_resolved: 1
+    downgrades_applied: 1
+    omissions_added: 1
+    metrics_removed: 1
+
+artifacts:
+  overview: 00_overview.md
+  project_layer: 01_project_layer.md
+  engineering_knowledge: 02_engineering_knowledge.md
+  knowledge_layer: 03_knowledge_layer.md
+  flow_atlas: 04_flow_atlas.md
+  candidates: 05_candidates.md
+  validation_dir: 06_validation/
+  refresh_delta: refresh-delta.md

@@ -1,0 +1,89 @@
+project: PoEM
+project_full_name: Proof-of-Execution Memory
+slug: poem
+repository: https://github.com/bithabib/ai_security.git
+version: null
+version_note: "No pyproject.toml, requirements.txt, tag, or release version; commit is the only version anchor."
+commit: 4021642395daad997786cfbbd04b64924e8a46bd
+commit_message: "Checkpoint: baseline defenses, multi-model results, and injection paper"
+commit_timestamp: 2026-08-28T23:30:36+09:00
+branch: main
+license: MIT
+skill: knowledge-archaeology
+skill_version: "3.2"
+archaeologized_at: 2026-11-19
+mode: initial
+run_id: ARCH-2026-11-19-001
+source_entry: "KnowlegeMap 05_scan_logs/2026-11/2026-11-19_radar-watch_scan.md + 08_agent_centric/domains/agent-memory.md:85 + 06_expansion_index/README.md:459"
+scope:
+  include:
+    - farma_repro/
+    - poem-paper/ (design intent only)
+  exclude:
+    - injection_lab/
+    - injection-paper/
+
+summary: >-
+  PoEM (Proof-of-Execution Memory) is a FARMA-reproduction research artifact plus an IEEE Access
+  paper draft. Its core claim is that a memory-based agent should not treat a natural-language claim
+  ("the step was already done") as authority; it should require an event in a separate, HMAC-chained
+  execution ledger. The harness implements ReasoningMemory (unsigned/free text) and ExecutionLedger
+  (HMAC-SHA256 chain over action|subject|step|prev), and a decision gate that vetoes one configured
+  unsafe action when the safety step is absent from the ledger. Six defenses are compared across
+  three scenarios and two attack families. The repository contains no unified test suite and no
+  packaging metadata; verification is research scripts plus JSON/Markdown result tables.
+
+quality_metrics:
+  tracked_files: 253
+  python_files: 49
+  python_lines: 4712
+  harness_python_lines: 2767
+  engineering_knowledge: 49
+  ek_graph:
+    link_declarations: 156
+    avg_edges_per_ek: 3.18
+    free_floating_ek: 0
+    dangling_links: 0
+    edge_types_covered: "mechanism / subsystem / causal / dependency / constraint / contrast (6/6)"
+    aggregation_coverage: "10/10 (100%)"
+  ko: 10
+  ko_layers: "9 L3 + 1 L2 observation; 0 L4; 0 L5"
+  ko_aggregation: "R1 x3 (KO-04,KO-05,KO-06) / R2 x2 (KO-07,KO-08) / R3 x3 (KO-01,KO-02,KO-03) / R4 x2 (KO-09,KO-10)"
+  flow_edges: 49
+  flow_classes: "7/7 (Control 9, State 7, Data 8, Evidence 7, Authority 7, Memory 6, Policy 5)"
+  candidates: 14
+  counterexamples: 10
+  validation:
+    independent_kos: "7 CONFIRMED / 2 DOWNGRADED / 1 NEEDS_HUMAN_REVIEW"
+    independent_ek_sample: "11 CONFIRMED / 1 PARTIALLY_CONFIRMED"
+    verdict: ACCEPTED WITH LIMITATIONS
+
+key_findings:
+  - "Two physically separate stores: ReasoningMemory holds claims; ExecutionLedger holds HMAC-chained execution events. PoEM's gate reads the ledger, not the memory."
+  - "The gate is narrow: it checks only the configured unsafe action against one safety_step+subject. Out-of-scope actions pass through (policy_test Part B reproduces export_to_partner escaping a narrow gate set)."
+  - "Proof identity is (action, subject) only. NaivePoEM accepts any event with the safety_step, so cross-subject replay defeats it; PoEM's subject+chain check blocks that path (attack_poem.py, mock)."
+  - "HMAC chain proves byte order under a key, not write authority. The default key b'trusted-runtime-key' lets anyone who reads the source mint a valid chain; record() and clear() are public; duplicate/out-of-order events still verify (EK-49)."
+  - "Chain verification is O(N): measured 18.3 us at N=10, 1.74 ms at N=1,000, 173.8 ms at N=100,000. The paper's microsecond wording holds only at small N."
+  - "Sentinel is a lexical score; the LangChain port strips EXTERNAL provenance and hardcodes AGENT, so ported SENTINEL is not equivalent to the harness version (EK-47)."
+  - "Experimental claims are S3 author-recorded: GPT-4o/4o-mini adaptive ASR 94-100%, Llama-3.1-8B 40-56%, PoEM 0%. No live model was rerun here; no Ollama/OpenAI key was available."
+  - "No unified test suite or packaging; mock numbers are explicitly a plumbing demonstration, not scientific results. Real-model reproduction remains open."
+
+key_controversies:
+  - "KO-02 and KO-05 were initially promoted to L4 candidates; Independent Validation downgraded both to L3 because the evidence is one prototype plus deployment inference / conceptual comparison."
+  - "KO-09 (model-capability-vs-ASR) is an L2 Observation needing human review; the result files are author-produced and the mock harness cannot test the claim."
+  - "Trial pairing: clean and poisoned trials are separate stochastic runs paired by index, which can bias ASR (EK-46)."
+  - "attack.py defines 3+7 variants, but experiment.py imports scenarios.py variants only; the published matrix must be attributed to scenarios.py (EK-45)."
+  - "safe-step accounting records that the safe action was selected, not that the real tool succeeded; the paper's threat model and harness abstraction leave this open."
+
+skill_improvement_proposal: false
+skill_improvement_note: "No systemic skill defect was confirmed. Stale package counts and two over-promoted L4 labels were caught by Independent Validation and corrected in reconciliation; these are artifact-level issues, not engine-level failures."
+
+paths:
+  overview: 00_overview.md
+  project_layer: 01_project-layer/project_layer.md
+  engineering_knowledge: 02_engineering-knowledge/ek_graph.md
+  knowledge_layer: 03_knowledge-layer/knowledge_layer.md
+  flow_atlas: 04_flow-atlas/flow_atlas.md
+  candidates: 05_candidates/candidates.md
+  validation: 06_validation/
+  run: archaeology-runs/ARCH-2026-11-19-001/
