@@ -1,0 +1,54 @@
+project: MemMachine
+slug: memmachine
+repository: https://github.com/MemMachine/MemMachine.git
+branch: main
+commit_sha: 377510d436dc81c3651502f2d5e36ff245650ce7
+commit_time: "2026-11-02T11:35:15-08:00"
+license: Apache-2.0
+stars: 3087
+mode: initial
+priority: A-
+status: completed
+run_id: ARCH-2026-11-14-001
+skill: knowledge-archaeology
+skill_version: "3.2"
+archaeology_date: 2026-11-14
+organization: Agent Memory / Ground-truth-preserving Memory
+paper: "arXiv 2604.04853 (candidate-card metadata; not verified in repo)"
+summary: >
+  一个多存储、多后端的 agent memory server：原始 Episode 是权威，declarative/event
+  是两套可重建索引；写入是 1~3 路条件并行且无补偿；检索的上下文单位在两个 backend
+  不等价；身份是命名空间而非信任边界。核心认知是“权威原文 + 可重建索引 + 失败只让记忆变少”。
+layer_counts:
+  evidence: 92
+  ek: 52
+  ko: 8
+  candidates: 12
+  flow_edges: 72
+quality:
+  evidence_s3: 90
+  evidence_s2: 2
+  evidence_s4: 0
+  evidence_s5: 0
+  ek_avg_out_degree: 2.79
+  ek_isolated_ratio: 0.0
+  ek_missing_targets: 0
+  ko_aggregation_rule_coverage: 1.0
+  ko_counterexamples: 24
+  ko_avg_cluster_size: 6.5
+validation:
+  self: CONDITIONAL_PASS
+  independent: PASS_WITH_CORRECTIONS
+  findings_checked: 18
+  confirmed: 13
+  partially_confirmed: 3
+  downgraded: 1
+  over_generalized: 2
+  contradicted: 1
+  missing: 5
+  needs_human_review: 2
+  key_correction: "C-06 citation orphan contradicted by PG FK ON DELETE CASCADE"
+notes:
+  - "所有证据来自静态代码/测试阅读，未执行测试或服务；S4/S5 = 0。"
+  - "8 个 KO 全部为 L3 candidate / Observation，不是 Validated Pattern。"
+  - "README 拓扑与代码多后端不一致，保留为 NEEDS_HUMAN_REVIEW。"

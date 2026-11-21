@@ -1,0 +1,100 @@
+run_id: ARCH-2026-11-15-001
+job_id: ARCH-2026-11-15-001
+project: Graphiti
+repository: https://github.com/getzep/graphiti.git
+slug: graphiti
+mode: initial
+priority: A-
+skill: knowledge-archaeology
+skill_version: "3.2"
+branch: main
+commit: ed23196506eba8806fae6da831d73fcd2ad714d8
+commit_time: "2026-11-14 09:12:37 +0000"
+license: Apache-2.0
+package_version: "0.31.2"
+timestamp_utc: "2026-11-14T18:20:12Z"
+timestamp_local: "2026-11-15 02:20:12 +0800"
+runtime_verified: false
+
+repository_stats:
+  files_excluding_git: 424
+  python_files: 302
+  python_lines: 77773
+  test_files: 81
+  static_test_defs: 910
+  size_kb: 16389
+
+quality_metrics:
+  evidence_facts: 114
+  engineering_knowledge: 58
+  generalized_ko: 8
+  l3_patterns: 15
+  ek_links_declared: 96
+  ek_with_link_pct: 100.0
+  ek_isolated: 0
+  ek_average_out_degree: 1.66
+  ko_aggregation_rule_coverage_pct: 100.0
+  ko_average_cluster_size: 5.88
+  false_aggregation: 0
+  flow_types: 7
+  flow_edges: 89
+  candidates_runtime: 20
+  cross_project_candidates: 5
+  needs_human_review: 7
+  s4_count: 0
+  s5_count: 0
+  tests_executed: 0
+
+validation:
+  self_validation: PASS_WITH_LIMITATIONS
+  independent_validation: PARTIALLY_CONFIRMED
+  independent_truth_confirmed: 32
+  independent_partially_confirmed: 6
+  independent_downgraded: 1
+  independent_over_generalized: 1
+  independent_missing: 5
+  independent_contradicted: 3
+  independent_needs_human_review: 5
+  truth_sample: 20
+  truth_confirmed: 8
+  truth_corrected: 11
+  truth_confirmed_false: 1
+  abstraction_downgrades: 4
+  abstraction_reframes: 2
+  l5_principles_promoted: 0
+  counterexample_targets: 8
+  counterexample_found: 8
+
+scope:
+  included:
+    - graphiti_core
+    - server
+    - mcp_server
+    - tests (static inspection only)
+  excluded:
+    - zep hosted service
+    - deployment gateways
+    - client integrations
+    - git history before ed23196
+
+hard_constraints:
+  target_repo_read_only: true
+  knowledgemap_read_only: true
+  production_skill_read_only: true
+  max_deep_projects_per_day: 1
+  overwrite_existing_corpus: false
+  feishu_delivery: false
+
+artifacts:
+  - job_manifest.md
+  - snapshot_artifact.md
+  - package/00_overview.md
+  - package/01_project_layer.md
+  - package/02_engineering_knowledge.md
+  - package/03_knowledge_layer.md
+  - package/04_flow_atlas.md
+  - package/05_candidates.md
+  - package/06_validation/self-validation.md
+  - package/06_validation/coverage-gaps.md
+  - package/06_validation/independent-validation.md
+  - package/06_validation/reconciliation.md

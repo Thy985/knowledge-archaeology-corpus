@@ -1,0 +1,46 @@
+run_id: ARCH-2026-10-15-001
+project: RAMPART
+slug: rampart
+repository: https://github.com/microsoft/RAMPART.git
+commit: 2c9067dff437deaa6562ec3979416ddda04f5a28
+commit_message: "[FEAT]: Add RAMPART onboarding skill (#195)"
+commit_author: Nina Chikanov
+commit_timestamp: 2026-10-13T14:35:56-07:00
+branch: main
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-10-15T00:00:00+08:00
+mode: initial
+priority: S
+source_entry: "[cand]rampart-clarity-2026.md @ KnowlegeMap 03_expansion_queue/candidates/"
+
+quality_metrics:
+  facts: 45
+  engineering_knowledge:
+    count: 35
+    with_links: 35
+    free_ek: 0
+  ko:
+    count: 8
+    with_aggregation_rule: 8
+    cluster_size_range: [3, 6]
+  candidates: 9
+  flow_edges: 28
+  coverage_modules: 38_of_132_direct_read
+  evidence_strength:
+    S3_implemented: true
+    S4_test_validated: true
+    S8_cross_project: false
+
+validation:
+  result: PASS_WITH_REVIEW_ITEMS
+  confirmed: 22
+  partially_confirmed: 6
+  over_generalized: 1
+  missing: 1
+  contradicted: 0
+  needs_human_review: 2
+  blind_reconstruction: true
+  counterexamples: "8/8 KO attacked"
+
+corpus_status: PENDING_COMMIT   # 阶段⑥写入 projects/rampart/
+skill_evolution_proposal: false

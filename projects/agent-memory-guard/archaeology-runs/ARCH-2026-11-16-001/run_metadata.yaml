@@ -1,0 +1,96 @@
+run_id: ARCH-2026-11-16-001
+project: OWASP Agent Memory Guard
+slug: agent-memory-guard
+repository: https://github.com/OWASP/www-project-agent-memory-guard.git
+commit: b63f76eece80d84387b6056919bd94816c60bd89
+branch: main
+version: "0.4.0"
+mode: refresh
+priority: "A-"
+skill: knowledge-archaeology
+skill_version: "3.2"
+timestamp: "2026-11-16T02:34:06+08:00"
+previous_run:
+  run_id: ARCH-2026-10-07-001
+  commit: 84030912a8c1b96e42ada98d6ba2f4d4a7d345b1
+  version: "0.3.3"
+change_scope:
+  ahead_by: 115
+  behind_by: 0
+  files_changed: 300
+  additions: 420
+  deletions: 56
+quality_metrics:
+  evidence_assertions: 119
+  fact_bullets: 15
+  engineering_knowledge: 55
+  ek_links: 166
+  avg_links_per_ek: 3.02
+  edge_types:
+    causal: 36
+    constraint: 23
+    subsystem: 8
+    mechanism: 21
+    dependency: 26
+    contrast: 52
+  free_floating_ek: 0
+  knowledge_objects: 10
+  flow_edges: 49
+  flow_distribution:
+    control: 8
+    state: 7
+    data: 8
+    evidence: 7
+    authority: 7
+    memory: 6
+    policy: 6
+  candidates: 19
+  cross_project_candidates: 5
+  human_review: 6
+  tests:
+    passed: 504
+    skipped: 2
+    xfailed: 10
+    duration_seconds: 14.81
+    python: "3.12"
+    pytest: "9.0.2"
+validation:
+  self: PASS_WITH_LIMITATIONS
+  independent:
+    confirmed: 26
+    partially_confirmed: 5
+    downgraded: 0
+    over_generalized: 0
+    contradicted: 4
+    missing: 5
+    needs_human_review: 0
+    total: 40
+  contradictions_documented: 4
+  contradictions_resolved: 4
+  benchmark_case: BC-01
+  benchmark_result: FAIL_COVERAGE
+  benchmark_reason: missing_0.3.3_to_0.4.0_ko_delta
+deliverables:
+  package: archaeology-jobs/ARCH-2026-11-16-001/package
+  validation:
+    - 06_validation/self-validation.md
+    - 06_validation/independent-validation.md
+    - 06_validation/reconciliation.md
+    - 06_validation/coverage-gaps.md
+  corpus_target: projects/agent-memory-guard/archaeology-runs/ARCH-2026-11-16-001
+  corpus_index: projects/agent-memory-guard/REFRESH-2026-11-16.md
+boundaries:
+  target_repository_modified: false
+  knowlegemap_modified: false
+  production_skill_modified: false
+  feishu_written: false
+  overwrite_existing_corpus_run: false
+  deep_projects_this_day: 1
+skill_evolution:
+  candidate_pr: false
+  proposals:
+    - id: P2-01
+      priority: P2
+      type: Refresh Continuity
+      proposal: force refresh-delta.md with old_ko_id / old_claim / new_status / superseded_by / evidence_change
+      status: recorded_not_implemented

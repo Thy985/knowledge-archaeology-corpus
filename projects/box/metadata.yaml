@@ -1,0 +1,18 @@
+project: box
+slug: box
+repository: https://github.com/strands-agents/box.git
+latest_run: ARCH-2026-10-20-001
+mode: initial
+version: developer-preview（2026-10-07 AWS Open Source Blog 发布）
+commit: 069c39cfd29f830aaadd2a1af362753a57c7b202
+skill_version: knowledge-archaeology v3.2
+status: COMPLETED
+runs:
+  - ARCH-2026-10-20-001
+connections:
+  - dogwood              # 策略语言本体（corpus 09-08）——同生态"语言+宿主"双考古
+  - mxc                  # 同域对照（corpus 10-19；Friday 验证计划 MXC×Box 双对照）
+  - deepseek-harness     # sandbox/approval seam（应用层 vs OS 层）
+  - agent-governance-toolkit  # 服务端无状态策略引擎 vs 本地 PDP
+  - rampart              # 终局证据分离（服务端治理范式对照）
+  - tafcm / teammind / silver-shield / campus_order  # 用户项目连接

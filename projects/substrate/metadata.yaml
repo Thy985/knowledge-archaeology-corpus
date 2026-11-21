@@ -1,0 +1,33 @@
+project: agent-substrate-substrate
+slug: substrate
+repository: https://github.com/agent-substrate/substrate.git
+version: 0.6.0
+commit: 59a58a5fb2c0e7958722ac4c4bc609fe7f16ddf8
+commit_message: "manifests: Run control plane containers as non-root (#3028)"
+commit_timestamp: 2026-10-25T15:26:43Z
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-10-26
+mode: initial
+run_id: ARCH-2026-10-26-001
+source_entry: "KnowlegeMap current_focus Runtime 周二号锚点（10-22 Google Agent Compute Engine+Agent Substrate 发布，10-24 fallback scan 标记 S 级对象移交，开源满足 validated 门槛）；GitHub API 确认 agent-substrate/substrate（5785★/627 forks/Go/Apache-2.0/created 2026-05-13/pushed 2026-10-25）"
+
+summary: >-
+  Agent Substrate（Go 1.27 / Apache-2.0 / K8s-native / v0.6.0，2026-10-22）——零信任 agent 沙箱运行时：
+  把海量有状态 actor 映射到少量热 worker，空闲整机快照、请求到来恢复，换取密度与亚秒激活；
+  安全模型 "Every agent has an identity, but no credentials, no open network, and no way out of the sandbox"。
+  核心认知：KO-S01 快照-恢复三件套（分级快照 VOLUMES/ROOTFS/MEMORY × 幂等 checkpoint
+  .checkpoint-done.json × 本地/远端双持久化 locality+durableSnapshot PENDING/COMPLETED）；
+  KO-S02 零信任四支柱（必沙箱 gVisor/CH-microVM × 零环境凭据水合 × 默认拒绝网络 fail-closed
+  egress × 组件 mTLS 1h SPIFFE）；KO-S03 身份代行可区分（actoridjwt 双 Kind：actor 自身 vs
+  worker-for-actor 组件代行）；KO-S04 请求停车（parking lot 1024 + budget 5s + 可重试码转 503
+  为内部重试）；KO-S05 凭据外注（注入后丢弃，与 dapr-agents/MXC/Strands Box 三仓收敛假说）；
+  KO-S06 恢复一致性（幂等完成标记 × torn-file 防护 × revert 保 durable 单调不回退）；KO-S07
+  低意见运行时（atelet/worker 互不透明 + 生命周期与物理 Pod 解耦）。
+  独立审计（盲重建 ingress.go/config.go/checkpoint_test.go/tunnel.go/dnshandler/credentials.go）
+  11 CONFIRMED + 2 PARTIALLY_CONFIRMED + 1 CONTRADICTED（legacy plaintext pod-IP:80 路径——
+  upstream-connect=false 时可达，主考古补正）+ 0 DOWNGRADED + 1 OVER_GENERALIZED（C-S05 自查保持）
+  + 4 MISSING + 1 NEEDS_HUMAN_REVIEW（security.md Met 声明群）。
+  Reconciliation 合并 5 项：Flow Edge C3b legacy 路径、router 侧端口 8443/8444、EK-S10 证据升级
+  [doc]→[code]+[doc]、EgressPolicy actor 级作用域、run_metadata 判定统计。
+  架构文档显式声明 "aspirational, and is not yet implemented!" + security.md Met/In-Progress/Future
+  状态表 = 愿望/实现分离制度化（AI 时代代码库治理模型）。Skill Evolution 未触发。

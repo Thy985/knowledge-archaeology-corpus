@@ -1,0 +1,29 @@
+run_id: ARCH-2026-10-24-001
+project: mxc
+repository: https://github.com/microsoft/mxc.git
+commit: ffecec04357747d6649714f473436dfb77111be8
+branch: main
+version: 1.0.1
+skill_version: knowledge-archaeology v3.2
+mode: initial
+priority: P0
+timestamp: 2026-10-24 02:40:00+08:00
+quality_metrics:
+  ek_count: 20
+  ek_links_coverage: 1.0
+  ek_avg_out_edges: 1.9
+  ek_dangling: 0
+  ko_count: 6
+  ko_aggregation_coverage: 1.0
+  candidates_count: 7
+  flow_count: 7
+  evidence_references: 60
+validation_result:
+  status: auditor_done
+  contradicted: 0
+  needs_human_review: 0
+  auditor_verdict: 11 CONFIRMED / 1 PARTIALLY / 0 CONTRADICTED
+  benchmark_cases:
+  - BC-MXC-1: closed JSON unknown-field 拒绝（config_parser.rs 测试可复跑）
+  - BC-MXC-2: deny wins over allow（network_rules.rs 单测可复跑）
+  - BC-MXC-3: IsolationSession 缺 network 必须拒绝（tests/policy/sdk-v1/invalid 金标准）

@@ -1,0 +1,46 @@
+run_id: ARCH-2026-11-04-001
+repository:
+  name: durare
+  url: https://github.com/SamuelXing/durare
+  commit: 87ed2db147474b2cdb7f0a1ae9d80ccf49d74483
+  branch: main
+  tag: v0.5.0
+  commit_time: 2026-11-01T19:58:26-08:00
+skill_version: knowledge-archaeology v3.2
+archaeology_date: 2026-11-04
+mode: initial
+selected_reason: >
+  DBOS-compatible Rust durable-execution SDK。①与已考古 dbos-transact-py 构成同生态跨语言对照；
+  ②与官方 dbos-transact-rust 存在显式 context vs task-local 的设计对照（contrast 边）；
+  ③62k 行完整工程；④11-01 仍活跃修复（#252）。
+quality_metrics:
+  ek_count: 52
+  ek_with_links: 52
+  ek_avg_out_edges: 2.15
+  ko_count: 10
+  ko_aggregation_rule_coverage: 1.0
+  ko_avg_cluster_size: 5.0
+  candidates: 6
+  flow_types: 7
+  counterexample_attacks: 14
+  counterexample_hits_corrected: 3
+  counterexample_partial_downgraded: 2
+  blind_rebuild_findings: 9
+  confirmed: 22
+  partially_confirmed: 2
+  downgraded: 1
+  missing: 2
+  contradicted: 0
+  needs_human_review: 1
+  evidence_cap: S4
+  evidence_note: >
+    静态考古，无 Docker/运行时环境；S4 均指"测试代码存在且断言如此"，未经本环境运行。
+validation:
+  blind_reconstruction: done  # 阶段⑤独立 Auditor 盲重建完成，判定统计见 validation report
+  contradictions_resolved: 2
+  counterexamples_kept: 2
+  epistemic_self_check: pass
+corpus_connection:
+  same_ecosystem: dbos-transact-py（main 已含）
+  contrast_target: dbos-transact-rust（官方，upstream commit 7937413 对照）
+  open_prs: [58, 59, 60, 61, 62, 63]  # 等待合入，勿重放
