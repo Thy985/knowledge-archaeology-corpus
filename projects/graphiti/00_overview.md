@@ -1,48 +1,89 @@
-# 00 Overview · Graphiti
+# 00 · Overview — Graphiti Archaeology
 
-## 定位
-Zep 开源的**时序上下文图框架**（`graphiti-core 0.31.2`）：LLM 从 episode 抽取实体与事实，写入带时间窗的知识图，以混合检索返回"当前/历史为真"的事实。它**不提供**认证、授权、隔离与托管治理——这些属于 Zep 托管产品。
+- run_id: `ARCH-2026-11-15-001`
+- project: **Graphiti** (`getzep/graphiti`)
+- commit: `ed23196506eba8806fae6da831d73fcd2ad714d8` (`main`, 2026-11-14)
+- version: `graphiti-core 0.31.2`
+- license: `Apache-2.0`
+- skill: `knowledge-archaeology v3.2`
+- mode: `initial`
+- date: 2026-11-15
 
-## 本次考古规模
-| 项 | 值 |
+## 1. Central Question
+
+> **Graphiti 如何用“双时间事实图”保证记忆的权威性、可追溯性与作用域？为此付出了什么代价？**
+
+拆成四个可证伪的子问题：
+1. “双时间”到底由哪些字段、哪些写入路径、哪些时间锚构成？
+2. 旧事实被新事实取代时，系统是删除、覆盖，还是保留并标记？谁来判定“矛盾”？
+3. 检索是否默认只返回当前有效事实？如果不是，无效事实会以什么形式进入 LLM 上下文？
+4. `group_id` 是不是安全边界？reference server 的信任模型是什么？
+
+## 2. Answer in One Page
+
+Graphiti 的核心不是一个向量库，而是**一个带证据边和时间有效区间的事实图**：
+
+- 每个事实边（`EntityEdge`）同时携带 `created_at`（入库时间）、`valid_at`（事实在现实世界开始为真的时间）、`invalid_at`（事实在现实世界不再为真的时间）、`expired_at`（系统记录该事实被取代的时间）。这不是通常意义上的“双时间”两列，而是**四条时间轴**：知识时间、事件开始、事件结束、记录失效。
+- 新事实进入时，LLM 先判断它是旧事实的重复、矛盾还是无关；若判为矛盾，代码再把旧边的 `invalid_at` 设为新边的 `valid_at`，把旧边的 `expired_at` 设为当前时间。**旧边不删除**，所以历史仍可审计，但默认检索仍可能返回它。
+- 因此 Graphiti 的“权威性”不是数据库约束保证的，而是三层协作：**LLM 的语义判断 + 时间窗口算术 + 调用方对上下文的解释**。任何一层缺失，旧事实都可能继续作为“当前事实”出现。
+- `group_id` 是分区键，且在非默认数据库时会触发 driver/database 路由；但**这种路由只覆盖 `add_episode` 与 `add_episode_bulk`**。`add_triplet`、`remove_episode`、`get_nodes_and_edges_by_episode` 与默认 `search` 仍使用默认 driver；跨库部署下可能读空、写错库、删错库。它更不是认证或授权——reference REST/MCP server 明确声明无认证、无授权、无调用方隔离、无 prompt-injection 防护。
+- **证据锚有一个可复现的破口**：`add_triplet` 不传 episode 时会构造一个未持久化的 synthetic `EpisodicNode`，并把它的 UUID 追加到 `edge.episodes`。字段看起来有溯源，实际指向不存在的 episode（悬空 UUID），比空列表更危险。
+- 持久化层存在明确的**驱动差异**：Neo4j 的 `transaction()` 有真实 commit/rollback；FalkorDB、Kuzu、Neptune 的 `execute_write` 只是立即执行函数，没有原子事务。所谓“主图原子写”只在 Neo4j 上成立。
+- MCP server 的“立即返回”依赖一个**进程内 `asyncio.Queue`**：同 `group_id` 顺序执行，但队列不持久化、失败只记日志、进程重启即丢。图是持久的，接收确认不是。
+
+一句话结论：
+
+> **Graphiti 把“事实何时为真”与“系统何时知道/何时废弃”拆开保存，用软失效保留审计轨迹；但它把“哪条事实现在为真”的最终裁决权，留给了 LLM 判断、检索调用方和外部认证层。它的请求级隔离与证据锚都是“局部实现”，不是系统级保证。**
+
+## 3. What This Project Teaches (preview)
+
+| 认知层 | 预览 |
 |---|---|
-| Run ID | `ARCH-2026-11-08-001` |
-| Commit | `747b480ec6b12ecb718f1e2bc588b20ee36ea9c2` |
-| Branch / 版本 | `main` / `graphiti-core 0.31.2` |
-| 仓库规模（排除 `.git`） | 386 文件 / 300 `.py` / 76,764 py 行 / test_*.py 81 个 |
-| License | Apache-2.0 |
-| 采集时间 | 2026-11-06 04:49:50 +0000 |
+| L3 Pattern | 事实图应把“有效性”做成可查询的时间区间，而不是布尔删除位。 |
+| L3 Pattern | 语义矛盾判断与时间簿记应分离：LLM 提议矛盾，确定性代码执行失效算术。 |
+| L3 Pattern | 接收确认的持久性必须与图写入的持久性对齐；否则“已接收”只是进程内承诺。 |
+| L4 Model | **保留（retention）与有效（validity）是两条独立轴**；可审计系统必须同时表达两者。 |
+| L4 Model | **命名空间不是安全边界**；隔离需要独立的执行权威，而不是一个分区键。 |
+| L5 Methodology | 设计记忆系统时，先定义“事实失效”的语义与时序，再决定检索默认过滤与审计保留策略。 |
 
-## 产物索引
-| 层 | 文件 | 内容 |
-|---|---|---|
-| Project Layer | `01_project_layer/architecture.md` | 三层结构、核心抽象、与 Mem0 对照 |
-| | `01_project_layer/lifecycle.md` | add_episode 七阶段、bulk、删除、社区、saga |
-| | `01_project_layer/data_model.md` | 节点/边字段、双时间、分区 |
-| | `01_project_layer/config_and_testing.md` | 依赖、配置、测试三条非显然事实、15 workflow |
-| | `01_project_layer/governance.md` | 文档权威链、SECURITY 声明、权限模型 |
-| Engineering Knowledge | `02_engineering_knowledge/evidence-index.md` | E-01 ~ E-53 |
-| | `02_engineering_knowledge/ek-01-08-core-mechanisms.md` | 管线/溯源/双时间/失效/作用域/分区/去重/预算 |
-| | `02_engineering_knowledge/ek-09-17-implementation.md` | 签名/矛盾/时间戳/saga/摘要/检索/BFS/分块/降级 |
-| | `02_engineering_knowledge/ek-18-25-decisions.md` | BYO DB/Namespace/LLMRuntime/并发/参考实现/202/删除/社区 |
-| | `02_engineering_knowledge/ek-26-33-failures-boundaries.md` | 开源边界/负向清单/信任/无鉴权/测试门/后端 gotcha/弃用/回归族 |
-| | `02_engineering_knowledge/ek-graph.md` | 33 节点 95 边、平均出度 2.88、0 孤立 |
-| Knowledge Layer | `03_knowledge_layer/ko-01-04.md` | 4 个 KO（时间事实/渐进管线/分层裁决/请求级隔离） |
-| | `03_knowledge_layer/ko-05-08.md` | 4 个 KO（分区双语义/开源边界/信任边界/能力矩阵） |
-| | `03_knowledge_layer/ko-aggregation-matrix.md` | R1-R4 矩阵与覆盖表 |
-| Flow Atlas | `04_flow_atlas/flow-atlas.md` | 七类流 54 条 Edge + Flow→KO 校验 |
-| Candidates | `05_candidates/candidates.md` | CAND-01 ~ 07（全部 Hypothesis） |
-| Validation | `06_validation/self-validation.md` | 六维自评 + 质量指标 + 已知缺口 |
-| | `validation/independent_validation.md` | 独立 Auditor 盲重建（阶段⑤） |
-| Metadata | `run_metadata.yaml` | run 元信息 |
+## 4. Package Index
 
-## 三条最值得记住的结论
+| File | Content |
+|---|---|
+| `00_overview.md` | 本文件：问题、结论、认知预览 |
+| `01_project_layer.md` | 项目地图：架构、模块、生命周期、数据结构、配置、依赖、测试 |
+| `02_engineering_knowledge.md` | Evidence Index（EV-001..EV-114）+ EK-01..EK-57（含 EK-41b，共 58 条）+ EK Graph |
+| `03_knowledge_layer.md` | KO-01..KO-08，逐条 L1→L5 + 聚合规则 + 反例 |
+| `04_flow_atlas.md` | 七类流（Control/State/Data/Evidence/Authority/Memory/Policy），**89 条 Edge** |
+| `05_candidates.md` | 未验证假说 C-01..C-20、跨项目候选 XP-01..XP-05、需人工复核 HR-01..HR-07 |
+| `06_validation/self-validation.md` | 自验证：Truth/Coverage/Flow/Abstraction/Counterexample/Epistemic |
+| `06_validation/independent-validation.md` | 独立 Auditor 盲重建：48 项判定、3 成功、3 错误、5 遗漏、Benchmark case |
+| `06_validation/coverage-gaps.md` | 覆盖缺口与最小复现建议 |
+| `06_validation/reconciliation.md` | 独立验证修正如何合并进 Package |
+| `run_metadata.yaml` | 运行元数据与质量指标 |
 
-1. **记忆 = 带时间窗与来源的断言**（不是状态快照）。Graphiti 用 `valid_at/invalid_at` + `episodes[]` 把"内容/时间/来源"绑定在同一条边上。
-2. **去重与抽取的成本纪律：确定性优先、LLM 兜底**。identity → cosine(0.6, top15) → 仅未决集进 LLM；能力缺失时降级而非报错。
-3. **信任边界只到 `group_id`**。官方明示"同 group 内所有 episode 同等信任"，新内容可失效旧事实；记忆投毒不是 bug，是信任模型的设计结果——防线必须在写入准入，而非检索过滤。
+## 5. Validation Summary（阶段⑤/⑥后）
 
-## 使用本 Package 时的边界声明
-- 全部结论基于**代码/文档阅读**（S3），**零运行验证**（环境无 Neo4j/FalkorDB/Docker/API key）。
-- 8 个 KO 均标 `cross-project validation pending`，不得直接当通用原则引用。
-- 反例预算未达标（8/24），见 `06_validation/self-validation.md` §5。
+| Dimension | Result |
+|---|---|
+| Self-validation | PASS WITH LIMITATIONS |
+| Independent validation | PARTIALLY_CONFIRMED（32 confirmed / 6 partial / 1 downgraded / 1 over-generalized / 5 missing / 3 contradicted） |
+| Core correction 1 | `add_triplet` 的 `episodes` 是悬空 UUID，不是空列表 |
+| Core correction 2 | 请求级 driver 只覆盖两个 ingestion API，不是所有公开 API |
+| Core correction 3 | `remove_episode` / `get_nodes_and_edges_by_episode` / 默认 `search` 未做 group→database 路由 |
+| Runtime evidence | S4=0, S5=0 |
+
+
+## 5. Epistemic Declaration
+
+- **Fact**：直接来自 `ed23196` 的代码、配置、文档或本轮静态计数。
+- **Observation**：由多条 Fact 组合出的行为描述，未运行验证。
+- **Hypothesis**：代码路径暗示但未运行验证的结论，全部进入 `05_candidates.md`。
+- **Pattern / Model / Principle**：跨出本项目解释范围的抽象，均在 `03_knowledge_layer.md` 标注 `Cross-project validation pending`，不冒充 Law。
+- **未执行**：未启动服务、未连接图数据库、未调用 LLM、未运行测试。因此本 Package 的 S4/S5 证据数为 **0**。
+
+## 6. Source Boundary
+
+- 只读仓库快照：`/home/user/.doubao/agent_mode/workspace/archaeology-jobs/ARCH-2026-11-15-001/repo`
+- 所有代码引用均指向该快照的 `ed23196`。
+- 未使用 README 宣传语作为实现事实；README 只在需要区分“reference server”与“生产部署”时作为设计意图证据。

@@ -1,0 +1,59 @@
+run_id: ARCH-2026-11-02-001
+repository: https://github.com/temporalio/temporal.git
+branch: main
+commit: e0233ff6658fcab7b4e7ecc1c16af40baf629b78
+commit_timestamp: "2026-10-31T18:08:29Z"
+skill_version: knowledge-archaeology v3.2
+archaeology_date: "2026-11-02"
+evidence_mode: static-source-shallow-clone
+evidence_max_strength: S4  # 测试揭示行为；无 Docker，未运行验证，不升 S5
+go_version: "1.27.3"
+repo_scale:
+  total_go_lines: 1124761
+  generated_lines_api_proto: 101047
+  business_lines: 1023714
+  services: {history: 265806, matching: 52830, worker: 49069, frontend: 39997}
+  chasm_lines: 102658
+deliverables:
+  package:
+    - package/00_overview.md
+    - package/01_project_layer.md
+    - package/02_engineering_knowledge.md
+    - package/03_knowledge_layer.md
+    - package/04_flow_atlas.md
+    - package/05_candidates.md
+    - package/06_validation.md
+  manifest: ../job_manifest.md
+  snapshot: ../snapshot_artifact.md
+quality_metrics:
+  ek_count: 40
+  ek_avg_out_edges: 2.1
+  ek_orphan_ratio: 0.0
+  ko_count: 9
+  ko_aggregation: {R1: 3, R2: 2, R3: 2, R4: 2}
+  flow_edges: 38
+  flow_flows: 7
+  candidates: 6
+  truth_blind_reconstruction: "8/8 consistent"
+  flow_spot_check: "7/7 traceable"
+  counterexample_coverage: "9/9 KO attacked"
+  ivr_verdicts:
+    CONFIRMED: 5
+    PARTIALLY_CONFIRMED: 2
+    DOWNGRADED: 0
+    OVER_GENERALIZED: 0
+    CONTRADICTED: 0
+    MISSING_critical: 0
+validation_result:
+  status: PASSED_WITH_NOTE  # 2 KO 加限定语保留，无降级/矛盾
+  notes:
+    - "KO-01 解释范围收窄为 Replay-based 一族（Chasm 反例）"
+    - "KO-05 加非全局代际限定（nsreplication 独立）"
+    - "archival/matching 细节标注 D 级未深挖"
+known_gaps:
+  - "无运行验证（无 Docker 环境，S4 上限）"
+  - "SDK 仓库（sdk-go/java/ts/python）未考古"
+  - "完整 git 历史未考古（shallow clone）"
+  - "archival/matching 服务细节为 D 级"
+selection_reason: "durable execution 品类鼻祖（Replay-based），与 Restate（journal）/agent-substrate（挂起恢复）构成三大执行模型对照；Chasm 新引擎（10.2万行）高 Novelty；2026-10 活跃（1.32.1 发布 + llm-info agent 页）；TeamMind（Java 多 Agent）有 Java SDK 直接相关性"
+source_entry: "KnowlegeMap 07_radar_watch/current_focus.md (Runtime 领域) + 08_agent_centric/domains/agent-runtime.md durable-execution 候选卡"

@@ -1,31 +1,47 @@
-# Restate 知识考古总览 — ARCH-2026-10-27-001
+# Restate — Project Archaeology Overview（ARCH-2026-11-01-001）
 
-> 仓库：restatedev/restate（commit `db4b02e`，v1.8.2-dev，BUSL-1.1，Rust 35.3 万行）· run_id：ARCH-2026-10-27-001 · skill v3.2 · mode=initial
+## 一句话认知
 
-## 一句话定位
-**分布式 durable execution 运行时**（Rust 实现）：把"有状态服务/虚拟对象/工作流/AI Agent"的执行拆成可持久化的 journal 原语，让任意基础设施故障下应用无需自写恢复逻辑即可恢复。与 Agent Substrate（整机快照-恢复）构成"恢复"两种哲学的另一半——**步骤持久化（journal）+ 崩溃后重放**。
+**Restate 是"步骤持久化派"durable execution 的独立运行时侧代表**：把每次 handler 执行切成 journal 条目（journal_v2），每步写持久化存储（Bifrost 日志 + RocksDB 表），崩溃/重启后从最后完成的 entry 恢复——与上轮考古的 agent-substrate（挂起恢复派）构成同一问题的两条技术路线对照。
 
-## 六条认知主线
-1. **Journal 即真相**：一切副作用（call/sleep/state/promise/signal）都写成 journal Command（20 种）+ Completion（结果回填）；已完成的 entry 重放时跳过（`is_resumable`）——执行确定性由 journal 次序保证，而非代码重跑
-2. **分区-处理器权威模型**：数据按 PartitionKey 分片；每个分区有唯一 leader processor（epoch 标记），从 bifrost 日志 `last_applied_lsn` 起重放——权威可迁移（leadership 移交），状态不丢
-3. **虚拟对象串行化（vqueues）**：Virtual Object = 按 key 串行的队列 + LockTable；同一 key 的并发请求排队，Scheduler 公平调度（RefillMode）——对象语义 = 单线程执行幻觉
-4. **日志段抽象（bifrost）**：Loglet Provider 可换（local RocksDB / replicated sequencer+log server / memory）——单机到集群的持久化后端解耦；append 返回 Lsn 即持久化确认点
-5. **重试与背压分层**：invoker 内 AttemptState（New/InFlight/WaitingRetry）+ RetryPolicy（OnMaxAttempts=Pause|Kill）；分区级 RuleBook 限流（UpsertRuleBook 走日志跨副本一致）；LimitKey 层次化并发控制
-6. **BUSL-1.1 开放核心**：源码可用但"Public Restate Platform Service"（第三方注册自身服务经管理面调用）被禁止；4 年后转 Apache-2.0——商业护城河在托管层
+## 项目定位（README 事实）
+- "Restate is the simplest way to build resilient applications."
+- 定位 "the Durable Runtime for your Agents and Backends"（KnowlegeMap candidate 记录，cross-check README：Durable AI Agents、Workflows-as-Code、Microservice Orchestration、Event Processing、Async Tasks、Stateful Actors/state machines）
+- SDK：TypeScript / Java+Kotlin / Python / Go / Rust
+- 采用证据：Replit 全量采用（"Restate now handles all durable orchestration at Replit"，来自 KnowlegeMap candidate，非本 repo 内断言——标 External/Observation）
 
-## 关键数字
-- 1242 个 .rs 文件 / 35.3 万行；196 个含 #[test] 文件；44 crates
-- 核心 crate：worker 33944 行 / partition-store 22068 / bifrost 19342 / core 16091 / vqueues 11195
-- partition-store 13 表族目录（invocation_status/journal(v2)/state/promise/outbox/timer/vqueue/lock/dedup/fsm/durable_lsn/snapshots…）
-- 20 种 journal Command + 11 个 Completion struct（NotificationType 另含 Signal）
-- GitHub：4609★/228 forks/created 2023-01/pushed 2026-10-26；v1.8.0(10-14)/v1.8.1(10-21)/v1.7.14(10-22)
+## 考古范围与方式
+| 项 | 值 |
+|---|---|
+| run_id | ARCH-2026-11-01-001 |
+| repository | https://github.com/restatedev/restate.git |
+| commit | `c30b4bced95c1934d12628f6438872a1bffb1c26`（main，2026-10-31 00:27:58 +0100） |
+| 版本 | 1.8.2-dev（Cargo.toml） |
+| 规模 | 1271 .rs / 367,514 行 / 20 .proto / 43 crates / 25MB |
+| 模式 | initial（首次考古） |
+| 方法 | 本地生产版 knowledge-archaeology v3.2（多角色只读考古）；无 Docker → 静态考古（不编译不跑集成测试） |
+| 参照 | 上轮 agent-substrate（ARCH-2026-10-31-001）——挂起恢复派 vs 步骤持久化派对照 |
 
-## Corpus 跨项目连接
-- **dapr-agents（10-25）**：Dapr DurableAgent 步骤持久化 vs Restate journal——同属"步骤持久化"恢复范式；Dapr 走 actor+state store 双存储，Restate 走单一日志+派生状态表
-- **agent-substrate（10-26）**：整机快照 vs journal 重放——"恢复"两种哲学直接对照（周五 7-way 横向素材）
-- **Vercel durable-harness / Notion Gen-6（10-25 记录）**：durable agent 品类主流化；Restate 是独立运行时侧代表
-- **TeamMind（Java）**：Restate 提供 Java/Kotlin SDK——TeamMind durable state/恢复方案选型直接候选（KnowlegeMap 10-27 显式连接）
+## 核心发现速览（详见各层）
+1. **Journal 持久化是主机制**：每步执行写 journal_v2 条目（20 种 Command），崩溃后从最后完成 entry 恢复（`crates/worker/src/partition/state_machine/mod.rs:4968 append_journal_entry`）。
+2. **幂等是显式状态机**：`handle_duplicated_requests` 按 InvocationStatus 分派——Free→新调用、in-flight→append response sink、Completed→回放响应；workflow 忽略幂等 key 返回 `WORKFLOW_ALREADY_INVOKED_INVOCATION_ERROR`（mod.rs:1076）。
+3. **挂起/恢复**：OnSuspendCommand 先尝试用已有 notifications resolve `awaiting_on`（UnresolvedFuture 树），能解析直接 Resume；否则写 SuspendedEvent + 转 Suspended 状态 + 挂起 vqueue entry（suspend.rs）。
+4. **Bifrost 分布式日志**："Restate's durable interconnect system"——loglet 抽象保证 append 返回 offset 即 durable committed；LogChainWriter seal/extend 日志链（bifrost.rs:50 ErrorRecoveryStrategy）。
+5. **VQueue（keyed 调度）**：Sha256(partition_key||ty||scope||limit_key||exclusive?1:0||service||key) 生成 VQueueId，exclusive handler 独立队列天然无锁串行；DRR 调度器（util.rs:102）。
+6. **元数据版本化**：MetadataStore put/delete 带 Precondition（None/DoesNotExist/MatchesVersion）防并发覆盖（metadata.rs:55）。
+7. **治理证据驱动**：AGENTS.md/CLAUDE.md 强制 evidence-based + cite file:line + `cargo nextest run`；CI 18 workflows；存储迁移机制（migrations/ + features/ 双轨）。
+8. **License 修正**：实际为 **BSL 1.1**（4 年后转 Apache 2.0），非 snapshot 初记的纯 Apache-2.0。
 
-## 审计声明
-- license 为 **BUSL-1.1 非 OSI 许可**（snapshot 已标注）——使用/部署须过 Additional Use Grant 条款
-- 本考古以代码为准（journal_v2/processor/partition-store/bifrost/vqueues 均有文件:行锚）；docs/dev 为开发指南非产品文档，未作为实现事实
+## 三层知识架构配比
+| 层 | 数量 | 文件 |
+|---|---|---|
+| Project Layer | 1 地图 | 01_project-layer/ |
+| Engineering Knowledge（EK Graph） | 44 条（全部带 links） | 02_engineering-knowledge/ |
+| Generalized KO | 9 个（全部带 aggregation_rule） | 03_knowledge-layer/ |
+| Flow Atlas | 7 类流 | 04_flow-atlas/ |
+| Candidates | 6 条（跨项目假说/暂定模式） | 05_candidates/ |
+| Validation & Evidence | 6 审计 + 反例 + 质量指标 | 06_validation/ |
+
+## 认知状态声明
+- 本 Package 区分 **Fact（S3 已实现 / S4 测试验证）** 与 **Observation（从代码推断）** 与 **Hypothesis（Candidates）**；跨项目结论一律标 `Cross-project validation pending`。
+- 未编译/未运行集成测试（无 Docker），凡"运行时行为"类断言全部标 Observation/S4- 以下，不冒充 S5 运行时验证。

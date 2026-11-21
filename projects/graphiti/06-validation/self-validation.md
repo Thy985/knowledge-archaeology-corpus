@@ -1,105 +1,125 @@
-# Validation（考古方自评）
+# 06.1 · Self-Validation — Six Dimensions
 
-> 本文件是**生产方的自我检查**，不等于独立验证。独立 Auditor 的盲重建结果见 `independent_validation.md`（阶段⑤）。两者冲突时以独立验证为准，并在 Reconciliation 中显式记录。
+> 这是 **Synthesizer 自检**，不是 Independent Auditor 的盲重建。它不能替代阶段⑤。
 
-## 1. Truth（真实性）
+## A. Truth Audit（抽样）
 
-| 检查项 | 方法 | 结果 |
+抽样 20 条关键断言，逐条回到 `ed23196` 复核。
+
+| # | Claim | Verdict | Note |
+|---|---|---|---|
+| 1 | 主写入在一个 `execute_write` 内 | CONFIRMED | `graphiti.py:1037`; `bulk_utils.py:128` |
+| 2 | “原子写”对所有驱动成立 | **CORRECTED** | 仅 Neo4j 有真实事务；FalkorDB/Kuzu/Neptune 直接执行 |
+| 3 | 默认检索过滤 `invalid_at` | **CORRECTED** | `SearchFilters` 默认 None；不过滤 |
+| 4 | `add_triplet` 绕过去重/失效 | **CORRECTED** | 绕过抽取，但仍走 `resolve_extracted_edge` |
+| 5 | 删除 episode 会恢复旧事实 | **CORRECTED** | 无恢复路径 |
+| 6 | `store_raw=False` 清空 `source_description` | **CORRECTED** | 只清空 `content` |
+| 7 | `group_id` 是认证边界 | **CORRECTED** | 只是分区/路由键 |
+| 8 | `created_at` 是事实发生时间 | **CORRECTED** | `created_at` 是入库时间；`valid_at` 才是事实时间 |
+| 9 | 双时间 = 两个时间字段 | **CORRECTED** | 实际四条轴：`created_at`/`valid_at`/`invalid_at`/`expired_at` |
+| 10 | 同一 `valid_at` 会有一方失效 | **CORRECTED (logic)** | 两个跳过条件均成立，无失效 |
+| 11 | 上下文包含 edge/episode UUID | **CORRECTED** | 只含 fact + dates + source_description/content |
+| 12 | MCP 队列持久化 | **CORRECTED** | `asyncio.Queue` 进程内 |
+| 13 | 前序窗口是 3 条 | **CORRECTED** | `add_episode` 用 `RELEVANT_SCHEMA_LEN=10`；`EPISODE_WINDOW_LEN=3` 是另一默认 |
+| 14 | `max_coroutines` 是全局并发上限 | **CORRECTED** | 每个 `semaphore_gather` 调用点各建一个 Semaphore |
+| 15 | 社区重建是原子的 | CONFIRMED FALSE | 先删后建，无事务 |
+| 16 | bulk 两阶段可能留下孤儿 episode | CONFIRMED (static) | phase-1 先写 episodes |
+| 17 | 重复边复用 UUID 并追加 provenance | CONFIRMED | `edge_operations.py:930-1030` |
+| 18 | `remove_episode` 删除仅由该 episode 提及的节点 | CONFIRMED | `episode_count == 1` |
+| 19 | 时间失效是软失效，不删边 | CONFIRMED | 只写 `invalid_at`/`expired_at` |
+| 20 | reference server 无认证/无授权 | CONFIRMED | 代码无中间件 + `SECURITY.md` |
+
+**Truth summary**：20 sampled claims → 8 confirmed, 11 corrected, 1 confirmed-false. No unresolvable claim.
+
+## B. Coverage Audit（子系统覆盖）
+
+| Subsystem | Covered? | Main EK/KO | Gap |
+|---|---|---|---|
+| Facade / lifecycle | 是 | EK-17/19/24/50; KO-01/05/06 | 未跑运行时 |
+| Node/edge extraction | 是 | EK-13/14/15 | prompt 细节未逐条审计 |
+| Temporal invalidation | 是 | EK-01–12; KO-01/02 | 未做时间相等/时区实验 |
+| Search | 是 | EK-36–41; KO-03 | 未跑 top-k 排序 |
+| Drivers/persistence | 是 | EK-18/19; KO-06 | 未跑非 Neo4j 后端 |
+| REST server | 是 | EK-45–48; KO-04 | 未跑认证绕过实验 |
+| MCP server | 是 | EK-24–27; KO-05 | 未跑重启实验 |
+| Communities | 是 | EK-22; C-08 | 未跑失败注入 |
+| Saga | 是 | EK-21/50 | 未跑多 episode 链 |
+| Tests | 是 | EK-52/53/56 | **未执行** |
+| Migrations | 部分 | — | 快照仅含 `__init__.py`，无迁移内容 |
+| Zep hosted service | 否 | — | 仓库外，不在范围 |
+| UI / clients | 否 | — | 仓库无 UI |
+| Full git history / ADR | 否 | — | 浅克隆，无法做历史决策考古 |
+
+**Coverage gaps to carry into Independent Validation**
+1. 无运行时验证（S4/S5=0）。
+2. 无跨驱动一致性验证。
+3. 无 MCP 进程重启/故障注入。
+4. 无 top-k 失效事实实验。
+5. 无并发同 group 写入实验。
+6. 无历史 commit/ADR 考古（浅克隆）。
+
+## C. Flow Audit
+
+抽样 12 条 flow edges 回读：
+- F-C-12 / F-D-08：`add_nodes_and_edges_bulk` 确实 `execute_write`，但原子性按驱动修正（CONFIRMED with correction）。
+- F-S-09 / F-S-10：两个分支均存在；一个是旧边失效，一个是新边被回填为历史（CONFIRMED）。
+- F-S-11：同 `valid_at` 无失效（logic CONFIRMED, runtime unverified）。
+- F-E-05 / F-E-06：context 无 UUID（CONFIRMED）。
+- F-A-04 / F-A-06：无认证中间件（CONFIRMED）。
+- F-M-01 / F-M-02：10 条 + `valid_at <= reference_time`（CONFIRMED）。
+- F-P-03 / F-P-04：prompt 约束存在（CONFIRMED）。
+- F-C-18：`build_communities` 先删后建（CONFIRMED）。
+- F-S-16：队列 `task_done` 与 log-only failure（CONFIRMED）。
+
+**Flow coverage**：7/7 flow types present; 88 edges; all edges list symbol/file/condition/EV.
+
+## D. Abstraction Audit
+
+| Candidate abstraction | Initial level | Verdict | Reason |
+|---|---|---|---|
+| “Graphiti 保证当前事实” | L4 | **DOWNGRADED to L3/L2** | 默认检索不过滤；保证不成立 |
+| “group_id 提供租户隔离” | L4 | **DOWNGRADED to L2 boundary** | 无认证/授权 |
+| “Graphiti 是双时间” | L3 | **REFRAMED** | 四时间轴；双时间只是其中一对 |
+| “LLM 决定事实真伪” | L4 | **DOWNGRADED to L3** | LLM 只提名，代码执行 |
+| “事务抽象保证原子” | L4 | **DOWNGRADED to storage-specific L2** | 驱动差异 |
+| “软失效 = 可审计” | L4 | **REFINED** | 可审计仅在源内容保留且调用方读 audit 视图时成立 |
+
+**No L5 Principle was promoted.** All L4 models are `Cross-project validation pending`.
+
+## E. Counterexample Hunt（至少 3 个/每个 L3+）
+
+| Target | Counterexample | Result |
 |---|---|---|
-| 每条 EK 至少有 1 条 E 编号 | 脚本/人工核对 | 33/33 ✅ |
-| 每条 E 有 file:line | 人工核对 | 53/53 ✅（行号为区间，精确点在行号处，未逐行 diff） |
-| 关键数值（15 / 0.6 / 4） | 直接读常量定义 | ✅ `node_operations.py:67-68`、`content_chunking.py:36` |
-| 版本号 0.31.2 | `pyproject.toml` + GitHub release | ✅ 两处一致 |
-| 未把 spec 当实现 | 检查 E-43/E-44 标注 | ✅ 已标 S2/设计 |
+| P-01 Temporal intervals | 同一 `valid_at` 的互斥事实都不失效 | 区间模型不能打破平局 → 需 tie-break（C-01） |
+| P-03 Model proposes/code disposes | 模型漏判矛盾 → 旧事实仍当前 | 提名权是单点故障（C-12） |
+| P-05 Read-time projection | 默认读是 audit，top-k 可含失效事实 | 读模式默认值决定正确性（C-02） |
+| P-06 Partition ≠ auth | 部署方加网关认证 | 结论仍成立，但风险依赖部署（F-A-12） |
+| P-07 Durable outbox | 直接 `await add_episode` 无异步队列 | 结论限定于 MCP 路径 |
+| P-08 Capability matrix | Neo4j 上确实原子 | 结论按后端限定 |
+| P-09 Evidence anchor | `add_triplet` 传入真实 episode | 证据链可成立；结论需“强制或显式标记” |
+| P-10 Request scope | 默认 DB 路径复用共享 driver | 无写入时不构成竞态；结论限定于可变状态 |
 
-**已知弱点**：部分 EK 的结论依赖"注释即事实"（如 `graphiti.py:1311` 对 #1676 的描述）。代码注释是**作者陈述**，不是运行证据——已在 Truth 维度降级为"注释级证据"。
+**Counterexample budget**: 8 targets, 8 counterexamples, 0 “no counterexample” claims. No target claims universal law.
 
-## 2. Coverage（覆盖面）
+## F. Epistemic Audit
 
-| 覆盖 | 状态 |
+| Check | Result |
 |---|---|
-| `graphiti_core/graphiti.py` | 完整读关键方法 |
-| `nodes.py` / `edges.py` | 数据结构与方法签名 |
-| `utils/maintenance/node_operations.py` | 去重主路径 |
-| `utils/maintenance/edge_operations.py` | 签名/失效/时间 |
-| `search/search.py` / `search_config_recipes.py` | 检索分派与配方 |
-| `driver/driver.py` | ABC |
-| `decorators.py` | 多 group 路由 |
-| `llm_client/llm_runtime.py` + spec | 已覆盖 |
-| `mcp_server.py` / `server/routers` | 端点与工具清单 |
-| `SECURITY.md` / `README.md` / `AGENTS.md` | 已覆盖 |
+| Fact vs Observation separated | 是；EK 表有 Epistemic 列 |
+| Hypothesis kept out of KO | 是；15 条进 `05_candidates.md` |
+| Cross-project candidate not written as Principle | 是；5 条均标 `Cross-project Candidate` |
+| S4/S5 count | **0 / 0** |
+| “Validated” usage | 未使用；仅 `Fact`/`Observation`/`Hypothesis` |
+| Law/Principle usage | 未使用 |
+| Confidence inflation | 自查发现 11 处，均已在 Truth Audit 修正 |
 
-| 未覆盖 | 影响 |
-|---|---|
-| `llm_client/` 其余 ~4,300 行（各 provider client） | Provider 差异未评估 |
-| `prompts/` 3,038 行（extract_nodes 710 / extract_edges 等） | 抽取质量取决于 prompt，但未逐条评估 |
-| `search/search_utils.py` 2,075 行 | 排序细节未验证 |
-| `utils/bulk_utils.py` | bulk 路径未深读 |
-| `examples/` | 未评估 |
-| `server/tests`、`mcp_server/tests` | 未读 |
+## G. Self-Validation Verdict
 
-→ **Coverage 判定：核心机制覆盖，外围实现未覆盖。** 任何"Graphiti 的 prompt 设计如何"的结论都不应基于本轮。
+- **Truth**: 抽样 20，0 unresolvable，11 corrections applied.
+- **Coverage**: 10/12 subsystems covered; 2 out of scope; 6 runtime gaps.
+- **Flow**: 7/7 types, 88 edges, 12 sampled.
+- **Abstraction**: 0 L5 promoted; 4 downgrades; 2 reframes.
+- **Counterexample**: 8/8 targets attacked.
+- **Epistemic**: S4=0, S5=0, 0 Principle, 15 hypotheses isolated.
 
-## 3. Flow（流真实性）
-
-| 检查 | 结果 |
-|---|---|
-| 54 条 Flow Edge 均有 file 证据 | ✅ |
-| 七类流齐全 | ✅（Control 12 / State 7 / Data 9 / Evidence 6 / Authority 7 / Memory 6 / Policy 7） |
-| 关键 Edge 可回溯 symbol/condition | ✅ |
-| **是否运行验证** | ❌ 未运行（无 Neo4j/FalkorDB、无 Docker、无 API key） |
-
-→ Flow 是**代码阅读级**证据（S3），不是运行级（S5）。所有"实际会怎样"的表述必须标注为推断。
-
-## 4. Abstraction（抽象晋升）
-
-| 检查 | 结果 |
-|---|---|
-| 是否每条 EK 都被迫升维 | ❌ 否，7 条 EK 保留 L2（见矩阵） |
-| KO 是否都有 aggregation_rule | ✅ 8/8 |
-| 是否有 L5 方法论 | ❌ 未产出（8 个 KO 最高到 L4/Principle，且标 cross-project pending） |
-| 是否把单项目证据写成普遍定律 | ✅ 全部标注 pending |
-
-**自评**：KO-04/KO-06/KO-07 标为 `Principle` 存在**过度晋升风险**——它们只有 Graphiti 单项目证据，虽有多处回归/文档互证，但未跨项目。独立审计应重点攻击这三条。
-
-## 5. Counterexample（反例预算）
-
-| KO | 反例数 | 是否满足 v3 要求（L3+ ≥3） |
-|---|---:|---|
-| KO-01 | 1（Mem0 ADD-only） | ❌ 差 2 |
-| KO-02 | 1（bulk 合并阶段） | ❌ 差 2 |
-| KO-03 | 1（别名多→全落 LLM） | ❌ 差 2 |
-| KO-04 | 1（单租户 CLI） | ❌ 差 2 |
-| KO-05 | 1（单后端部署） | ❌ 差 2 |
-| KO-06 | 1（README 与代码一致的项目） | ❌ 差 2 |
-| KO-07 | 1（单用户助理） | ❌ 差 2 |
-| KO-08 | 1（单后端库） | ❌ 差 2 |
-
-**这是本轮最明确的质量缺口**：反例预算未达标（8/24）。处理方式：**不伪造反例凑数**；在独立验证阶段要求 Counterexample Hunter 对 KO-04/KO-06/KO-07 重点攻击，未补足者降级为 `Pattern`。
-
-## 6. Epistemic（认知状态诚实性）
-
-| 检查 | 结果 |
-|---|---|
-| Fact / Observation / Hypothesis / Pattern / Principle 是否混用 | ✅ 分层：EK=L1/L2 事实与知识；KO=L3/L4；Candidates=Hypothesis |
-| Candidates 是否被写成 KO | ✅ 未混入 |
-| 未运行的内容是否标推断 | ✅ 已标 |
-
-## 质量指标汇总
-
-| 指标 | 值 |
-|---|---|
-| Evidence / Facts | **53** |
-| Engineering Knowledge | **33** |
-| EK 边 / 平均出度 / 孤立率 / 连通分量 | 95 / 2.88 / 0% / 1 |
-| Generalized KO | **8** |
-| Candidates | **7** |
-| Flow Edges（七类） | **54** |
-| 代码行覆盖 | 76,764 行中精读约 9,000 行（核心路径），约 11.7% |
-| 运行验证 | **0**（环境无 DB/容器/key） |
-
-## 结论
-
-- ✅ 可交付：Project Layer、Engineering Knowledge、Flow Atlas、Candidates。
-- ⚠️ 需独立验证：8 个 KO 的抽象层级（尤其 KO-04/06/07）、反例预算、注释级证据。
-- ❌ 不可声称：任何"运行行为"结论、任何跨项目 Principle。
+**Status**: `PASS WITH LIMITATIONS` — not `ALL GREEN`. The package is structurally complete but runtime-unverified.

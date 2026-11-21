@@ -1,0 +1,126 @@
+run_id: ARCH-2026-11-11-001
+job_id: ARCH-2026-11-11-001
+project: OpenViking
+slug: openviking
+repository: https://github.com/volcengine/OpenViking.git
+commit: f7e83b2d739905b50215cd7739199a564b9b044b
+commit_timestamp: "2026-11-10T22:17:06+08:00"
+commit_subject: "chore(ui): prepare react 0.1.6 release (#7391)"
+branch: main
+license: AGPL-3.0
+declared_version: "0.3.22 (README only; no tag / _version.py; setuptools-scm dynamic)"
+mode: initial
+priority: B+
+selected_at: "2026-11-11"
+skill:
+  name: knowledge-archaeology
+  version: "3.2"
+  path: /home/user/.super_doubao/super-doubao-runtime/workspace/.user_skills/knowledge-archaeology
+  read_only: true
+
+scope:
+  included:
+    - openviking/ (core, storage, session, retrieve, server, privacy, crypto, config, service, scheduling)
+    - docs/en/concepts/ (01,05,07,08,09,11,13,15,16,17)
+    - tests/ (structure & CI)
+    - pyproject.toml / CI workflows
+  excluded:
+    - crates/ (Rust, 247 files / 130,408 lines; lock internals marked rust-unread)
+    - frontend/ (710 files)
+    - web-studio/ (817 files)
+    - examples/ (818 files)
+    - bot/ (283 files)
+    - third_party/ (372 files)
+    - sdk/ (65 files)
+    - integrations/ (57 files)
+    - openviking_gateway/ (50 files; multi-instance routing not covered)
+  snapshot:
+    files_excluding_git: 6608
+    size: 218MB
+    python_files: 2252
+    python_lines: 733129
+    rust_files: 232
+    rust_lines: 130408
+    tests: 803
+    ci_workflows: 37
+
+metrics:
+  evidence_count: 66
+  evidence_strength:
+    S3: 39
+    S2_doc: 26
+    S0_vendor: 1
+    S4: 0
+    S5: 0
+  ek_count: 36
+  ek_edges: 98
+  ek_avg_out_degree: 2.72
+  ek_isolated_ratio: 0.0
+  ko_count: 8
+  ko_by_layer:
+    L3: 5
+    L4: 3
+    L5: 0
+  ko_aggregation_rules:
+    R1: 2
+    R2: 2
+    R3: 2
+    R4: 2
+  counterexamples: 24
+  flow_edges: 74
+  flow_edges_code: 59
+  flow_edges_doc: 15
+  coverage:
+    subsystems_high: 4
+    subsystems_medium: 3
+    declared_blind_spots: 5
+
+validation:
+  self_validation: pass_with_declared_gaps
+  independent_validation:
+    status: completed
+    findings: 15
+    confirmed: 7
+    partially_confirmed: 3
+    downgraded: 1
+    over_generalized: 1
+    missing: 3
+    contradicted: 0
+    needs_human_review: 1
+    result: PASS_WITH_CORRECTIONS
+  reconciliation:
+    applied: true
+    changes:
+      - "KO-02 L4 -> L3 (single-path evidence)"
+      - "KO-07 marked disputed / no cross-project promotion"
+      - "KO-01 scope narrowed to indexed namespaces (viking://system excluded)"
+      - "EK-14 delete guards 6 -> 7 (batch-level unresolved upsert guard)"
+      - "EK-16 rewritten as batch-level + per-item skip"
+      - "FA-09 added: precheck MANAGE then bypass_acl for internal recursion"
+      - "FC-23 added: FILE_ONLY namespace rm with no_vector bypass"
+
+artifacts:
+  - 00_overview.md
+  - 01-project-layer/architecture.md
+  - 01-project-layer/data_model_and_lifecycle.md
+  - 01-project-layer/config_testing_governance.md
+  - 02-engineering-knowledge/evidence-index.md
+  - 02-engineering-knowledge/ek.md
+  - 02-engineering-knowledge/ek-graph.md
+  - 03-knowledge-layer/ko.md
+  - 04-flow-atlas/flow-atlas.md
+  - 05-candidates/candidates.md
+  - 06-validation/self-validation.md
+  - 06-validation/reconciliation.md
+  - 06-validation/independent-validation.md
+  - run_metadata.yaml
+
+skill_improvement_proposal:
+  generated: false
+  rationale: >
+    本轮暴露的 3 处问题（L4 过度、单路径升维、bypass 未穷举）属于执行纪律问题，
+    现有 v3.2 的 Abstraction Promotion Gate 与 Counterexample 预算制已覆盖，
+    不构成新的系统性 skill 缺陷，故不提案。若同类问题在 >=2 个项目重复出现，再启动 Skill Evolution。
+
+created_at: "2026-11-11T02:20:19+08:00"
+created_by: Thy985
