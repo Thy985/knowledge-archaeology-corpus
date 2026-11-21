@@ -1,0 +1,36 @@
+project: temporal
+slug: temporal
+repository: https://github.com/temporalio/temporal.git
+version: 1.32.x（HEAD 2026-10-31；1.32.1 发布于 2026-10-09）
+commit: e0233ff6658fcab7b4e7ecc1c16af40baf629b78
+commit_message: "HEAD@selection (2026-10-31 18:08:29 UTC; go 1.27.3)"
+commit_timestamp: 2026-10-31T18:08:29Z
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-11-02
+mode: initial
+run_id: ARCH-2026-11-02-001
+source_entry: "KnowlegeMap 07_radar_watch/current_focus.md（Runtime 领域，2026-10-26 周起始 active）+ 08_agent_centric/domains/agent-runtime.md durable-execution 候选卡 §2/§4"
+
+summary: >-
+  temporal（Go，MIT，go.temporal.io/server，2026-10-31 push，24k★，Server 1.32.x）——durable execution
+  品类鼻祖，Replay-based（确定性重放）执行模型代表：持久化"事件序列"而非"执行"，worker 崩溃后从
+  Event History 重放 workflow 代码，已存在事件跳过副作用。核心：Command→Event 两阶段闭环
+  （worker 提议 / history 校验裁决，15 种命令 case 含 PROTOCOL_MESSAGE）；Event History 不可变追加 +
+  Mutable State 派生视图（MutableStateRebuilder 双路径 applyHSMEvent/applyChasmEvent）；
+  RangeID/ShardOwnershipLostError CAS 租约；VersionedTransition{NsFailoverVersion,TransitionCount} 幂等；
+  Workflow Task 状态机（transient/speculative 变体）；NDC 复制批处理 + attempt 重置；Worker Versioning
+  （build ID/deployment/版本化 SA）；Nexus 跨系统调用 + callback token；**Chasm 新引擎**
+  （10.2 万行：泛型 Transition + Tree/Node 状态树 + Registry 三层注册 + lib 7 库，workflow 被 ASM 化为
+  chasm/lib/workflow）——双引擎过渡期由动态配置开关矩阵治理（EnableChasm 默认 true）。
+  本次考古产出 40 EK（EK Graph 六类边，平均出边 2.1，游离 0，聚合覆盖率 100%）/ 9 KO
+  （R1×3 R2×2 R3×2 R4×2，L3/L4，KO-01 收窄 replay 族、KO-05 非全局代际限定）/ 7 类 Flow 38 Edge /
+  6 Candidates（C-01 Chasm 取代 Workflow / C-02 speculative≈transient 统一 / C-03 NDC attempt 脆弱点 +
+  C-04 状态树 vs 步骤日志 / C-05 worker versioning≈K8s / C-06 nexus token≈webhook 签名）。
+  独立审计（盲重建 handleCommands/mutable_state_rebuilder/chasm engine-registry-tree/
+  state_transition_history/dynamicconfig 开关矩阵/callback_token）8 CONFIRMED + 5 PARTIALLY_CONFIRMED
+  （含 KO-01/05 限定）+ 2 MISSING-minor（Chasm 开关矩阵子集、chasm/lib 库数 3→7）+ 0 CONTRADICTED +
+  0 NEEDS_HUMAN_REVIEW。Reconciliation 合并 5 项修正（R-1 命令 case 15 含 PROTOCOL_MESSAGE / R-2 开关
+  矩阵补全 EnableChasm 默认 true / R-3 lib 库数 7 / R-4 KO-01 replay 族限定 / R-5 IVR 判定并入指标）。
+  Corpus 连接：Restate（journal 步骤持久化对照，C-04）/ agent-substrate（挂起恢复对照）/ Dapr Agents +
+  dbos-transact（durable 品类横向）/ TeamMind（Java SDK 选型候选）。Skill Evolution 未触发
+  （无系统性 skill 缺陷证据）。
