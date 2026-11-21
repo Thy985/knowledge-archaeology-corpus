@@ -1,0 +1,54 @@
+project: Hy-Memory 2.0
+slug: hy-memory
+repository: https://github.com/Tencent-Hunyuan/Hy-Memory.git
+version: 2.0.17
+commit: d8138b501a755f662a024f7e8eb879613eabf1d3
+commit_message: "feat(memhub): offline Qdrant BM25 in 1.0.8 build 49 (#456)"
+commit_timestamp: 2026-11-18T23:54:43+08:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-11-20
+completed_at: 2026-11-21
+mode: initial
+run_id: ARCH-2026-11-20-001
+source_entry: 05_scan_logs/2026-11/2026-11-20_radar-watch_scan.md + 08_agent_centric/domains/agent-memory.md:81 + 06_expansion_index/README.md:404
+
+scope:
+  include: [hy_memory/, tests/, pyproject.toml, README.md, docs/ constraints]
+  boundary_only: [memhub/, plugins/]
+  excluded: [memhub/ module-by-module audit]
+
+summary: >-
+  Hy-Memory 2.0 是双系统三场景 Agent 记忆引擎（chat / working / coding）。Python 引擎
+  105,375 行，L0–L7 八层，VDB + Graph + 业务库 + history + pipeline trace 五个独立
+  存储面；写入为 L1 raw-first + LLM 抽取 + reconcile + 逻辑退休，读取默认零 LLM、
+  agentic 模式才分类/改写。核心工程判断：scope 在数据模型分层但在执行面分散（公共
+  search 强制 user_ids，store 层可无用户条件，get/update/delete 仅按 ID，图工具逐
+  操作校验）；无全局记忆事务；默认开启的 history/pipeline trace 让删除变成“迁移”
+  而非清除；reconcile 锁仅 loop-local。产出 65 EK / 143 Flow Edge / 12 L2 / 9 L3 KO
+  / 1 L4 候选 / 16 Candidates；独立验证 9 CONFIRMED + 1 PARTIALLY，最终
+  ACCEPTED WITH LIMITATIONS。
+
+counts:
+  engineering_knowledge: 65
+  flow_edges: 143
+  l2_observations: 12
+  l3_kos: 9
+  l4_candidate_models: 1
+  l5_principles: 0
+  candidates: 16
+  counterexamples: 4
+
+validation:
+  independent_auditor: true
+  ko: {confirmed: 9, partially_confirmed: 1, downgraded: 0, over_generalized: 0, contradicted: 0}
+  ek_spot_checks: {sampled: 12, confirmed: 10, partially_confirmed: 2, contradicted: 0}
+  flow_spot_checks: {sampled: 8, confirmed: 6, partially_confirmed: 2, contradicted: 0}
+  result: ACCEPTED WITH LIMITATIONS
+  reconciliation: projects/hy-memory/06_validation/reconciliation.md
+
+limitations:
+  - no live LLM/embedding endpoint; no behavioral model or benchmark run
+  - memhub/ desktop application not audited module by module
+  - shallow clone depth 50; history-dependent claims excluded
+  - README benchmark figures not traced to paper tables
+  - full non-integration pytest run inconclusive (file descriptor exhaustion at teardown)
