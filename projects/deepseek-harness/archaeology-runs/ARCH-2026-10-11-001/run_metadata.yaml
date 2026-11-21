@@ -1,0 +1,41 @@
+run_id: ARCH-2026-10-11-001
+job:
+  mode: refresh
+  project: deepseek-harness
+  repository: https://github.com/deepseek-ai/deepseek-harness.git
+  baseline_run_id: ARCH-2026-09-03-001
+  baseline_repository_version: 0.1.2-rc.1
+  baseline_commit_sha: 76fda729799fe9b3848dbe2c211d4b231032b81e
+repository:
+  commit_sha: d743267388641bc76f17c45ce8b4c231aed1d32c
+  version: 0.2.1-alpha.2
+  tag: dsh-v0.2.1-alpha.2
+  branch: master
+  head_commit_message: "Merge pull request #5946 from deepseek-harness/release-0.2.1-alpha.2"
+skill_version: 3.2
+timestamp: 2026-10-10T18:17:36Z
+quality_metrics:
+  evidence_count: 40
+  ek_count: 40
+  ko_count: 10
+  candidate_count: 7
+  flow_count: 7
+  ek_links_coverage: 1.0
+  isolated_ek_ratio: 0.0
+  aggregation_rule_coverage: 1.0
+  ko_avg_cluster_size: 5.0
+  l4_ko_count: 8
+  l5_ko_count: 0
+  counterexample_attacks: 10
+  contradictions: 0
+  partially_confirmed: 2
+validation_result: PASS
+validation_notes:
+  - "六 Auditor 全部执行（Truth/Coverage/Flow/Abstraction/Counterexample/Epistemic）"
+  - "T1-T13 抽查全部 CONFIRMED（1 项 PARTIALLY：guard 默认启用仅 README 声明）"
+  - "0 Contradiction；KO-02/KO-10 为 PARTIALLY（提交后取消细节、spill locator 受控回传）"
+  - "盲重建独立报告见 independent_validation_report.md"
+cross_references:
+  knowledgemap_commit: 2af19f2
+  skill_repo_commit: 931124c
+  corpus_base_commit: d45dead

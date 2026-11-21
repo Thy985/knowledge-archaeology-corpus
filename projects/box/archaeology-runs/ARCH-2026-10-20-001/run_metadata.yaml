@@ -1,0 +1,39 @@
+run_id: ARCH-2026-10-20-001
+repository: https://github.com/strands-agents/box.git
+project: box
+commit: 069c39cfd29f830aaadd2a1af362753a57c7b202
+commit_message: "feat(box): choose native file checks for each workload (#113)"
+branch: main
+version: developer-preview（2026-10-07 发布；README 声明 macOS Apple silicon preview）
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-10-20
+mode: initial
+priority: P0
+
+quality_metrics:
+  ek_count: 22
+  ek_links_coverage: 1.0
+  ek_avg_out_edges: 1.7
+  ek_count_reconciled: 22
+  ek_orphan_ratio: 0.0
+  ko_count: 5
+  ko_aggregation_coverage: 1.0
+  candidates_count: 7
+  flow_types: 7
+  evidence_citations: ~70
+
+validation_result:
+  contradicted: 0
+  partially_confirmed: 0
+  over_generalized: 0
+  missing: 0
+  needs_human_review: 1
+  auditor_verdict: pending（见 06_validation/independent_validation_report.md）
+  benchmark_cases: 2（BC-BOX-1 占位符换真凭据、BC-BOX-2 加载期拒绝惰性规则）
+
+connections:
+  - dogwood            # 策略语言本体（corpus 09-08）
+  - mxc                # 同域对照（corpus 10-19，Friday MXC×Box 双对照）
+  - deepseek-harness   # sandbox/approval seam 应用层
+  - agent-governance-toolkit  # 服务端无状态策略引擎
+  - rampart            # 终局证据分离（服务端）

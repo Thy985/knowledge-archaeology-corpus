@@ -1,0 +1,19 @@
+slug: agent-aegis
+project: agent-aegis
+repository: https://github.com/Acacian/aegis.git
+status: COMPLETED
+archaeology_runs:
+  - run_id: ARCH-2026-10-22-001
+    mode: initial
+    commit: 134580e37190ed9297a245eb3c902972ca9bb334
+    skill_version: knowledge-archaeology v3.2
+    timestamp: 2026-10-22
+    validation: 11 CONFIRMED / 1 PARTIALLY / 0 CONTRADICTED
+connected_projects:
+  - aigis
+  - guardian
+  - ai-protector
+  - agent-governance-toolkit
+  - archon
+  - deepseek-harness
+  - mcp

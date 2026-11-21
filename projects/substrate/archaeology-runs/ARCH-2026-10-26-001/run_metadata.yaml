@@ -1,0 +1,31 @@
+run_id: ARCH-2026-10-26-001
+repository: https://github.com/agent-substrate/substrate.git
+project: agent-substrate-substrate
+mode: initial
+commit: 59a58a5fb2c0e7958722ac4c4bc609fe7f16ddf8
+branch: main
+release: v0.6.0
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-10-26
+quality_metrics:
+  evidence_anchors: ">40（proto/code/doc/test）"
+  engineering_knowledge: 20
+  ko: 7
+  ko_l4_pending: 3
+  candidates: 7
+  ek_avg_edges: 2.25
+  ek_free_floating: 0
+  aggregation_coverage: "100%"
+  flows: 7
+  flow_edges: 21
+  flow_pending_edges: 3
+validation_result:
+  truth: PASS_WITH_RESERVATIONS（security.md Met 声明待代码实锤；1 处 legacy 路径补正）
+  coverage: PARTIAL（cmd/ateapi、atunnel/egress、localjwtauthority 主体未精读——显式缺口）
+  flow: PASS（3 处 [pend]）
+  abstraction: PASS（无过度升维；3 KO 标 L4 pending）
+  counterexample: PASS（每条 L3+ 有反例）
+  epistemic: PASS（无状态混淆）
+  independent_validation: CONFIRMED 11 / PARTIALLY_CONFIRMED 2 / CONTRADICTED 1 / MISSING 4 / NEEDS_HUMAN_REVIEW 1 / DOWNGRADED 0
+corpus_status: NOT_YET_COMMITTED
+feishu_delivery: NOT_AUTHORIZED（未请求，默认不做）

@@ -1,0 +1,31 @@
+run_id: ARCH-2026-10-16-001
+project: pipelock
+repository: https://github.com/luckypipewrench/pipelock.git
+commit: 8ade100ce6fc48f565e916c12b462e006d699a27
+branch: main
+version: v3.7.0
+mode: initial
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-10-16T00:00:00+08:00
+sources:
+  job_manifest: job_manifest.md
+  snapshot: snapshot_artifact.md
+quality_metrics:
+  engineering_knowledge: 40
+  core_ko: 8
+  candidates: 8
+  flow_edges: 28
+  counterexample_coverage: "8/8"
+  evidence_strength: "S3-S5, S8 partial (KO-01)"
+  coverage_gaps:
+    - enterprise/ ELv2 code (authorization boundary)
+    - internal/cli, playground, replaycapture deep-read
+validation:
+  truth: PASS (EK-08 tightened to Observation->Hypothesis)
+  coverage: PARTIAL (documented gaps)
+  flow: PASS (28 edges traceable)
+  abstraction: PASS (KO-01 downgraded Principle->Validated Pattern)
+  counterexample: PASS (budget 8/8)
+  epistemic: PASS
+  contradictions: C-01..C-04 preserved (see 06_validation.md)
+corpus_path: projects/pipelock/

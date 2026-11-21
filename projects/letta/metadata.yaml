@@ -1,0 +1,40 @@
+project: Letta (legacy V1 API server)
+slug: letta
+repository: https://github.com/letta-ai/letta.git
+branch: archive
+commit: 56ba9c25552605eec89de8ed3dc6394b625c1993
+version: "letta 0.16.8"
+license: Apache-2.0
+repo_status: deprecated_legacy_v1_server
+domain: agent-memory
+run_id: ARCH-2026-11-09-001
+mode: initial
+priority: A
+archaeology_date: "2026-11-09"
+skill_version: "knowledge-archaeology 3.2"
+status: validated
+metrics:
+  facts: 40
+  engineering_knowledge: 23
+  ek_edges: 30
+  knowledge_objects: 6
+  ko_l3: 4
+  ko_l2: 2
+  candidates: 6
+  flow_edges: 28
+  evidence_max_strength: S3
+validation:
+  confirmed: 10
+  partially_confirmed: 3
+  over_generalized: 2
+  contradicted: 1
+  missing: 3
+  needs_human_review: 1
+related_projects:
+  - letta-code
+  - mem0
+  - graphiti
+boundaries:
+  - 本仓库为 deprecated legacy server，结论只描述 archive 分支的实现
+  - 无运行验证（无 Postgres/pgvector/Turbopuffer/LLM key）
+  - 浅克隆（depth=1），无 git 历史

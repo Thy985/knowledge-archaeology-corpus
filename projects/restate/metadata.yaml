@@ -1,0 +1,32 @@
+project: restate
+slug: restate
+repository: https://github.com/restatedev/restate.git
+version: 1.8.2-dev
+commit: db4b02e26171e3b35367144d27741dc7b56c04dd
+commit_message: "HEAD@selection (2026-10-26 push; workspace version 1.8.2-dev)"
+commit_timestamp: 2026-10-26T15:15:25+00:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-10-27
+mode: initial
+run_id: ARCH-2026-10-27-001
+source_entry: "KnowlegeMap 10-27 radar watch durable-execution 品类主流化 B 卡 [cand]durable-execution-category-mainstreaming-2026-10.md + 04_connections/README.md:130（Restate→TeamMind 最强连接，Java/Kotlin SDK 直接候选，对照 Dapr Agents Python）+ agent-runtime.md A 层缺口③"
+
+summary: >-
+  restate（Rust，BUSL-1.1 非 OSI，v1.8.2-dev，2023-01 创建，4609★/228 forks，2026-10-26 push，
+  v1.8.0 10-14 / v1.8.1 10-21 / v1.7.14 10-22 三 release）——分布式 durable execution 运行时：
+  "步骤持久化"恢复范式代表（对照 agent-substrate 整机快照）。核心：journal 即真相（20 种 journal
+  Command + 11 个 Completion struct；SDK 生成 durable 原语，完成标记 is_resumable 使重放跳过已完成 entry）；
+  分区-领导者权威模型（PartitionKey 分片 + 唯一 leader + last_applied_lsn 重放）；虚拟对象串行化
+  （vqueues 按 key 排队 + lock_table + Scheduler RefillMode）；bifrost 日志段抽象（local RocksDB /
+  replicated sequencer / memory 三 provider 可换，append→Lsn 即持久化确认）；重试与背压分层
+  （AttemptState + RetryPolicy OnMaxAttempts Pause|Kill + RuleBook 限流日志一致 + LimitKey）。
+  本次考古产出 24 EK（EK Graph 六类边，平均出边 2.0，聚合覆盖率 100%）/ 8 KO（R1×2 R2×2 R3×2 R4×2，
+  L3×3 L4×4 L5×1，7 条 Cross-project validation pending）/ 7 类 Flow 22 Edge / 7 Candidates
+  （跨项目假说 C-R01..03：幂等三层组合/虚拟对象实现范式/journal vs snapshot 恢复二分）。
+  独立审计（盲重建 command.rs/journal_table/schema/suspend/bifrost/dedup/limiter/license/invocation）
+  13 CONFIRMED + 2 CONTRADICTED（journal Command 17→20 计数、Completion 12→11 struct 计数）+ 1 DOWNGRADED
+  （partition-store 表族 15+→13 目录级）+ 4 MISSING（metadata-server/query_engine/replicated_loglet 故障
+  转移/object-store）+ 1 NEEDS_HUMAN_REVIEW（is_completed().unwrap_or(true) 恢复 fail-open 语义）。
+  Reconciliation 合并 4 项修正。Corpus 连接：dapr-agents（步骤持久化对照）/ substrate（journal vs snapshot
+  恢复两哲学）/ Vercel+Notion+MS+AWS+Obelisk+Mastra+Temporal（品类主流化 7-way 横向）/ TeamMind
+  （Java/Kotlin SDK 选型候选）。Skill Evolution 未触发（无系统性 skill 缺陷证据）。
