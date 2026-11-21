@@ -1,0 +1,91 @@
+run_id: ARCH-2026-11-22-001
+project: browser-use
+repository: https://github.com/browser-use/browser-use.git
+mode: refresh
+priority: A
+source_entry:
+  layer: KnowlegeMap
+  focus: Computer Use / Browser
+  candidate_card: 03_expansion_queue/candidates/[cand]computer-browser-use-2026.md
+  prior_run: ARCH-2026-09-22-001
+  prior_commit: d8110c5ff87ccba887aaa726cdb780f2f84bef8d
+  prior_version: 0.13.10
+commit: e682e0dc02d77a307a5b2aedf17142c2cd69af5b
+branch: main
+tag: 1.0.8rc1
+version: 1.0.8rc1
+commit_timestamp: 2026-11-20T14:48:08-08:00
+license: MIT
+skill_version: knowledge-archaeology v3.2
+run_timestamp: 2026-11-22T02:04:00+08:00
+timezone: Asia/Shanghai
+
+delta_from_prior:
+  files_changed: 546
+  insertions: 37339
+  deletions: 135830
+
+repository_stats:
+  tracked_files: 146
+  python_files: 75
+  python_lines: 35428
+  engine_lines: 16768
+  test_lines: 18492
+  ci_test_files: 25
+  shallow_depth: 50
+  commits_in_shallow_clone: 393
+
+quality_metrics:
+  facts: 95
+  engineering_knowledge: 35
+  knowledge_objects: 12
+  l3_patterns: 9
+  l4_models: 2
+  l5_methodology: 1
+  flows: 7
+  flow_edges: 68
+  candidates: 8
+  evidence_map_entries: 95
+  source_files_read: 25
+  test_files_inspected: 9
+
+validation:
+  method: independent_read_only_reconstruction
+  total_checks: 28
+  confirmed: 18
+  partially_confirmed: 4
+  contradicted: 2
+  downgraded: 0
+  over_generalized: 0
+  missing: 3
+  needs_human_review: 1
+  gate_result: PARTIAL
+  corrections_applied: 7
+  contradictions_resolved: 2
+  test_execution: not_run
+  test_collection_error: "ModuleNotFoundError: No module named 'pydantic_ai'"
+  runtime_evidence: none
+
+corpus:
+  target: knowledge-archaeology-corpus
+  path: projects/browser-use/
+  run_path: projects/browser-use/archaeology-runs/ARCH-2026-11-22-001/
+  overwrite_history: false
+  pr_status: pending
+  pr_url: null
+
+skill_evolution:
+  proposal_created: false
+  candidates:
+    - C-07 schema L5 abstraction question
+  production_skill_modified: false
+
+limits:
+  - no dependency installation
+  - no pytest execution
+  - no Chrome/Chromium launch
+  - no LLM or cloud key
+  - no browser-harness internals
+  - no benchmark score
+  - no 1.0.8 GA claim
+  - feishu delivery not authorized
