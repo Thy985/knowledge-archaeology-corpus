@@ -1,0 +1,74 @@
+project: playwright-mcp
+slug: playwright-mcp
+repository: https://github.com/microsoft/playwright-mcp.git
+version: 0.0.86
+commit: 2337aff0213d28db41d3e3daf48cee19b3d0bd82
+commit_message: "chore: skip fork PRs in the review bot workflow (#1875)"
+commit_timestamp: 2026-11-18T10:49:18-08:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-11-23
+mode: initial
+run_id: ARCH-2026-11-23-001
+source_entry: "KnowlegeMap 07_radar_watch/current_focus.md + 08_agent_centric/domains/agent-computer-use.md + 03_expansion_queue/candidates/[cand]computer-browser-use-2026.md"
+
+implementation_dependency:
+  package: playwright-core@1.66.0-alpha-2026-11-18
+  npm_git_head: 8124fc39233c4c349b9dbebd4abc4103738eae81
+  path: packages/playwright-core/src/tools
+
+summary: >-
+  @playwright/mcp v0.0.86（44 tracked files / 6,103 lines / 9 tests）是微软官方 MCP
+  浏览器控制面，但本仓库只是发布包装层：MCP server 与工具实现位于 microsoft/playwright
+  的 packages/playwright-core/src/tools（mcp/ + backend/，8,868 行），pin 在
+  playwright-core@1.66.0-alpha-2026-11-18（gitHead 8124fc3）。默认 25 个工具，
+  其中 browser_run_code_unsafe（自述 RCE-equivalent）、browser_evaluate（页面任意 JS）
+  与 browser_network_request（请求/响应头与 body）默认启用；默认持久 profile
+  按 browser token + client cwd 哈希分配；HTTP transport 无认证，仅 Host allowlist
+  做 DNS rebinding 防护。核心认知：默认开放的控制面里，真正的信任边界是客户端/传输层，
+  不是 capability 过滤、secrets redaction、origin filter 或 file root 这些便利性防护。
+  本次产出 30 EK / 23 KO（8 L1 + 6 L2 + 6 L3 + 2 L4 + 1 L5）/ 7 flows / 52 edges /
+  13 candidates。独立盲审计 30 项：27 CONFIRMED、1 PARTIALLY_CONFIRMED、
+  1 CONTRADICTED（Docker “any MCP client” vs Host allowlist）、1 MISSING（无运行时测试）；
+  claim-level 另有 2 DOWNGRADED、1 OVER_GENERALIZED（no vision）、1 NEEDS_HUMAN_REVIEW
+  （vm escape 未验证）。Gate = PARTIAL；未执行 npm ci/npm test，未启动浏览器。
+
+quality_metrics:
+  repository_files_total: 44
+  repository_lines_total: 6103
+  tests_total: 9
+  tests_executed: 0
+  facts: 35
+  engineering_knowledge: 30
+  knowledge_objects: 23
+  flows: 7
+  flow_edges: 52
+  candidates: 13
+  independent_findings: 30
+  independent_confirmed: 27
+  independent_partial: 1
+  independent_contradicted: 1
+  independent_missing: 1
+  validation_result: PARTIAL
+  runtime_validation: false
+
+validation_result: PARTIAL
+gate_reason:
+  - no npm ci or npm test executed
+  - no browser/chrome runtime validation
+  - implementation facts come from pinned dependency, separated from repo facts
+  - Docker "any MCP client" contradiction preserved
+  - extension token server-side validation remains unverified
+
+cross_project_candidates:
+  - id: C-10
+    status: hypothesis
+    summary: browser-use REPL/CDP route may be more token-efficient but less inspectable than Playwright MCP's a11y snapshot route; requires fixed-task benchmark
+  - id: B-01
+    status: candidate_benchmark
+    summary: default-open browser control plane evidence checklist
+
+corpus_history:
+  - run_id: ARCH-2026-11-23-001
+    path: archaeology-runs/ARCH-2026-11-23-001/
+    mode: initial
+    gate: PARTIAL

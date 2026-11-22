@@ -1,0 +1,69 @@
+run_id: ARCH-2026-11-23-001
+project: playwright-mcp
+repository: https://github.com/microsoft/playwright-mcp.git
+commit: 2337aff0213d28db41d3e3daf48cee19b3d0bd82
+branch: main
+tag: v0.0.86
+commit_time: "2026-11-18T10:49:18-08:00"
+skill_version: "3.2"
+skill_path: /home/user/.super_doubao/super-doubao-runtime/workspace/.user_skills/knowledge-archaeology/
+timestamp: "2026-11-23T00:00:00+08:00"
+mode: initial
+priority: A
+corpus_slug: playwright-mcp
+source_entry:
+  - KnowlegeMap/07_radar_watch/current_focus.md
+  - KnowlegeMap/08_agent_centric/domains/agent-computer-use.md
+  - KnowlegeMap/03_expansion_queue/candidates/[cand]computer-browser-use-2026.md
+implementation_dependency:
+  package: playwright-core@1.66.0-alpha-2026-11-18
+  npm_git_head: 8124fc39233c4c349b9dbebd4abc4103738eae81
+  path: packages/playwright-core/src/tools
+quality_metrics:
+  repository_files_total: 44
+  repository_files_inventoried: 44
+  repository_lines_total: 6103
+  implementation_tool_lines: 8868
+  tests_total: 9
+  tests_executed: 0
+  facts: 35
+  engineering_knowledge: 30
+  knowledge_objects:
+    l1: 8
+    l2: 6
+    l3: 6
+    l4: 2
+    l5: 1
+    total: 23
+  flows: 7
+  flow_edges: 52
+  candidates: 13
+  evidence_checks: 35
+  independent_findings: 30
+  independent_confirmed: 27
+  independent_partial: 1
+  independent_contradicted: 1
+  independent_missing: 1
+  claim_level_downgraded: 2
+  claim_level_overgeneralized: 1
+  claim_level_needs_human_review: 1
+  runtime_validation: false
+  test_pass_rate: null
+  coverage_percent: null
+validation_result: PARTIAL
+gate_reason:
+  - no npm ci or npm test executed
+  - no browser/chrome runtime validation
+  - implementation facts are from pinned dependency, separated from repo facts
+  - Docker "any MCP client" contradiction preserved
+  - extension token validation remains unverified
+contradictions:
+  - id: C-03
+    summary: README Docker says any MCP client, but HTTP Host allowlist defaults to localhost/loopback/bind host
+skill_evolution_proposal: none
+delivery:
+  corpus_only: true
+  feishu: false
+  target_repo_mutated: false
+  knowledgemap_mutated: false
+  production_skill_mutated: false
