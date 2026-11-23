@@ -1,0 +1,84 @@
+project: webmcp
+slug: webmcp
+repository: https://github.com/webmachinelearning/webmcp.git
+version: null
+commit: a768d04b4f9ac7f3d4357671db9686675d52c8e5
+commit_message: "Link to the @w3c/webmcp-polyfill npm package (#387)"
+commit_timestamp: 2026-11-23T11:50:07+01:00
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-11-24
+mode: initial
+run_id: ARCH-2026-11-24-001
+source_entry: "KnowlegeMap 07_radar_watch/current_focus.md + 05_scan_logs/2026-11/2026-11-24_radar-watch_scan.md + 03_expansion_queue/candidates/[cand]webmcp-page-declared-tools-2026.md"
+
+spec_status:
+  status: CG-DRAFT
+  group: webml
+  editors:
+    - Brandon Walderman (Microsoft)
+    - Khushal Sagar (Google)
+    - Dominic Farolino (Google)
+    - Samuel Dallstream (Microsoft)
+  test_suite: https://wpt.fyi/results/webmcp
+
+summary: >-
+  WebMCP（webmachinelearning/webmcp @ a768d04，CG-DRAFT，18 tracked files / 3,922 lines）
+  是一个“规范 + explainer + 实现状态”仓库，不是运行时实现。它把网页自身功能声明为结构化工具，
+  供页内 agent 与浏览器内置 agent 调用；规范只定义注册、发现、跨源暴露、执行、取消、错误映射的
+  结构边界，明确不规定 intent 验证、用户同意、JSON Schema 校验或 agent guardrail。
+  核心张力：页内 API 有三道跨源门（tools policy + exposedTo + fromOrigins），但内置 agent 走
+  非规范性 observation，直接收集全部 descendant documents 的 tool map，不做同样的过滤。
+  本次产出 30 EK / 19 KO（5 L1 + 6 L2 + 5 L3 + 2 L4 + 1 L5）/ 7 flows / 55 edges /
+  14 candidates。独立审计 30 项：24 CONFIRMED、3 PARTIALLY_CONFIRMED、1 DOWNGRADED、
+  1 CONTRADICTED（错误分类被压成“五类含 InvalidStateError”）、1 MISSING
+  （service worker 的 self.modelContext 与 [Exposed=Window] 未对齐）。Gate = PARTIAL；
+  无 WPT 运行、无浏览器 trial、无外部实现源码审计。
+
+quality_metrics:
+  repository_files_total: 18
+  repository_lines_total: 3922
+  normative_spec_lines: 2355
+  explainer_lines: 1347
+  tests_total: 0
+  tests_executed: 0
+  facts: 58
+  engineering_knowledge: 30
+  knowledge_objects: 19
+  ko_l1: 5
+  ko_l2: 6
+  ko_l3: 5
+  ko_l4: 2
+  ko_l5: 1
+  flows: 7
+  flow_edges: 55
+  candidates: 14
+  independent_findings: 30
+  independent_confirmed: 24
+  independent_partial: 3
+  independent_downgraded: 1
+  independent_contradicted: 1
+  independent_missing: 1
+  validation_result: PARTIAL
+  runtime_validation: false
+
+validation_result: PARTIAL
+gate_reason:
+  - no WPT webmcp tests executed
+  - no Chrome 149 / Edge 150 origin trial
+  - no Chromium/Edge implementation source audit
+  - built-in agent observation is non-normative and implementation-defined
+  - implementation-status is a document, not runtime evidence
+
+cross_project_candidates:
+  - id: C-13
+    status: hypothesis
+    summary: WebMCP positional authority (frame tree + origin + policy) vs Playwright MCP tool namespace vs browser-use CDP/REPL session; requires fixed-task benchmark
+  - id: C-14
+    status: contradiction
+    summary: service-worker explainer uses self.modelContext while spec exposes ModelContext only on Window
+
+corpus_history:
+  - run_id: ARCH-2026-11-24-001
+    path: archaeology-runs/ARCH-2026-11-24-001/
+    mode: initial
+    gate: PARTIAL
