@@ -1,0 +1,94 @@
+run_id: ARCH-2026-11-24-001
+project: webmcp
+repository: https://github.com/webmachinelearning/webmcp.git
+commit: a768d04b4f9ac7f3d4357671db9686675d52c8e5
+branch: main
+commit_date: 2026-11-23T11:50:07+01:00
+commit_subject: "Link to the @w3c/webmcp-polyfill npm package (#387)"
+tag: null
+describe: a768d04
+mode: initial
+priority: A
+skill: knowledge-archaeology
+skill_version: v3.2
+timestamp: 2026-11-24T00:00:00+08:00
+source_entry: "KnowlegeMap 07_radar_watch/current_focus.md; 05_scan_logs/2026-11/2026-11-24_radar-watch_scan.md; 03_expansion_queue/candidates/[cand]webmcp-page-declared-tools-2026.md"
+
+repository_snapshot:
+  tracked_files: 18
+  source_lines: 3922
+  size_kb: 588
+  spec_file: index.bs
+  spec_lines: 2355
+  explainer_lines: 1347
+  has_runtime_code: false
+  has_local_tests: false
+  external_test_suite: https://wpt.fyi/results/webmcp
+
+quality_metrics:
+  evidence_checks: 58
+  evidence_pass: 49
+  evidence_partial: 9
+  evidence_fail: 0
+  engineering_knowledge: 30
+  knowledge_objects: 19
+  ko_l1: 5
+  ko_l2: 6
+  ko_l3: 5
+  ko_l4: 2
+  ko_l5: 1
+  flows: 7
+  flow_edges: 55
+  candidates: 14
+  source_files_read: 17
+  source_lines_read: 3922
+  runtime_commands_executed: 0
+  tests_executed: 0
+  external_implementations_audited: 0
+
+validation:
+  auditor_findings: 30
+  confirmed: 24
+  partially_confirmed: 3
+  downgraded: 1
+  over_generalized: 0
+  missing: 1
+  contradicted: 1
+  needs_human_review: 0
+  overall: PARTIALLY_CONFIRMED
+  gate: PARTIAL
+  gate_reason: "No runtime, no WPT execution, no browser trial, no external implementation audit; spec-only repository."
+  corrections_applied:
+    - "EK-07 / KO-L1-05 error taxonomy corrected (5 execution reasons -> 4 exceptions; preconditions add 5 exception types)"
+    - "KO-L4-02 scoped to in-page authority; built-in agent observation treated as separate path"
+    - "C-14 added: self.modelContext vs [Exposed=Window] contradiction"
+
+dimensions:
+  truth: 0.93
+  coverage: 0.78
+  flow: 0.84
+  abstraction: 0.80
+  counterexample: 0.86
+  epistemic: 0.91
+
+artifacts:
+  job_manifest: job_manifest.md
+  snapshot: snapshot_artifact.md
+  package: package/
+  overview: package/00_overview.md
+  project_layer: package/01_project-layer/project_layer.md
+  engineering_knowledge: package/02_engineering-knowledge/ek_graph.md
+  knowledge_layer: package/03_knowledge-layer/knowledge_layer.md
+  flow_atlas: package/04_flow-atlas/flow_atlas.md
+  candidates: package/05_candidates/candidates.md
+  evidence_map: package/06_validation/evidence_map.md
+  independent_audit: package/06_validation/independent_audit.md
+  reconciliation: package/06_validation/reconciliation.md
+
+boundaries:
+  target_repo_modified: false
+  knowledgemap_modified: false
+  production_skill_modified: false
+  corpus_write: true
+  feishu_write: false
+  feishu_reason: "No explicit user authorization."
