@@ -24,6 +24,7 @@ knowledge-archaeology-corpus/
 ## 当前项目
 
 - [`codex/`](codex/) — OpenAI Codex 多轮考古（v1/v2/v3）
+- [`projects/agent-desktop/`](projects/agent-desktop/) — Vercel Labs agent-desktop 首次考古（2026-11-25）
 
 ## 约定
 
