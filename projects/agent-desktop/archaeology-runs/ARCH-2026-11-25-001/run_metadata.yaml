@@ -1,0 +1,112 @@
+run_id: ARCH-2026-11-25-001
+project: agent-desktop
+repository: https://github.com/vercel-labs/agent-desktop.git
+commit: ce2ddf07226346818de2a1c6bae9869cfad142df
+branch: main
+commit_date: 2026-11-23T12:34:52-06:00
+commit_subject: "Use the Vercel Labs lockup in the docs header (#732)"
+tag: v1.3.1
+describe: v1.3.1-10-gce2ddf0
+mode: initial
+priority: A
+skill: knowledge-archaeology
+skill_version: v3.2
+timestamp: 2026-11-25T02:26:43+08:00
+source_entry: "KnowlegeMap 07_radar_watch/current_focus.md; 05_scan_logs/2026-11/2026-11-25_radar-watch_scan.md; 03_expansion_queue/candidates/[cand]agent-desktop-a11y-desktop-2026-11.md; 08_agent_centric/domains/agent-computer-use.md"
+
+repository_snapshot:
+  package_version: "1.3.1"
+  workspace_rust_version: "1.89"
+  edition: "2024"
+  platform_crates: [core, macos, windows, linux, ffi]
+  tracked_files: 3806
+  rust_files: 2827
+  rust_lines: 378939
+  rust_test_files: 1067
+  tests_paths: 287
+  markdown_files: 77
+  workflows: 7
+  command_names: 61
+  operational_commands: 57
+  held_input_commands: 4
+  snapshot_timeout_ms: 3000
+  refmap_cap_bytes: 1048576
+  snapshot_retention: 128
+  snapshot_prune_low_water: 96
+  session_manifest_cap_bytes: 65536
+  trace_file_cap_bytes: 67108864
+  trace_event_cap_bytes: 1048576
+  trace_liveness_seconds: 300
+  has_runtime_code: true
+  has_local_tests: true
+  runtime_executed: false
+
+quality_metrics:
+  engineering_knowledge: 39
+  typed_ek_links: 118
+  knowledge_objects: 13
+  ko_l1: 4
+  ko_l2: 4
+  ko_l3: 3
+  ko_l4: 1
+  ko_l5: 1
+  ko_cluster_memberships: 52
+  average_ko_cluster_size: 4.0
+  free_floating_ek: 0
+  flows: 7
+  flow_edges: 44
+  evidence_rows: 46
+  candidates: 12
+  runtime_commands_executed: 0
+  tests_executed: 0
+  gui_sessions: 0
+
+validation:
+  auditor_findings: 24
+  confirmed: 16
+  partially_confirmed: 4
+  downgraded: 1
+  over_generalized: 1
+  missing: 0
+  contradicted: 0
+  needs_human_review: 2
+  overall: PARTIALLY_CONFIRMED
+  gate: PARTIAL
+  gate_reason: "No runtime execution, no GUI session, no cargo test, no E2E, no MCP child process; static/code/doc evidence only."
+  corrections_applied:
+    - "EK-16: added physical text mismatch exception; mismatch is not universally ACTION_FAILED"
+    - "KO-07: scoped value exclusion to predicate fields; role-specific stable-name promotion documented"
+    - "KO-08: scoped interaction lease to Unix machine-wide; Windows named handle; macOS Unix path"
+    - "EK-07 attached to KO-01; free-floating EK 0/39; average cluster size 4.0"
+    - "Evidence ledger EV-045/EV-046 added; EV-037/EV-038 misuse corrected"
+    - "Overview metrics replaced with counted values: 118 links, 47 evidence rows, 52 memberships"
+
+dimensions:
+  truth: 0.90
+  coverage: 0.86
+  flow: 0.88
+  abstraction: 0.86
+  counterexample: 0.84
+  epistemic: 0.92
+
+artifacts:
+  job_manifest: job_manifest.md
+  snapshot: snapshot_artifact.md
+  package: package/
+  overview: package/00_overview.md
+  project_layer: package/01_project-layer/project_layer.md
+  engineering_knowledge: package/02_engineering-knowledge/ek_graph.md
+  knowledge_layer: package/03_knowledge-layer/knowledge_layer.md
+  flow_atlas: package/04_flow-atlas/flow_atlas.md
+  candidates: package/05_candidates/candidates.md
+  evidence_map: package/06_validation/evidence_map.md
+  independent_audit: package/06_validation/independent_audit.md
+  reconciliation: package/06_validation/reconciliation.md
+
+boundaries:
+  target_repo_modified: false
+  knowlegemap_modified: false
+  production_skill_modified: false
+  corpus_write: true
+  feishu_write: false
+  feishu_reason: "No explicit user authorization."

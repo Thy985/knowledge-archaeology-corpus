@@ -1,0 +1,38 @@
+project: agent-desktop
+slug: agent-desktop
+repository: https://github.com/vercel-labs/agent-desktop.git
+repository_type: cross-platform desktop automation CLI / MCP server / Rust workspace
+version: 1.3.1
+commit: ce2ddf07226346818de2a1c6bae9869cfad142df
+branch: main
+commit_date: 2026-11-23T12:34:52-06:00
+first_archaeology: 2026-11-25
+latest_run: ARCH-2026-11-25-001
+runs:
+  - run_id: ARCH-2026-11-25-001
+    mode: initial
+    skill_version: knowledge-archaeology v3.2
+    validation: PARTIALLY_CONFIRMED
+    gate: PARTIAL
+    quality_metrics:
+      ek_count: 39
+      ek_edges: 118
+      ko_count: 13
+      flows: 7
+      flow_edges: 44
+      evidence_rows: 46
+      candidates: 12
+quality_metrics:
+  ek_count: 39
+  ek_edges: 118
+  ko_count: 13
+  candidates: 12
+  flows: 7
+  flow_edges: 44
+  evidence_rows: 46
+status: COMPLETED
+refresh_pending:
+  - runtime execution on macOS AX / Windows UIA / Linux AT-SPI
+  - Linux X11 vs Wayland behavior matrix (CAND-11)
+  - MCP child-process and batch E2E execution
+  - physical text mismatch downgrade under real Chromium/Electron fields
