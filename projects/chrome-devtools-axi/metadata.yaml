@@ -1,0 +1,63 @@
+project: chrome-devtools-axi
+slug: chrome-devtools-axi
+repository: https://github.com/kunchenguid/chrome-devtools-axi.git
+repository_type: chrome-devtools-mcp AXI-compatible CLI wrapper / persistent loopback bridge / TypeScript CLI
+version: 0.1.46
+commit: 1dbdac1ca1122e1d2b76d889bbc8a2dd2eb2dcd7
+branch: main
+commit_date: 2026-11-04T05:32:02+11:00
+first_archaeology: 2026-11-26
+latest_run: ARCH-2026-11-26-001
+runs:
+  - run_id: ARCH-2026-11-26-001
+    mode: initial
+    skill_version: knowledge-archaeology v3.2
+    validation: PARTIALLY_CONFIRMED
+    gate: PARTIAL
+    runtime_verified: false
+    quality_metrics:
+      ek_count: 36
+      ek_edges: 59
+      ek_orphans: 0
+      ko_count: 8
+      flows: 7
+      flow_edges: 48
+      evidence_rows: 49
+      candidates: 12
+quality_metrics:
+  ek_count: 36
+  ek_edges: 59
+  ek_orphans: 0
+  ko_count: 8
+  candidates: 12
+  flows: 7
+  flow_edges: 48
+  evidence_rows: 49
+status: COMPLETED
+validation:
+  overall: PARTIALLY_CONFIRMED
+  gate: PARTIAL
+  confirmed: 4
+  partially_confirmed: 2
+  downgraded: 1
+  over_generalized: 1
+  missing: 7
+  contradicted: 0
+  benchmark_score: 5/6
+security_notes:
+  cve: GHSA-x439-jhfh-v9x2
+  fixed_in: 0.1.27
+  fix_commit: 4ee5a49bbdec0c7c0b43aa6d9d6775798fa97534
+  residual_risk: loopback /call has no token/auth; arbitrary roots; no per-caller audit
+refresh_pending:
+  - cross-UID loopback reachability (C-01 / M-01)
+  - duplicate Host / HTTP2 :authority / reverse proxy rewrite (C-05 / M-02)
+  - state file permission/umask (C-03 / M-03)
+  - live MCP roots file read/write scope (C-06 / M-04)
+  - isBridgeProcess spoof / PID reuse (C-02 / M-05)
+  - live Chrome keychain isolation (C-07 / M-06)
+  - npx -y chrome-devtools-mcp@latest supply chain (C-10 / M-07)
+read_only:
+  target_repo: true
+  knowlege_map: true
+  production_skill: true

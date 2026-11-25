@@ -1,0 +1,587 @@
+schema: knowledge-archaeology/flow-atlas@3.1
+project: chrome-devtools-axi
+run_id: ARCH-2026-11-26-001
+flows:
+- id: control
+  title: Control Flow
+  summary: 从短命 CLI 到 MCP tool 的控制链。关键分支是“复用 vs 重启”和“gate 通过 vs 403”。
+  edge_count: 8
+  runtime_verified: false
+- id: state
+  title: State Flow
+  summary: 跨命令状态：PID/port、selected page、generation、identity epoch。每条边都改变下一次命令可观察的行为。
+  edge_count: 7
+  runtime_verified: false
+- id: data
+  title: Data Flow
+  summary: 参数、roots、MCP 结果、错误和文件路径的数据变换。注意 `/call` 没有通用 schema 校验。
+  edge_count: 7
+  runtime_verified: false
+- id: evidence
+  title: Evidence Flow
+  summary: 快照证据链：页面 -> uid stamp -> action -> freshness gate -> 响亮失败。
+  edge_count: 7
+  runtime_verified: false
+- id: authority
+  title: Authority Flow
+  summary: 谁能触发、能触达什么权限。Host/Origin 与 caller identity 是两个不同边界。
+  edge_count: 7
+  runtime_verified: false
+- id: memory
+  title: Memory Flow
+  summary: 文件即控制面内存：bridge.pid、selected-page-id、snapshot-generation、session 目录。
+  edge_count: 6
+  runtime_verified: false
+- id: policy
+  title: Policy Flow
+  summary: 仓库治理：CI、airlock、生成文件 guard、release provenance。
+  edge_count: 6
+  runtime_verified: false
+edges:
+- id: F-C01
+  flow: control
+  from: CLI main
+  to: COMMAND_HANDLERS dispatch
+  source: src/cli.ts:1997-2010
+  condition: argv 首个 token 是已知命令
+  state_transition: argv -> handler
+  evidence:
+  - EV-041
+  status: verified
+  note: 短命进程入口；未知命令/flag 在 handler 前拒绝
+- id: F-C02
+  flow: control
+  from: CLI command
+  to: ensureBridge
+  source: src/client.ts:473-510
+  condition: 每次需要浏览器会话的命令
+  state_transition: CLI 进程 -> 复用或新建 bridge
+  evidence:
+  - EV-004
+  - EV-005
+  status: verified
+  note: PID 存在 + deep health 才复用
+- id: F-C03
+  flow: control
+  from: ensureBridge
+  to: GET /health?deep=1
+  source: src/bridge.ts:557-580
+  condition: PID 活着且需要确认 CDP target
+  state_transition: bridge 进程 -> 探测结果
+  evidence:
+  - EV-005
+  - EV-006
+  status: verified
+  note: deep health 执行 list_pages；失败 503
+- id: F-C04
+  flow: control
+  from: ensureBridge
+  to: spawnBridgeProcess
+  source: src/client.ts:352-370
+  condition: 没有可复用 bridge 或 deep health 失败
+  state_transition: 无 bridge -> detached bridge
+  evidence:
+  - EV-001
+  - EV-010
+  status: verified
+  note: detached:true / stdio:ignore / unref
+- id: F-C05
+  flow: control
+  from: CLI HTTP client
+  to: POST /call
+  source: src/client.ts:744-790
+  condition: bridge ready
+  state_transition: 请求 -> bridge 路由
+  evidence:
+  - EV-002
+  - EV-026
+  status: verified
+  note: 默认 120s 外层 deadline
+- id: F-C06
+  flow: control
+  from: handleBridgeRequest
+  to: isRequestAllowed
+  source: src/bridge.ts:520-546
+  condition: 每个 /health /tools /call 请求
+  state_transition: 请求 -> 放行/403
+  evidence:
+  - EV-015
+  - EV-016
+  status: verified
+  note: gate 在路由前；拒绝不调用 CDP
+- id: F-C07
+  flow: control
+  from: handleCallRequest
+  to: client.callTool
+  source: src/bridge.ts:476-520
+  condition: gate 通过且 body 合法
+  state_transition: HTTP 请求 -> MCP tool 调用
+  evidence:
+  - EV-021
+  status: verified
+  note: name 直接传；无 auth
+- id: F-C08
+  flow: control
+  from: client.onclose
+  to: shutdown
+  source: src/bridge.ts:1248-1251
+  condition: MCP 连接关闭且非自身 shutdown
+  state_transition: 运行 -> 退出
+  evidence:
+  - EV-009
+  - EV-046
+  status: verified
+  note: stdio MCP 死后 bridge 自退
+- id: F-S01
+  flow: state
+  from: ensureBridge
+  to: bridge.pid
+  source: src/client.ts:473-510
+  condition: 启动/复用 bridge
+  state_transition: 无状态 -> PID+port 状态
+  evidence:
+  - EV-003
+  - EV-011
+  status: verified
+  note: 状态目录由 session 决定
+- id: F-S02
+  flow: state
+  from: select_page/new_page/close_page
+  to: selected-page-id
+  source: src/selected-page.ts:109-125
+  condition: 显式 select 或 new dump 唯一 [selected] 或 close 当前
+  state_transition: selection 空/旧 -> 新/空
+  evidence:
+  - EV-027
+  - EV-029
+  status: verified
+  note: list_pages 的 [selected] 不写路由
+- id: F-S03
+  flow: state
+  from: captureFreshSnapshot
+  to: bumpGeneration
+  source: src/uid-freshness.ts:81-84
+  condition: 每次抓快照
+  state_transition: generation N -> N+1
+  evidence:
+  - EV-033
+  - EV-035
+  status: verified
+  note: 文件写失败仍返回 bump 后值
+- id: F-S04
+  flow: state
+  from: MCP tool result
+  to: didMcpPageIdentityChange
+  source: src/bridge.ts:360-410
+  condition: reconnect marker 出现在 structuredContent 或首行
+  state_transition: identity epoch 未变 -> 已变
+  evidence:
+  - EV-031
+  status: verified
+  note: 只认首行/结构化 marker
+- id: F-S05
+  flow: state
+  from: bridge call handler
+  to: PAGE_IDENTITY_CHANGED_ERROR
+  source: src/bridge.ts:470-520
+  condition: pageIdentityChanged && args.pageId
+  state_transition: 旧 id -> 明确错误
+  evidence:
+  - EV-031
+  - EV-032
+  status: verified
+  note: 不自动 retarget
+- id: F-S06
+  flow: state
+  from: ensureBridge
+  to: clearSelectedPageId
+  source: src/client.ts:473-510
+  condition: respawn 新 bridge 前
+  state_transition: 保留 selection -> 清空
+  evidence:
+  - EV-005
+  status: verified
+  note: 避免旧 id 指向新进程
+- id: F-S07
+  flow: state
+  from: parseUidFresh
+  to: getPageRefState
+  source: src/uid-freshness.ts:118-140
+  condition: ref 带 gN 前缀
+  state_transition: 未校验 -> generation/mutations 判定
+  evidence:
+  - EV-035
+  status: verified
+  note: legacy ref 例外见 EK-17
+- id: F-D01
+  flow: data
+  from: CLI command args
+  to: JSON request body
+  source: src/client.ts:744-790
+  condition: 命令执行
+  state_transition: argv/对象 -> JSON
+  evidence:
+  - EV-002
+  - EV-026
+  status: verified
+  note: /call 只带 name/arguments/roots
+- id: F-D02
+  flow: data
+  from: handleCallRequest
+  to: JSON.parse body
+  source: src/bridge.ts:476-520
+  condition: POST /call
+  state_transition: 字节流 -> name/arguments/roots
+  evidence:
+  - EV-019
+  status: verified
+  note: 无 schema 全量校验；roots 单独校验
+- id: F-D03
+  flow: data
+  from: /call roots
+  to: applyRootsNow
+  source: src/bridge.ts:428-441
+  condition: roots 数组且绝对路径
+  state_transition: 请求字段 -> MCP roots 切换
+  evidence:
+  - EV-019
+  - EV-024
+  status: verified
+  note: 无 allowlist
+- id: F-D04
+  flow: data
+  from: handleCallRequest
+  to: client.callTool(name, args)
+  source: src/bridge.ts:476-520
+  condition: gate 通过
+  state_transition: HTTP -> MCP JSON-RPC
+  evidence:
+  - EV-018
+  status: verified
+  note: 任意 MCP tool name
+- id: F-D05
+  flow: data
+  from: MCP tool result
+  to: isToolResultError
+  source: src/bridge.ts:330-350
+  condition: result.isError === true
+  state_transition: MCP 成功响应 -> bridge error
+  evidence:
+  - EV-026
+  status: verified
+  note: 避免把失败报告成成功
+- id: F-D06
+  flow: data
+  from: parseCallResponse
+  to: CdpError
+  source: src/client.ts:790-850
+  condition: 响应含 error 字段
+  state_transition: HTTP 200 -> 非零退出
+  evidence:
+  - EV-026
+  - EV-032
+  status: verified
+  note: 错误码映射
+- id: F-D07
+  flow: data
+  from: CLI output arg
+  to: resolveOutputPath
+  source: src/paths.ts:7-9
+  condition: screenshot/network/perf/heap/lighthouse 等文件参数
+  state_transition: 相对路径 -> 绝对路径
+  evidence:
+  - EV-025
+  status: verified
+  note: 按 CLI cwd，不按 bridge cwd
+- id: F-E01
+  flow: evidence
+  from: snapshot command
+  to: capture snapshot
+  source: src/bridge.ts:591-605
+  condition: snapshot tool 调用
+  state_transition: 页面 -> 文本快照
+  evidence:
+  - EV-033
+  - EV-037
+  status: verified
+  note: 经 MCP snapshot
+- id: F-E02
+  flow: evidence
+  from: raw snapshot
+  to: stampSnapshotGeneration
+  source: src/snapshot.ts:51-60
+  condition: 含 uid= 行
+  state_transition: uid=id -> uid=gN:id
+  evidence:
+  - EV-036
+  status: verified
+  note: 已 stamp 不重复
+- id: F-E03
+  flow: evidence
+  from: snapshot injected script
+  to: MutationObserver
+  source: src/uid-freshness.ts:45-60
+  condition: 页面加载/抓取时
+  state_transition: 无 observer -> 计数 mutations
+  evidence:
+  - EV-035
+  status: verified
+  note: 状态挂在 window key
+- id: F-E04
+  flow: evidence
+  from: click/fill/type
+  to: uid ref
+  source: src/cli.ts:1860-1900
+  condition: 命令带 uid 参数
+  state_transition: ref 文本 -> MCP args
+  evidence:
+  - EV-034
+  status: verified
+  note: uid 原样传 MCP
+- id: F-E05
+  flow: evidence
+  from: parseUidFresh
+  to: generation + mutations check
+  source: src/uid-freshness.ts:118-140
+  condition: 每次 uid action 前
+  state_transition: ref -> fresh/stale
+  evidence:
+  - EV-035
+  status: verified
+  note: generation 不等或 mutations>0 -> STALE_REF
+- id: F-E06
+  flow: evidence
+  from: throwStaleRef
+  to: STALE_REF error
+  source: src/uid-freshness.ts:118-140
+  condition: 检查失败
+  state_transition: fresh -> loud error
+  evidence:
+  - EV-035
+  status: verified
+  note: CLI 非零退出
+- id: F-E07
+  flow: evidence
+  from: truncateSnapshot
+  to: line-boundary truncation
+  source: src/snapshot.ts:102-115
+  condition: 长度 > 16000 且未 --full
+  state_transition: 完整树 -> 截断树+metadata
+  evidence:
+  - EV-037
+  status: verified
+  note: token 预算，不是安全边界
+- id: F-A01
+  flow: authority
+  from: HTTP request
+  to: isRequestAllowed
+  source: src/bridge.ts:303-320
+  condition: 任意路由
+  state_transition: 未认证请求 -> 允许/拒绝
+  evidence:
+  - EV-015
+  status: verified
+  note: Host 必须 loopback；Origin 可缺省
+- id: F-A02
+  flow: authority
+  from: isRequestAllowed false
+  to: 403 Forbidden host
+  source: src/bridge.ts:531-546
+  condition: Host/Origin 非 loopback 或不可解析
+  state_transition: 请求 -> 403 + 日志
+  evidence:
+  - EV-016
+  status: verified
+  note: 不调用任何 CDP tool
+- id: F-A03
+  flow: authority
+  from: isRequestAllowed true
+  to: handleCallRequest
+  source: src/bridge.ts:591
+  condition: 允许的 /call
+  state_transition: 403 风险 -> 工具执行
+  evidence:
+  - EV-021
+  status: verified
+  note: 无 caller 身份
+- id: F-A04
+  flow: authority
+  from: handleCallRequest roots
+  to: applyRootsNow
+  source: src/bridge.ts:1098-1155
+  condition: body.roots 非空
+  state_transition: caller roots -> MCP roots
+  evidence:
+  - EV-024
+  status: verified
+  note: 等待 roots/list_changed 最多 2s
+- id: F-A05
+  flow: authority
+  from: buildTransportArgs
+  to: keychain flags
+  source: src/bridge.ts:683-760
+  condition: launch(--isolated/--userDataDir) vs attach
+  state_transition: launch -> mock keychain；attach -> 不加
+  evidence:
+  - EV-020
+  - EV-021
+  status: verified
+  note: 只对自己启动的浏览器负责
+- id: F-A06
+  flow: authority
+  from: resolveSessionPort
+  to: session port/state
+  source: src/sessions.ts:94-122
+  condition: 命名 session 或显式 PORT
+  state_transition: default 9224 -> hash 9225..10224
+  evidence:
+  - EV-011
+  - EV-012
+  status: verified
+  note: 只隔离 bridge，不隔离浏览器
+- id: F-A07
+  flow: authority
+  from: client.callTool
+  to: MCP tool privilege
+  source: src/bridge.ts:591
+  condition: 任意允许的 tool name
+  state_transition: HTTP caller -> 浏览器/CDP 权限
+  evidence:
+  - EV-018
+  - EV-021
+  status: verified
+  note: confused deputy 面
+- id: F-M01
+  flow: memory
+  from: spawnBridgeProcess
+  to: write bridge.pid
+  source: src/client.ts:352-370
+  condition: spawn 成功
+  state_transition: 无文件 -> PID+port
+  evidence:
+  - EV-003
+  status: verified
+  note: detached bridge 的所有权记录
+- id: F-M02
+  flow: memory
+  from: ensureBridge
+  to: read bridge.pid
+  source: src/client.ts:473-510
+  condition: 每次命令
+  state_transition: 文件 -> pid/port
+  evidence:
+  - EV-003
+  status: verified
+  note: 坏文件/死 PID -> respawn
+- id: F-M03
+  flow: memory
+  from: rememberToolRouting
+  to: write selected-page-id
+  source: src/selected-page.ts:109-125
+  condition: select/new/close
+  state_transition: selection -> 文件
+  evidence:
+  - EV-027
+  status: verified
+  note: 跨 CLI 存活
+- id: F-M04
+  flow: memory
+  from: bumpGeneration
+  to: write snapshot-generation
+  source: src/generation.ts:34-47
+  condition: 每次 capture
+  state_transition: N -> N+1 文件
+  evidence:
+  - EV-033
+  status: verified
+  note: 跨 CLI 存活
+- id: F-M05
+  flow: memory
+  from: session state dir
+  to: ~/.chrome-devtools-axi/
+  source: src/sessions.ts:110-122
+  condition: 默认/命名 session
+  state_transition: 无目录 -> 目录
+  evidence:
+  - EV-011
+  status: verified
+  note: sessions/<name>/ 隔离
+- id: F-M06
+  flow: memory
+  from: shutdown
+  to: unlink bridge.pid
+  source: src/bridge.ts:1232-1270
+  condition: bridge 退出
+  state_transition: PID 文件 -> 删除
+  evidence:
+  - EV-009
+  - EV-046
+  status: verified
+  note: 避免下一个 CLI 复用死 PID
+- id: F-P01
+  flow: policy
+  from: push/PR
+  to: ci.yml build+test
+  source: /.github/workflows/ci.yml:1-30
+  condition: Node 24 + pnpm
+  state_transition: 变更 -> CI 结果
+  evidence:
+  - EV-042
+  status: verified
+  note: frozen lockfile
+- id: F-P02
+  flow: policy
+  from: local dev
+  to: airlock lint
+  source: /.airlock/lint.sh
+  condition: 手动/agent 提交前
+  state_transition: 源码 -> prettier+tsc 结果
+  evidence:
+  - EV-043
+  status: verified
+  note: 禁止 npm/npx 绕过 pnpm
+- id: F-P03
+  flow: policy
+  from: PR diff
+  to: guard-generated-files
+  source: /.github/workflows/guard-generated-files.yml:1-60
+  condition: base...head 改 CHANGELOG/manifest
+  state_transition: 手改 -> fail
+  evidence:
+  - EV-048
+  status: verified
+  note: 生成文件所有权
+- id: F-P04
+  flow: policy
+  from: human PR
+  to: no-mistakes-required
+  source: /.github/workflows/no-mistakes-required.yml:1-60
+  condition: 非 release-please 作者
+  state_transition: 缺 attestation -> fail
+  evidence:
+  - EV-048
+  status: verified
+  note: 人工 PR 必须走流程
+- id: F-P05
+  flow: policy
+  from: main release
+  to: release-please + npm provenance
+  source: /.github/workflows/release-please.yml:1-60
+  condition: release PR 合并
+  state_transition: 版本 -> npm publish
+  evidence:
+  - EV-049
+  status: verified
+  note: 生成 CHANGELOG/manifest
+- id: F-P06
+  flow: policy
+  from: release PR
+  to: paths-ignore
+  source: /.github/workflows/ci.yml:1-30
+  condition: release-please 输出集
+  state_transition: release PR -> 跳过重复 CI
+  evidence:
+  - EV-042
+  - EV-049
+  status: verified
+  note: 避免永远 action_required

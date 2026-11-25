@@ -1,0 +1,25 @@
+{
+  "ko_count": 8,
+  "with_aggregation_rule": 8,
+  "facts_cluster_match": 8,
+  "abstraction": {
+    "L4": 4,
+    "L3": 4
+  },
+  "rules": {
+    "R4": 4,
+    "R2": 3,
+    "R1": 1
+  },
+  "cluster_sizes": {
+    "KO-01": 7,
+    "KO-02": 5,
+    "KO-03": 3,
+    "KO-04": 5,
+    "KO-05": 4,
+    "KO-06": 5,
+    "KO-07": 4,
+    "KO-08": 3
+  },
+  "errors": []
+}
