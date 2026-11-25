@@ -1,0 +1,383 @@
+schema: knowledge-archaeology/evidence-index@3.1
+project: chrome-devtools-axi
+run_id: ARCH-2026-11-26-001
+rows:
+- id: EV-001
+  source: README.md:117-160; AGENTS.md invariants
+  observation: CLI 是短命令进程，跨命令会话由 detached bridge 持有；session 只隔离 bridge。
+  confidence: high
+  status: verified
+  supports:
+  - EK-01
+  - EK-10
+- id: EV-002
+  source: src/bridge.ts:6-9, 520-605; src/client.ts:744-790
+  observation: bridge 暴露 /health /health?deep=1 /tools /call；CLI 通过 HTTP 调用。
+  confidence: high
+  status: verified
+  supports:
+  - EK-02
+  - EK-01
+- id: EV-003
+  source: src/bridge.ts:1225
+  observation: server.listen(port, "127.0.0.1")，只 bind loopback。
+  confidence: high
+  status: verified
+  supports:
+  - EK-02
+  - EK-03
+- id: EV-004
+  source: src/client.ts:192-202, 473-510
+  observation: checkBridgeHealth({deep}) 请求 /health?deep=1，并作为复用前置。
+  confidence: high
+  status: verified
+  supports:
+  - EK-04
+  - EK-05
+- id: EV-005
+  source: src/bridge.ts:557-580
+  observation: deep health 调用 isBridgeTargetReachable（list_pages）验证 CDP target。
+  confidence: high
+  status: verified
+  supports:
+  - EK-04
+  - EK-05
+- id: EV-006
+  source: src/bridge.ts:570-580
+  observation: deep 失败返回 503 CDP target unreachable + reason。
+  confidence: high
+  status: verified
+  supports:
+  - EK-04
+- id: EV-007
+  source: src/client.ts:269-279
+  observation: isBridgeProcess 用 ps -p <pid> -o command= 并做子串匹配。
+  confidence: high
+  status: verified
+  supports:
+  - EK-07
+- id: EV-008
+  source: src/client.ts:288-330
+  observation: terminateBridgeProcess 先 SIGTERM，2s 后对进程组 SIGKILL。
+  confidence: high
+  status: verified
+  supports:
+  - EK-05
+  - EK-07
+- id: EV-009
+  source: src/bridge.ts:1248-1251
+  observation: client.onclose 非自身 shutdown 时 void shutdown()。
+  confidence: high
+  status: verified
+  supports:
+  - EK-06
+- id: EV-010
+  source: src/client.ts:352-370
+  observation: spawn detached:true / stdio:ignore / unref()。
+  confidence: high
+  status: verified
+  supports:
+  - EK-01
+  - EK-07
+- id: EV-011
+  source: src/sessions.ts:110-122
+  observation: 状态目录 ~/.chrome-devtools-axi/，命名 session 在 sessions/<name>/。
+  confidence: high
+  status: verified
+  supports:
+  - EK-03
+  - EK-08
+  - EK-09
+- id: EV-012
+  source: src/sessions.ts:28-30, 94-108
+  observation: 默认端口 9224；命名 session FNV-1a 映射到 1000 个端口。
+  confidence: high
+  status: verified
+  supports:
+  - EK-08
+- id: EV-013
+  source: src/sessions.ts:50-90
+  observation: validateSessionName 拒绝路径穿越/分隔符/shell 元字符/空/全点/>64。
+  confidence: high
+  status: verified
+  supports:
+  - EK-08
+- id: EV-014
+  source: src/bridge.ts:642-658; src/bridge-script.ts:31
+  observation: EADDRINUSE -> exit code 48。
+  confidence: high
+  status: verified
+  supports:
+  - EK-09
+- id: EV-015
+  source: src/bridge.ts:217-320, 531-546
+  observation: LOOPBACK_HOSTNAMES、extractHostHeaderHostname、isAllowedBridgeHost、isRequestOriginAllowed、isRequestAllowed。
+  confidence: high
+  status: verified
+  supports:
+  - EK-19
+  - EK-20
+- id: EV-016
+  source: src/bridge.ts:531-546
+  observation: 拒绝时 403 {"error":"Forbidden host"} 并记录 host/origin/method/url。
+  confidence: high
+  status: verified
+  supports:
+  - EK-19
+  - EK-36
+- id: EV-017
+  source: src/bridge.ts:610-620
+  observation: createBridgeServer 只有 createServer + handler，无 auth middleware。
+  confidence: high
+  status: verified
+  supports:
+  - EK-21
+- id: EV-018
+  source: commit 4ee5a49bbdec0c7c0b43aa6d9d6775798fa97534
+  observation: 'fix(bridge): reject non-loopback Host/Origin to block DNS rebinding (GHSA-x439-jhfh-v9x2)；token gate 标为 out-of-scope follow-up。'
+  confidence: high
+  status: verified
+  supports:
+  - EK-21
+  - EK-19
+- id: EV-019
+  source: src/bridge.ts:428-441, 476-520
+  observation: /call 的 roots 只校验 Array.isArray + isAbsolute；name 直接传 callTool。
+  confidence: high
+  status: verified
+  supports:
+  - EK-21
+  - EK-22
+- id: EV-020
+  source: src/bridge.ts:683-760
+  observation: buildTransportArgs 的 attach 优先与 launch 分支。
+  confidence: high
+  status: verified
+  supports:
+  - EK-23
+  - EK-24
+- id: EV-021
+  source: test/keychain-isolation.test.ts; test/bridge.test.ts
+  observation: launch 矩阵 7 + attach 矩阵 3；调用方 --chrome-arg 不能挤掉隔离 flag。
+  confidence: high
+  status: verified
+  supports:
+  - EK-23
+- id: EV-022
+  source: src/bridge.ts:920-1020
+  observation: resolveTransportSpec / resolveTransport 的 URL-only / URL+MCP_PATH / local stdio 分支。
+  confidence: high
+  status: verified
+  supports:
+  - EK-24
+  - EK-25
+- id: EV-023
+  source: test/bridge.test.ts:532-940
+  observation: MCP 本地解析 explicit/PATH/global/npx 与 Windows 布局测试。
+  confidence: high
+  status: verified
+  supports:
+  - EK-25
+- id: EV-024
+  source: src/bridge.ts:1098-1155
+  observation: applyRootsNow 发 notifications/roots/list_changed 并等待 2s。
+  confidence: high
+  status: verified
+  supports:
+  - EK-22
+- id: EV-025
+  source: src/paths.ts:7-9; src/client.ts:640-690
+  observation: resolveOutputPath 按 CLI cwd；collectRootDirs 加 cwd 和输出路径最近存在祖先。
+  confidence: high
+  status: verified
+  supports:
+  - EK-22
+  - EK-28
+- id: EV-026
+  source: src/bridge.ts:330-350, 476-520; src/client.ts:790-850
+  observation: isToolResultError 把 isError:true 转成 {error}；parseCallResponse 抛 CdpError。
+  confidence: high
+  status: verified
+  supports:
+  - EK-26
+  - EK-28
+- id: EV-027
+  source: src/selected-page.ts:1-20, 109-125
+  observation: selected page 只由显式 select/new 写入；list_pages 的 [selected] 只展示。
+  confidence: high
+  status: verified
+  supports:
+  - EK-11
+  - EK-12
+  - EK-03
+- id: EV-028
+  source: src/pages.ts:1-20
+  observation: pages parser 是 display-only；不得把解析结果注入 callTool。
+  confidence: high
+  status: verified
+  supports:
+  - EK-11
+  - EK-12
+- id: EV-029
+  source: src/selected-page.ts:109-125, 198-230
+  observation: rememberToolRouting 处理 select/new/close；new 只在唯一 [selected] 行写。
+  confidence: high
+  status: verified
+  supports:
+  - EK-11
+  - EK-13
+- id: EV-031
+  source: src/bridge.ts:360-410, 470-520
+  observation: didMcpPageIdentityChange 认 structuredContent.reconnected 或首行 marker；显式 pageId 返回 identity error。
+  confidence: high
+  status: verified
+  supports:
+  - EK-13
+  - EK-14
+- id: EV-032
+  source: src/client.ts:790-850
+  observation: 'isMissingPageError 只取最后一个非空行并去 Error: 前缀；注释标 UNVERIFIED DEPENDENCY CONTRACT。'
+  confidence: high
+  status: verified
+  supports:
+  - EK-14
+  - EK-26
+- id: EV-033
+  source: src/generation.ts:23-60; src/uid-freshness.ts:81-84
+  observation: snapshot-generation 持久化；每次 capture bump。
+  confidence: high
+  status: verified
+  supports:
+  - EK-15
+  - EK-16
+  - EK-17
+- id: EV-034
+  source: src/generation.ts:23-47
+  observation: getCurrentGeneration / bumpGeneration / resetGeneration 读写状态文件。
+  confidence: high
+  status: verified
+  supports:
+  - EK-15
+  - EK-03
+- id: EV-035
+  source: src/uid-freshness.ts:45-60, 118-140
+  observation: 页面侧 {generation, mutations, observer}；parseUidFresh 要求 generation 相同且 mutations=0。
+  confidence: high
+  status: verified
+  supports:
+  - EK-16
+  - EK-17
+- id: EV-036
+  source: src/snapshot.ts:51-60; test/snapshot.test.ts:200-240
+  observation: uid=id 重写为 uid=gN:id；legacy ref 返回 stale:false。
+  confidence: high
+  status: verified
+  supports:
+  - EK-17
+- id: EV-037
+  source: src/snapshot.ts:102-115
+  observation: truncateSnapshot 默认 16,000 字符，按行边界，保留 truncated/totalLength。
+  confidence: high
+  status: verified
+  supports:
+  - EK-18
+- id: EV-038
+  source: src/navigation-timeout.ts:22-74
+  observation: DEFAULT_MCP_REQUEST_TIMEOUT_MS=60s、DEFAULT_CALL_TIMEOUT_MS=120s、headroom 30s、max 1e9。
+  confidence: high
+  status: verified
+  supports:
+  - EK-27
+- id: EV-039
+  source: src/idle.ts:24-100; src/bridge.ts:607
+  observation: idle 只接受正整数，最低 1s；ambient header 不续命。
+  confidence: high
+  status: verified
+  supports:
+  - EK-29
+- id: EV-040
+  source: src/run.ts:196-380
+  observation: runScript 写临时 .mjs、动态 import、注入 page helper、只捕获 console.log。
+  confidence: high
+  status: verified
+  supports:
+  - EK-30
+  - EK-35
+- id: EV-041
+  source: src/cli.ts:1829-1900, 1981-2010
+  observation: COMMAND_HANDLERS 注册命令；validateCommandFlags 在 handler 前。
+  confidence: high
+  status: verified
+  supports:
+  - EK-31
+- id: EV-042
+  source: .github/workflows/ci.yml:1-30
+  observation: Node 24 + pnpm frozen lockfile、build、test。
+  confidence: high
+  status: verified
+  supports:
+  - EK-32
+  - EK-33
+- id: EV-043
+  source: .airlock/lint.sh
+  observation: pnpm install --frozen-lockfile --ignore-scripts、pnpm exec prettier、pnpm exec tsc --noEmit。
+  confidence: high
+  status: verified
+  supports:
+  - EK-33
+- id: EV-044
+  source: .airlock/workflows/main.yml
+  observation: 'AIRLOCK_RISK_THRESHOLD: medium。'
+  confidence: high
+  status: verified
+  supports:
+  - EK-33
+- id: EV-045
+  source: README.md keychain isolation; AGENTS.md invariants
+  observation: session 只隔离 bridge；keychain 只在 launch 模式隔离。
+  confidence: high
+  status: verified
+  supports:
+  - EK-10
+  - EK-23
+- id: EV-046
+  source: 'local: pnpm test'
+  observation: Test Files 29 passed (29), Tests 796 passed (796), 80.57s。
+  confidence: high
+  status: runtime
+  supports:
+  - EK-05
+  - EK-06
+  - EK-29
+  - EK-32
+- id: EV-047
+  source: test/bridge.test.ts, test/keychain-isolation.test.ts, test/bridge-lifecycle.test.ts
+  observation: 安全矩阵、keychain 矩阵、真实 detached bridge 生命周期测试。
+  confidence: high
+  status: verified
+  supports:
+  - EK-19
+  - EK-20
+  - EK-32
+- id: EV-048
+  source: .github/workflows/guard-generated-files.yml:1-60; .github/workflows/no-mistakes-required.yml:1-60
+  observation: 生成文件 base...head 检查；人工 PR attestation。
+  confidence: high
+  status: verified
+  supports:
+  - EK-34
+- id: EV-049
+  source: .github/workflows/release-please.yml:1-60; .github/workflows/ci.yml
+  observation: release-please + npm publish --provenance；CI paths-ignore 对齐 release 输出。
+  confidence: high
+  status: verified
+  supports:
+  - EK-34
+  - EK-33
+- id: EV-050
+  source: 'local: rg -c ''it\('' test/*.test.ts'
+  observation: 654 个静态 it( 站点；29 个测试文件。
+  confidence: high
+  status: verified
+  supports:
+  - EK-32

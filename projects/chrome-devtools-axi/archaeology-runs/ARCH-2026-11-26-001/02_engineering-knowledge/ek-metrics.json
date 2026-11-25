@@ -1,0 +1,14 @@
+{
+  "nodes": 36,
+  "declared_edges": 59,
+  "orphans": 0,
+  "avg_out": 1.333,
+  "types": {
+    "causal": 15,
+    "dependency": 7,
+    "constraint": 13,
+    "subsystem": 8,
+    "contrast": 8,
+    "mechanism": 8
+  }
+}

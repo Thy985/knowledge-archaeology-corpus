@@ -1,0 +1,125 @@
+run_id: ARCH-2026-11-26-001
+job_id: KA-2026-11-26-001
+project: chrome-devtools-axi
+mode: initial
+priority: A
+repository:
+  url: https://github.com/kunchenguid/chrome-devtools-axi.git
+  commit: 1dbdac1ca1122e1d2b76d889bbc8a2dd2eb2dcd7
+  branch: main
+  commit_time: '2026-11-04T05:32:02+11:00'
+  describe: chrome-devtools-axi-v0.1.46-2-g1dbdac1
+  npm_version: 0.1.46
+  npm_modified: '2026-10-29T13:48:43.002Z'
+skill:
+  name: knowledge-archaeology
+  version: v3.2
+  path: /home/user/.super_doubao/super-doubao-runtime/workspace/.user_skills/knowledge-archaeology/
+timestamp: '2026-11-26T02:28:38+08:00'
+artifacts:
+- 00_overview.md
+- 01_project-layer/project-map.md
+- 02_engineering-knowledge/engineering-knowledge.md
+- 02_engineering-knowledge/ek-graph.yaml
+- 02_engineering-knowledge/ek-metrics.json
+- 03-knowledge-layer/knowledge-objects.md
+- 03-knowledge-layer/ko-graph.yaml
+- 03-knowledge-layer/ko-metrics.json
+- 04_flow-atlas/flow-atlas.md
+- 04_flow-atlas/flow-atlas.yaml
+- 05_candidates/candidates.md
+- 05_candidates/candidates.yaml
+- 06-validation/evidence-index.md
+- 06-validation/evidence-index.yaml
+- 06-validation/independent-validation.md
+- 06-validation/reconciliation.md
+- 06-validation/quality-metrics.json
+quality_metrics:
+  ek: 36
+  ek_edges: 59
+  ek_orphans: 0
+  ek_avg_out: 1.333
+  ek_types:
+    causal: 15
+    dependency: 7
+    constraint: 13
+    subsystem: 8
+    contrast: 8
+    mechanism: 8
+  ko: 8
+  ko_with_aggregation_rule: 8
+  ko_facts_cluster_match: 8
+  ko_abstraction:
+    L4: 4
+    L3: 4
+  ko_rules:
+    R4: 4
+    R2: 3
+    R1: 1
+  ko_cluster_sizes:
+    KO-01: 7
+    KO-02: 5
+    KO-03: 3
+    KO-04: 5
+    KO-05: 4
+    KO-06: 5
+    KO-07: 4
+    KO-08: 3
+  flow_edges: 48
+  flow_counts:
+    control: 8
+    state: 7
+    data: 7
+    evidence: 7
+    authority: 7
+    memory: 6
+    policy: 6
+  evidence_rows: 49
+  candidates: 12
+  candidate_types:
+    cross_project_candidate: 1
+    evidence_gap: 1
+    hypothesis: 5
+    known_limitation: 2
+    uncertain_pattern: 3
+testing:
+  test_files: 29
+  static_it_sites: 654
+  executed_cases: 796
+  passed: 796
+  duration_s: 80.57
+  build: pnpm run build PASS
+  worktree_clean: true
+  node_local: v22.23.4
+  ci_node: '24'
+validation:
+  overall: PARTIALLY_CONFIRMED
+  gate: PARTIAL
+  confirmed: 4
+  partially_confirmed: 2
+  downgraded: 1
+  over_generalized: 1
+  missing: 7
+  contradicted: 0
+  needs_human_review: 0
+  benchmark_score: 5/6
+runtime_verified: false
+limitations:
+- no live Chrome
+- no live CDP
+- no running bridge attack
+- no cross-UID test
+- no HTTP/2 or duplicate Host test
+- no live MCP roots test
+- no isBridgeProcess spoof test
+skill_evolution:
+  proposal: false
+  reason: no systemic skill defect exposed; project-level evidence gaps only
+corpus_delivery:
+  target: projects/chrome-devtools-axi/
+  history_policy: do not overwrite existing runs
+  feishu: not written (no explicit authorization)
+read_only:
+  target_repo: true
+  knowlege_map: true
+  production_skill: true
