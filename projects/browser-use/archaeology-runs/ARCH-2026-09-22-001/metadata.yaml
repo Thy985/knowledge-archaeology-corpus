@@ -1,0 +1,26 @@
+project: browser-use
+slug: browser-use
+repository: https://github.com/browser-use/browser-use.git
+version: 0.13.10
+commit: d8110c5ff87ccba887aaa726cdb780f2f84bef8d
+commit_message: "docs: add PZERO OpenAI-compatible provider example (#5579) (#5648)"
+commit_timestamp: 2026-09-18T22:34:42Z
+skill_version: knowledge-archaeology v3.2
+archaeologized_at: 2026-09-22
+mode: initial
+run_id: ARCH-2026-09-22-001
+source_entry: "03_expansion_index/README.md [cand]computer-browser-use-2026 (A级) + 05_scan_logs/2026-09/2026-09-22_radar-watch_scan.md §2 信号（Anthropic Computer Use GA 09-18 / Vercel Agent Browser / Browserbase Stagehand 重建 / Skyvern 3.0 验证码原生）"
+
+summary: >-
+  browser-use（Python ≥3.11，Apache-2.0，115,743★，v0.13.10）——开源事实标准的浏览器 Agent 库：
+  Agent 通过 LLM 决策 + CDP 控制 Chromium 执行网页任务，同时是三层商业漏斗的 OSS 顶端
+  （OSS 库 → Browser Use Cloud 云端浏览器 $0.02/hr → Hosted Agent API → 自有模型 ChatBrowserUse 推荐）。
+  本次考古产出 25 Facts/22 EK（EK Graph 六类边）/10 KO（6 Pattern + 3 Cognitive Model + 1 Methodology）
+  /7 类 Flow/5 Candidates。关键认知：KO-03 软门控 vs 硬门控（循环检测只注入上下文 nudge 从不阻断
+  ——行为质量靠说服、资源终止靠强制）、KO-02 上下文预算分级降级（compaction→75% 警告→最后一步
+  强制 done→失败强制 done）、KO-04 事件驱动 watchdog 架构（bubus EventBus + 16 监视器）、
+  KO-05 三重安全边界（域白名单+重定向捕获+IP 编码绕过防护 block_ip_addresses）。
+  独立审计（盲重建）10 判定：8 CONFIRMED + 3 PARTIAL + 1 DOWNGRADED + 1 OVER_GENERALIZED
+  + 3 MISSING（M-1 IP 绕过防护 / M-2 captcha vendor 三态 / M-3 nudge escalating 分级）
+  + 0 CONTRADICTED + 1 NEEDS_HUMAN_REVIEW（beta Rust SDK），已 Reconciliation 5 项。
+  跨项目候选 C-01 软硬门控分工 / C-02 OSS 漏斗产品化（与 mem0 同构，第二实例）待第三实例验证。
