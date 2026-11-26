@@ -1,0 +1,136 @@
+# run_metadata.yaml — ARCH-2026-11-27-001
+
+run_id: ARCH-2026-11-27-001
+job_id: KA-2026-11-27-001
+project: browser-use
+slug: browser-use
+repository: https://github.com/browser-use/browser-use.git
+branch: detached HEAD at tag 1.0.8
+repository_version: 1.0.8
+commit: 753d629d76eb2b670f4cf467f3355bbe750f6845
+commit_message: "1.0.8: release the 1.0.8rc1 code (#6504)"
+commit_timestamp: 2026-11-21T19:30:22-08:00
+skill_version: knowledge-archaeology v3.2
+timestamp: 2026-11-27T02:09:12+08:00
+mode: refresh
+baseline_run: ARCH-2026-09-22-001
+baseline_version: 0.13.10
+baseline_commit: d8110c5ff87ccba887aaa726cdb780f2f84bef8d
+selected_by: Daily Archaeology Job Selection (multi-factor, not star-rank)
+
+target_selection:
+  priority: A
+  reason: >-
+    1.0 is an architecture-level rewrite (persistent Python REPL over raw CDP, no DOM serializer/action schema),
+    so the 0.13.10 KOs cannot be inherited without re-derivation. The repository is small enough for a single-day
+    close (35,428 Python lines, 18,492 test lines), and the 2026-11-27 radar provided source-level entry points.
+  source_entry:
+    - KnowlegeMap 07_radar_watch/current_focus.md
+    - KnowlegeMap 05_scan_logs/2026-11/2026-11-27_radar-watch_scan.md
+    - KnowlegeMap 03_expansion_queue/candidates/[cand]computer-browser-use-2026.md §3.9/§5
+    - KnowlegeMap 03_expansion_queue/candidates/[cand]local-control-plane-exposure-2026-11.md
+    - KnowlegeMap 08_agent_centric/domains/agent-computer-use.md §十 Day5
+    - Corpus projects/browser-use/metadata.yaml (0.13.10 baseline)
+
+repository_snapshot:
+  clone: shallow, depth 1, tag 1.0.8
+  is_shallow: true
+  tracked_files: 146
+  python_lines: 35428
+  test_lines: 18492
+  test_files: 25
+  test_functions_tests_ci: 429
+  local_tests:
+    command: "uv run pytest tests/ci -m 'not chrome' -q"
+    result: "964 passed, 3 skipped, 140 deselected, 1 warning in 328.03s"
+    worktree_clean: true
+
+quality_metrics:
+  facts_evidence_count: 55
+  engineering_knowledge_count: 55
+  pattern_count: 10
+  cognitive_model_count: 2
+  methodology_count: 0
+  principle_count: 0
+  flow_atlas_flows: 7
+  flow_edges: 59
+  candidate_count: 13
+  within_project_candidates: 5
+  cross_project_hypotheses: 8
+  validation_verdict_count: 12
+  confirmed_count: 9
+  partially_confirmed_count: 3
+  downgraded_count: 0
+  contradicted_count: 0
+  missing_count: 0
+  over_generalized_count: 0
+  needs_human_review_count: 0
+
+validation_result:
+  status: PASS_WITH_CONDITIONS
+  truth_audit: PASS
+  coverage_audit: PARTIAL (cloud/MCP/CLI late paths, real Chrome, 0.13.10 line-by-line baseline not fully exercised)
+  flow_audit: PASS (one evidence-flow edge corrected)
+  abstraction_audit: PASS_WITH_SCOPE (10 L3 + 2 L4; no L5 promoted)
+  counterexample: PASS (12/12 KOs have a boundary or attempted counterexample)
+  epistemic_audit: PASS (Fact/Observation/Hypothesis/Pattern/Model/Principle separated)
+  independent_validation: role-separated auditor in the same runtime; same-model limitation disclosed
+
+corrections:
+  - id: COR-01
+    description: "Effective max_steps default corrected from 1000 (Session) to 100 (Agent.run)."
+  - id: COR-02
+    description: "Removed an erroneous judge -> is_successful() edge; is_successful() reads only agent success."
+  - id: COR-03
+    description: "Qualified Chrome attach approval: conditional UI gate, not universal; launched profile copy has no gate."
+  - id: COR-04
+    description: "Removed the phrase 'independent judge'; judge is a separate request from the same model over the same trace."
+
+known_gaps:
+  - "Cloud stop/downloads/keep-alive late paths partially traced; no live cloud run."
+  - "MCP browser_exec thread/cancellation not fully traced."
+  - "140 chrome-marked tests not run locally."
+  - "0.13.10 baseline not re-read line-by-line; comparison uses old corpus metadata + 1.0 docs/code."
+  - "Telemetry payload construction sampled, not exhaustively audited."
+  - "CLI skill-install/doctor sampled."
+  - "Auditor shares the same runtime/model as the primary pass."
+
+license_note: >-
+  The 1.0.8 LICENSE and pyproject.toml declare MIT. The 0.13.10 corpus metadata summary says Apache-2.0.
+  The shallow clone has no history to determine whether the license changed or the baseline metadata was wrong.
+  This is recorded as a baseline discrepancy, not as a 1.0.8 fact.
+
+evidence_refs:
+  - repo/pyproject.toml
+  - repo/README.md
+  - repo/MIGRATING.md
+  - repo/AGENTS.md
+  - repo/CLAUDE.md
+  - repo/browser_use/agent/service.py
+  - repo/browser_use/agent/views.py
+  - repo/browser_use/agent/loop.py
+  - repo/browser_use/agent/judge.py
+  - repo/browser_use/agent/prompt.py
+  - repo/browser_use/repl/session.py
+  - repo/browser_use/repl/worker.py
+  - repo/browser_use/browser/browser.py
+  - repo/browser_use/browser/local.py
+  - repo/browser_use/domains.py
+  - repo/browser_use/tools.py
+  - repo/browser_use/auth.py
+  - repo/browser_use/config.py
+  - repo/browser_use/llm/__init__.py
+  - repo/browser_use/mcp/cli_mcp.py
+  - repo/browser_use/cli.py
+  - repo/browser_use/legacy.py
+  - repo/tests/ci/test_loop.py
+  - repo/tests/ci/test_repl.py
+  - repo/tests/ci/test_judge.py
+  - repo/tests/ci/test_browser.py
+  - repo/tests/ci/test_local_browser.py
+  - repo/tests/ci/test_domains.py
+  - repo/tests/ci/test_compat.py
+  - repo/.github/workflows/test.yaml
+  - repo/.github/workflows/package.yaml
+  - repo/.github/workflows/docker.yml
+  - repo/LICENSE

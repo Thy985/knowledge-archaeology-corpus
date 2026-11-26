@@ -1,26 +1,98 @@
+# browser-use — Knowledge Archaeology Corpus Entry
+
 project: browser-use
 slug: browser-use
 repository: https://github.com/browser-use/browser-use.git
-version: 0.13.10
-commit: d8110c5ff87ccba887aaa726cdb780f2f84bef8d
-commit_message: "docs: add PZERO OpenAI-compatible provider example (#5579) (#5648)"
-commit_timestamp: 2026-09-18T22:34:42Z
+latest_run: ARCH-2026-11-27-001
+mode: refresh
+version: 1.0.8
+commit: 753d629d76eb2b670f4cf467f3355bbe750f6845
+commit_message: "1.0.8: release the 1.0.8rc1 code (#6504)"
+commit_timestamp: 2026-11-21T19:30:22-08:00
 skill_version: knowledge-archaeology v3.2
-archaeologized_at: 2026-09-22
-mode: initial
-run_id: ARCH-2026-09-22-001
-source_entry: "03_expansion_index/README.md [cand]computer-browser-use-2026 (A级) + 05_scan_logs/2026-09/2026-09-22_radar-watch_scan.md §2 信号（Anthropic Computer Use GA 09-18 / Vercel Agent Browser / Browserbase Stagehand 重建 / Skyvern 3.0 验证码原生）"
+archaeologized_at: 2026-11-27
+status: COMPLETED
+previous_run:
+  run_id: ARCH-2026-09-22-001
+  version: 0.13.10
+  commit: d8110c5ff87ccba887aaa726cdb780f2f84bef8d
+  mode: initial
+  path: archaeology-runs/ARCH-2026-09-22-001/
+runs:
+  - run_id: ARCH-2026-09-22-001
+    version: 0.13.10
+    mode: initial
+    path: archaeology-runs/ARCH-2026-09-22-001/
+  - run_id: ARCH-2026-11-27-001
+    version: 1.0.8
+    mode: refresh
+    path: archaeology-runs/ARCH-2026-11-27-001/
+source_entry: >-
+  KnowlegeMap 07_radar_watch/current_focus.md + 05_scan_logs/2026-11/2026-11-27_radar-watch_scan.md
+  （Computer Use Day5 源码级验证：browser-use 1.0.8 无 DOM serializer / judge 单请求 / 本地执行显式）
+  + 03_expansion_queue/candidates/[cand]computer-browser-use-2026.md §3.9/§5
+  + [cand]local-control-plane-exposure-2026-11.md P8/P9
 
 summary: >-
-  browser-use（Python ≥3.11，Apache-2.0，115,743★，v0.13.10）——开源事实标准的浏览器 Agent 库：
-  Agent 通过 LLM 决策 + CDP 控制 Chromium 执行网页任务，同时是三层商业漏斗的 OSS 顶端
-  （OSS 库 → Browser Use Cloud 云端浏览器 $0.02/hr → Hosted Agent API → 自有模型 ChatBrowserUse 推荐）。
-  本次考古产出 25 Facts/22 EK（EK Graph 六类边）/10 KO（6 Pattern + 3 Cognitive Model + 1 Methodology）
-  /7 类 Flow/5 Candidates。关键认知：KO-03 软门控 vs 硬门控（循环检测只注入上下文 nudge 从不阻断
-  ——行为质量靠说服、资源终止靠强制）、KO-02 上下文预算分级降级（compaction→75% 警告→最后一步
-  强制 done→失败强制 done）、KO-04 事件驱动 watchdog 架构（bubus EventBus + 16 监视器）、
-  KO-05 三重安全边界（域白名单+重定向捕获+IP 编码绕过防护 block_ip_addresses）。
-  独立审计（盲重建）10 判定：8 CONFIRMED + 3 PARTIAL + 1 DOWNGRADED + 1 OVER_GENERALIZED
-  + 3 MISSING（M-1 IP 绕过防护 / M-2 captcha vendor 三态 / M-3 nudge escalating 分级）
-  + 0 CONTRADICTED + 1 NEEDS_HUMAN_REVIEW（beta Rust SDK），已 Reconciliation 5 项。
-  跨项目候选 C-01 软硬门控分工 / C-02 OSS 漏斗产品化（与 mem0 同构，第二实例）待第三实例验证。
+  browser-use 1.0.8 是对 0.13.10 的架构级重写，不是 feature refresh：模型不再从 DOM/action schema 里选动作，
+  而是在一个持久 Python REPL 里写代码，通过 browser-harness helpers 与 raw CDP 驱动浏览器。
+  本轮产出 55 EK / 12 KO（10 L3 Pattern + 2 L4 Cognitive Model，0 L5）/ 7 类 Flow / 59 条 Flow Edge /
+  13 Candidates；964 个非 Chrome 测试通过（3 skipped / 140 deselected）。
+  关键认知：1) 代码即动作空间后，治理从 action schema 层转移到 parent/worker/daemon 执行面、browser attach/domain 面、
+  以及 budget/delivery 面；2) redaction 不是 sandbox，domain allowlist 不是网络隔离，local debug port 是未认证的
+  loopback authority grant；3) agent 的 finish(success=...) 与 judge 是两条并列通道，is_successful() 只读前者，
+  judge 是同一模型的第二次请求而非独立验证；4) 失败降级是固定阶梯（cell deadline → delivery deadline →
+  delivery-only turn → partial checkpoint），保交付物而非保 Python 变量。
+
+key_findings:
+  - KO-01 代码即动作：无 DOM serializer / 无 action schema；built-ins 只有 python / finish / finish_from_repl
+  - KO-02 三平面执行：parent 持 key/budget/delivery；worker 以用户身份跑代码、可被杀/重启；daemon 持浏览器、可跨进程存活
+  - KO-03 预算→交付阶梯：90% 预算进入 delivery-only，cell timeout 杀进程树，文件/浏览器状态保留、Python 变量丢失
+  - KO-04 交付是结构契约：split delivery / placeholder / missing file 各修一次；但只校验结构，不校验语义
+  - KO-05 两条 verdict：is_successful() 只读 agent success；judge 同模型、同 trace，cached path 还共享 prefix，不独立
+  - KO-06 redaction ≠ isolation：worker 可读用户文件、parent .env、/proc/<pid>/environ；截图/js() 不 redact
+  - KO-07 domain allowlist ≠ 网络隔离：只拦 main-frame document；iframe/subresource/Python HTTP 不过滤
+  - KO-08 local debug port = ambient authority：127.0.0.1、无 token、同机账户可 attach；profile copy 带 cookies
+  - KO-09 双 compaction 路径：server-side LazyCompaction vs client-side summary checkpoint + 20/2 image prune
+  - KO-10 managed cloud 是默认运行时：Browser() cloud + bu-4.0 + 单 key；local 是显式 opt-in
+  - KO-11 (L4) action space 决定治理面：typed action → action-level policy；code action → OS/process/browser/budget policy
+  - KO-12 (L4) 四类边界易混淆：confidentiality / execution containment / navigation policy / authority grant
+
+quality_metrics:
+  engineering_knowledge: 55
+  ko: 12
+  ko_layers: "10 L3 + 2 L4 + 0 L5"
+  flows: 7
+  flow_edges: 59
+  candidates: 13
+  validation:
+    confirmed: 9
+    partially_confirmed: 3
+    downgraded: 0
+    contradicted: 0
+    missing: 0
+    over_generalized: 0
+    needs_human_review: 0
+  tests:
+    passed: 964
+    skipped: 3
+    deselected_chrome: 140
+    test_functions_tests_ci: 429
+
+key_controversies:
+  - "COR-01: Session.max_steps=1000 vs Agent.run(max_steps=100)；有效默认是 100"
+  - "COR-02: judge 不驱动 is_successful()；早期流程图错误地画了这条边"
+  - "COR-03: Chrome attach 的 Allow 提示是条件性的；launched profile copy 没有该 gate"
+  - "COR-04: 'independent judge' 措辞已删除；同模型/同 trace 的第二次请求不等于独立验证"
+  - "COR-05: 0.13.10 corpus 摘要写 Apache-2.0；1.0.8 LICENSE/pyproject 是 MIT；shallow clone 无法判定变更时点"
+  - "KO-08/KO-11/KO-12 为 PARTIALLY_CONFIRMED：文档/代码支持，但无 live 多用户测试；L4 为模型而非事实"
+
+connections:
+  - playwright-mcp        # 另一条 Computer Use 控制面：MCP typed tools vs code-execution REPL
+  - chrome-devtools-axi   # wrapper/upstream 对照：DevTools 控制面与本地端口暴露
+  - openclaw              # Browser Relay /cdp 无 token，与本地控制面暴露同族
+  - graphiti              # 记忆/上下文压缩对照：server-side vs client-side checkpoint
+  - mem0                  # OSS 漏斗产品化对照（cloud default + 单 key）
+  - agent-memory-guard    # 记忆写入治理 vs 浏览器执行治理
+
+skill_improvement_proposal: false
