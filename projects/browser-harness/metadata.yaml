@@ -1,33 +1,66 @@
 project: browser-harness
 slug: browser-harness
 repository: https://github.com/browser-use/browser-harness.git
-version: 0.1.13
-commit: afbcc381b963040c19627d788e40c7e7663171ee
-commit_message: "Merge pull request #757 from warun7/fix/video-export-nested-output"
-commit_timestamp: 2026-09-07T13:13:31-07:00
+version: 0.1.15
+commit: 373aecc4c40ef67d97b5ee69c144684a64a42a11
+commit_message: "Merge pull request #1077 from browser-use/release/0.1.15-telemetry"
+commit_timestamp: 2026-11-25T17:25:45+05:30
 skill_version: knowledge-archaeology v3.2
-archaeologized_at: 2026-10-04
-mode: initial
-run_id: ARCH-2026-10-04-001
-source_entry: "KnowlegeMap 03_expansion_queue/candidates/ [cand]browser-harness-2026.md（A 级卡）+ 2026-10-04 雷达扫描（next step: Agentic Attack/agent-harness/computer-browser-use 聚焦）"
+archaeologized_at: 2026-11-28
+mode: refresh
+run_id: ARCH-2026-11-28-001
+job_id: KA-2026-11-28-001
+previous_run: ARCH-2026-10-04-001
+source_entry: "KnowlegeMap 07_radar_watch/current_focus.md + 05_scan_logs/2026-11/2026-11-28_radar-watch_scan.md + [cand]browser-harness-2026.md; Day6 回灌日，不新扫描"
+runs:
+  - run_id: ARCH-2026-10-04-001
+    version: 0.1.13
+    commit: afbcc381b963040c19627d788e40c7e7663171ee
+    mode: initial
+    path: archaeology-runs/ARCH-2026-10-04-001/
+  - run_id: ARCH-2026-11-28-001
+    version: 0.1.15
+    commit: 373aecc4c40ef67d97b5ee69c144684a64a42a11
+    mode: refresh
+    path: archaeology-runs/ARCH-2026-11-28-001/
+
+quality:
+  ek_nodes: 60
+  ek_edges: 150
+  ek_avg_out_degree: 2.5
+  ko_total: 10
+  ko_l3: 9
+  ko_l4: 1
+  ko_l5: 0
+  candidates: 9
+  evidence_rows: 60
+  tests_executed: false
+  runtime_probes: 0
+
+validation:
+  status: PARTIAL_PASS_WITH_DOWNGRADE
+  confirmed: 79
+  partially_confirmed: 7
+  downgraded: 1
+  over_generalized: 1
+  missing: 6
+  contradicted: 3
+  needs_human_review: 3
+  report: 06-validation/independent_validation.md
+  reconciliation: 06-validation/reconciliation.md
 
 summary: >-
-  browser-harness（Python ≥3.11，MIT，15.7k+ stars，v0.1.13）——browser-use 出品的极简自愈浏览器 harness：
-  LLM 经一根可编辑 CDP WebSocket 直连真实 Chrome，agent 在执行中自写缺失 helper（agent-workspace/agent_helpers.py
-  运行时注入 helpers globals），无框架/无 recipes/无 rails，每次运行自我改进。
-  架构 = CLI(stdin heredoc exec) + 长驻 daemon(持 CDP 会话权威, IPC relay) + helpers(CDP wrapper + agent 扩展加载点)。
-  本次考古产出 100+ Facts/47 EK（EK Graph 六类边，平均出边 2.3）/8 KO（R1×2 R2×2 R3×1 R4×3）
-  /7 类 Flow/7 Candidates。关键认知：KO-01 进程身份端到端验证（ping {pong:true} 严格 dict、
-  identify type-is-int 拒 bool/0<pid<2^31、start-time 指纹、generation 指纹，SIGTERM 前双重确认）；
-  KO-03 被拒不重连纪律（permission 拒绝=状态非错误，修复史："how a single approval turned into an endless prompt"）；
-  KO-04 受控中间层+运行时能力扩展（核心 src 受保护、agent 扩展隔离 agent-workspace、唯一加载点注入）；
-  KO-05 cloud 计费权威（shutdown 失败保持 daemon 存活重试清理、BU_AUTOSPAWN 显式端点守卫矩阵）；
-  KO-06 四层输出面统一脱敏（日志 endpoint 拓扑/录制 URL secret scrub/遥测 FORBIDDEN_KEYS 17 项/video SENSITIVE+ROUTE_UNSAFE）。
-  独立审计（盲重建）8 CONFIRMED + 2 PARTIALLY_CONFIRMED + 2 DOWNGRADED + 0 OVER_GENERALIZED
-  + 5 MISSING + 0 CONTRADICTED + 1 NEEDS_HUMAN_REVIEW（SKILL.md name=browser-harness vs AGENTS.md
-  identity=browser-use 冲突），Reconciliation 合并 8 项（E-01 domain-skills 首标签 / E-02 IPC 超时三层预算 /
-  E-03 P-02 范围限定 / M-01→EK-46 dialog 状态机 / M-02→EK-34 recordings CLI / M-03→EK-47 debug-clicks /
-  M-04→EK-35 export --reviewed / M-05→EK-04 _IPCResponseTimeout detail 修复）。
-  跨项目候选：C-02 多 agent 共享浏览器 lane 并发安全边界（SKILL.md 声称串行安全、仓库内无互斥实现）；
-  C-04 agent_helpers 长期漂移（无版本治理、注入策略可能遮蔽核心函数）；C-06 与 deepseek-harness/opencode
-  daemon 身份机制同构性待 cross-corpus 比对。Skill Evolution 未触发（无系统性 skill 缺陷证据）。
+  0.1.15 refresh of browser-harness: the daemon now has tab-level ownership (tab_owner,
+  session_owner, GUARDED Target.attachToTarget/closeTarget/activateTarget, iframe proof,
+  URL/title blanking, idle release, owner state persistence). Old C-02 is partially resolved:
+  a tab mutex exists and is unit-tested, but ownership is a cooperative routing label, not
+  authentication; browser-level CDP sessions (`Target.attachToBrowserTarget`) are not
+  owner-bound; a sub-agent without `BH_OWNER` can still drive the parent's current tab via
+  `cdp()`, while only `close_tab`/`release_tabs` are refused. browser-use 1.0.8 pins
+  `browser-harness==0.1.13`, has zero owner-API usage, and gives each non-shared Browser its
+  own daemon; the shared `Browser('chrome')` path carries no owner identity, so the upstream
+  owner model is not in force downstream. Independent audit: 79 CONFIRMED, 7 PARTIALLY_CONFIRMED,
+  1 DOWNGRADED (KO-09 L4 -> L3), 1 OVER_GENERALIZED (EK-10 warning frequency), 6 MISSING,
+  3 CONTRADICTED (a quoted README sentence absent from the snapshot; test-file count), 3
+  NEEDS_HUMAN_REVIEW (browser-level exploit, sub-agent host behavior, cross-project daemon
+  identity). Skill Evolution not triggered; no systemic skill defect proven this run.

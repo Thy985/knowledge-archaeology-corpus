@@ -1,0 +1,84 @@
+run_id: ARCH-2026-11-28-001
+job_id: KA-2026-11-28-001
+project: browser-harness
+repository: https://github.com/browser-use/browser-harness.git
+mode: refresh
+priority: A
+target:
+  tag: v0.1.15
+  commit: 373aecc4c40ef67d97b5ee69c144684a64a42a11
+  commit_time: "2026-11-25T17:25:45+05:30"
+  subject: "Merge pull request #1077 from browser-use/release/0.1.15-telemetry"
+baseline:
+  run_id: ARCH-2026-10-04-001
+  version: 0.1.13
+  commit: afbcc381b963040c19627d788e40c7e7663171ee
+skill:
+  name: knowledge-archaeology
+  version: v3.2
+  path: /home/user/.super_doubao/super-doubao-runtime/workspace/.user_skills/knowledge-archaeology
+started_at: "2026-11-28T00:00:00+08:00"
+completed_at: "2026-11-28T02:53:00+08:00"
+timestamps:
+  manifest: 2026-11-28
+  snapshot: 2026-11-28
+  package_written: 2026-11-28T02:26:03+08:00
+repository_snapshot:
+  clone: archaeology-jobs/ARCH-2026-11-28-001/repo
+  shallow: true
+  detached_head: true
+  size: 12M
+  tracked_files: 299
+  src_python_lines: 8428
+  test_python_lines: 6830
+  test_functions: 404
+  installed: false
+  tests_executed: false
+quality:
+  ek_nodes: 60
+  ek_edges: 150
+  ek_avg_out_degree: 2.5
+  ek_orphans: 0
+  ko_total: 10
+  ko_l3: 9
+  ko_l4: 1
+  ko_l5: 0
+  candidates: 9
+  evidence_rows: 60
+  distinct_anchors: 129
+  dead_anchors_target_repo: 0
+  core_modules_inspected: 12/17
+  runtime_probes: 0
+validation:
+  self:
+    status: CONDITIONAL_PASS
+    contradictions: 0
+    open_checks:
+      - browser-level CDP exploit not executed
+      - last-page invariant depends on info freshness
+      - video/macOS domains not covered
+      - test suite not executed
+  independent:
+    status: PARTIAL_PASS_WITH_DOWNGRADE
+    report: 06-validation/independent_validation.md
+    judgments: {CONFIRMED: 79, PARTIALLY_CONFIRMED: 7, DOWNGRADED: 1, OVER_GENERALIZED: 1, MISSING: 6, CONTRADICTED: 3, NEEDS_HUMAN_REVIEW: 3}
+  reconciled:
+    status: DONE
+    report: 06-validation/reconciliation.md
+deliverables:
+  - 00_overview.md
+  - 01-project-layer/project_layer.md
+  - 02-engineering-knowledge/ek_graph.md
+  - 03-knowledge-layer/knowledge_layer.md
+  - 04-flow-atlas/flow_atlas.md
+  - 05-candidates/candidates.md
+  - 06-validation/evidence.md
+  - 06-validation/self_validation.md
+  - run_metadata.yaml
+scope_notes:
+  read_only_target: true
+  knowlegemap_read_only: true
+  production_skill_read_only: true
+  corpus_written: false
+  feishu_written: false
+  one_deep_project: true

@@ -1,76 +1,222 @@
-# 03 Knowledge Layer — browser-harness（8 KO · 窄尖顶）
+# 03 Knowledge Layer — browser-harness 0.1.15 (10 KO)
 
-> Generalized Knowledge（L3/L4/L5）。每个 KO 声明 aggregation_rule（R1-R4）+ 簇内 EK + 边类型。簇成立五条件：内聚性/跨实例性/解释范围扩大/可命名/可回溯。升维候选全部经反例压力（见 06）。
+> Generalized layer: 9 L3 Patterns, 1 L4 Cognitive Model, 0 L5. Each KO is a cluster on the EK graph, not a curated list.
+> `derivation.facts` is exactly the cluster EK set. All claims are scoped; cross-project validation is pending unless stated.
+> No KO is promoted to L5 because this run has one project plus one downstream comparison, not a cross-domain evidence base.
 
-## KO 聚合规则矩阵
-| KO | 规则 | 簇内 EK | 边类型 | 解释范围扩大论证 |
+## Aggregation matrix
+
+| KO | Rule | Cluster EK | Edge types | Abstraction |
 |---|---|---|---|---|
-| KO-01 | R1 机制簇 | EK-18/19/20/21/22/23 | mechanism（身份验证机制跨 _ipc/admin 两子系统） | "进程身份必须端到端验证"从 IPC 层扩散到 daemon 生命周期层 |
-| KO-02 | R2 因果链簇 | EK-06→43→10→42 | causal（会话失效→恢复注册→重连→锁序） | 单个 CDP 错误展开为完整自愈故事 |
-| KO-03 | R3 不变量簇 | EK-14/25/12/13/22 | constraint（permission 纪律约束所有连接路径） | "被拒不重连"是跨连接路径的安全不变量 |
-| KO-04 | R4 主题簇 | EK-01/02/03/04/05/09 | subsystem（自愈架构） | heredoc+注入+中间人+追踪=一个完整架构模型 |
-| KO-05 | R4 主题簇 | EK-24/26/27/32/33/38 | subsystem（cloud 授权与计费） | 云端浏览器的生命周期是一个完整治理主题 |
-| KO-06 | R1 机制簇 | EK-28/29/30/31/36 | mechanism（脱敏机制跨日志/录制/遥测/视频四层） | "输出面统一脱敏"是同一机制的多实例 |
-| KO-07 | R4 主题簇 | EK-05/09/11/15/16/17/40 | subsystem（后台操作原则） | 不打扰用户的浏览器控制是完整行为主题 |
-| KO-08 | R2 因果链簇 | EK-02→31→34→35→36 | causal（观察→记录→编译→导出） | 观察钩子到视频产物的完整流水线 |
+| KO-01 | R1 mechanism | 12,14,15,16,17,18,28,29 | mechanism/subsystem | L3 |
+| KO-02 | R2 causal chain | 09,10,11,14,18 | causal/constraint | L3 |
+| KO-03 | R2 causal chain | 13,20,24,25,26 | causal | L3 |
+| KO-04 | R3 invariant | 21,26,49 | constraint | L3 |
+| KO-05 | R4 thematic | 11,28,29,44,45 | subsystem/contrast | L3 |
+| KO-06 | R1 mechanism | 31,32,33,34,35,36,38 | mechanism/dependency | L3 |
+| KO-07 | R3 invariant | 36,37,49,50 | constraint | L3 |
+| KO-08 | R1 mechanism | 53,54,55 | mechanism/contrast | L3 |
+| KO-09 | R3 invariant | 14,16,19,56 | constraint/contrast | L3 |
+| KO-10 | R4 thematic | 07,09,19,58 | subsystem/contrast | L3 |
 
 ---
-## L3 Patterns（可复用模板）
 
-**P-01（KO-04 实例）Agent harness 的"受控中间层 + 运行时能力扩展"模式**
-守护进程持有外部资源（浏览器会话）的权威；agent 进程经 IPC 请求动作；agent 的自定义能力以文件形式落在独立工作区，运行时注入。同类对照：lint 的受控接口、CI 的 checkout 沙箱、MCP server 模式。
-证据：EK-01/03/04；helpers.py:655-668；AGENTS.md
-Epistemic：Pattern（本项目强证据，跨项目验证 pending）
+## KO-01 · Tab ownership is a routing contract, not a security boundary (L3 Pattern)
 
-**P-02（KO-01 实例）进程身份验证模式（Reconciliation E-03 范围限定）**
-对"可能被复用的 PID/端口/文件"做端到端身份确认：**ready daemon（有 IPC socket）路径** = 活体应答（ping 协议）→ 自报身份（PID）→ 起始时间指纹（start-time）三重验证后才允许发信号；**pending daemon（handshake-wait，无 IPC socket）路径**走 fingerprint generation 匹配（原子发布的进程起始指纹），owner 变化则不动手。两类路径共享原则：身份未端到端确认绝不发信号。同类：sshd 的 host key、consul 的 session 失效检测。
-证据：EK-19/20/21/22 + EK-46 邻近的 pending 路径；_ipc.py:96-145；admin.py:760-880
-Epistemic：Pattern（本项目强证据，跨项目验证 pending）
+- claim: In a multi-agent browser broker, per-tab ownership can prevent cooperating agents from driving each other's tabs, but it only protects the surfaces it routes; it does not authenticate the owner or cover browser-level capabilities.
+- epistemic_status: Validated Pattern (within this repository)
+- confidence: high
+- derivation.facts: EK-12, EK-14, EK-15, EK-16, EK-17, EK-18, EK-28, EK-29
+- aggregation_rule: R1
+  - rule: R1 mechanism cluster
+  - cluster_eks: [EK-12,EK-14,EK-15,EK-16,EK-17,EK-18,EK-28,EK-29]
+  - edges: `mechanism: EK-12↔EK-14↔EK-17`; `subsystem: EK-15/EK-16/EK-18/EK-28/EK-29`
+  - naming: every member implements one of the gates that answers "may this caller act on this target/session?"
+  - scope_expansion: the members individually describe a guard, a proof, a filter, or a retry; together they describe a broker-level authority surface with a measurable perimeter.
+- scope:
+  - applies_when: one daemon multiplexes several cooperating callers over one browser; callers can supply a stable owner name.
+  - does_not_apply_when: callers are mutually untrusted same-OS-user processes, or the capability is browser-domain rather than tab-targeted.
+- evidence: EV-12, EV-14, EV-15, EV-16, EV-17, EV-18, EV-28, EV-29
+- counterexample: EK-19 (browser-level session escapes the map); EK-11 (sub-agent can drive parent tab via `cdp()`).
+- validation: truth PASS; coverage PASS; abstraction OK; counterexample found (bounded); blind reconstruction performed.
+- links: contrast→KO-02, KO-09
 
-**P-03（KO-03 实例）"被拒不自动重试"的交互纪律模式**
-对"需要人类批准才能继续"的交互（权限弹窗/登录墙）：拒绝或超时后绝不自动重试/创建替代连接——保持现场等人类决定；自动重试会把一次批准变成无尽弹窗。同类：sudo 超时后重新询问、OAuth 授权失败不静默重放。
-证据：EK-14；admin.py:683-706；SKILL.md "Login walls: stop and ask"
-Epistemic：Pattern（本项目强证据，跨项目验证 pending）
+## KO-02 · Owner identity is a cooperative label, not an authenticated principal (L3 Pattern)
 
----
-## L4 Cognitive Models（稳定关系，一句话）
+- claim: When owner identity is taken from environment variables and sent as a request field, the resulting boundary separates well-behaved collaborators but cannot separate an adversary who can set the same variables or speak the same IPC protocol.
+- epistemic_status: Validated Pattern (code fact)
+- confidence: high
+- derivation.facts: EK-09, EK-10, EK-11, EK-14, EK-18
+- aggregation_rule: R2
+  - rule: R2 causal chain cluster
+  - cluster_eks: [EK-09,EK-10,EK-11,EK-14,EK-18]
+  - edges: `causal: EK-09→EK-10→EK-11→EK-14→EK-18`
+  - naming: the chain is "identity source → inheritance → partial refusal → guarded routing → current-tab pinning."
+  - scope_expansion: each EK says one step; together they show the boundary is a chain of voluntary checks with two explicit holes.
+- scope:
+  - applies_when: same-user agents, host-provided session ids, no adversarial IPC client.
+  - does_not_apply_when: a process can write `BH_OWNER`, connect to the 0600 socket, or call `cdp()` directly.
+- evidence: EV-09, EV-10, EV-11, EV-14, EV-18
+- counterexample: `_refuse_for_shared_owner` wraps only two helpers (EK-11); request owner is unvalidated (`Daemon.handle`).
+- validation: truth PASS; abstraction OK; counterexample found; blind reconstruction performed.
+- links: dependency→KO-01; contrast→KO-09
 
-**CM-01（由 P-01 升维）会话权威与任务能力分离**
-Agent 对真实系统的控制 = 权限契约：会话权威（谁握着连接/状态）与任务能力（agent 会写什么代码）是两个独立维度，前者由守护进程持有、后者可在独立工作区自由增长；能力增长不自动扩展权威。
-证据：EK-03/04/05 + AGENTS.md（核心 src 受保护）
-升维论证：解释范围从"浏览器 harness"扩到"任何 agent-外部系统边界"（权限边界 = EP-002 关注点）。
-Epistemic：Cognitive Model（cross-project validation pending——browser-harness 单项目证据）
+## KO-03 · Reclamation is a staged return, not a destructive cleanup (L3 Pattern)
 
-**CM-02（由 P-02 升维）信任 = 端到端可验证的身份，而非文件/端口的存在**
-PID 文件、端口、socket 文件的存在都不构成信任；对恶意/陈旧/复用的中间态，信任必须由"端到端应答 + 身份 + 起始指纹"重建。声明 ≠ 权威。
-证据：EK-18~22；_ipc.py ping/identify 全部防御分支
-Epistemic：Cognitive Model（cross-project validation pending）
+- claim: A long-lived shared browser needs a staged lifecycle: keep the current tab while active, return non-current tabs on idleness, return the last tab after a long forget window, and close only explicitly-created unmarked tabs on an explicit release.
+- epistemic_status: Validated Pattern
+- confidence: high
+- derivation.facts: EK-13, EK-20, EK-24, EK-25, EK-26
+- aggregation_rule: R2
+  - rule: R2 causal chain
+  - cluster_eks: [EK-13,EK-20,EK-24,EK-25,EK-26]
+  - edges: `causal: EK-13→EK-20→EK-24→EK-25→EK-26`
+  - naming: "create → active → idle → forget → explicit done" is a complete lifecycle.
+  - scope_expansion: each EK is one phase; the cluster explains why a single "cleanup" operation would either leak tabs or destroy the person's page.
+- scope:
+  - applies_when: a broker owns tabs on behalf of ephemeral agents and a human shares the browser.
+  - does_not_apply_when: an agent owns a dedicated browser with no human tabs (destructive cleanup is then acceptable).
+- evidence: EV-13, EV-20, EV-24, EV-25, EV-26
+- counterexample: marked tabs can stay forever (by design); default idle never closes, so storage still accumulates detached tabs.
+- validation: truth PASS; abstraction OK; blind reconstruction performed.
+- links: dependency→KO-04
 
-**CM-03（由 P-03 升维）交互性拒绝是状态，不是错误**
-人类批准类的拒绝/超时是待处理状态（等人类），不是可自动重试的瞬态错误（可退避）。把两者混淆会把系统推进"自动制造更多弹窗"的灾难循环。
-证据：EK-14 的修复史注释（"how a single approval turned into an endless prompt"）
-Epistemic：Cognitive Model（cross-project validation pending）
+## KO-04 · Destructive cleanup must preserve the last shared real page (L3 Pattern)
 
----
-## L5 Methodology（可操作准则）
+- claim: Any cleanup that can close tabs must treat the browser's last real page as a conserved resource, independent of which agent created it.
+- epistemic_status: Validated Pattern
+- confidence: high
+- derivation.facts: EK-21, EK-26, EK-49
+- aggregation_rule: R3
+  - rule: R3 invariant cluster
+  - cluster_eks: [EK-21,EK-26,EK-49]
+  - edges: `constraint: EK-21→EK-26←EK-49`
+  - naming: all three constrain what may be destroyed or abandoned when ownership ends.
+  - scope_expansion: from "do not close a marked tab" to "do not leave the browser page-less" is a broader invariant about shared resources.
+- scope:
+  - applies_when: a human may still be using the browser; agents' tabs share the window.
+  - does_not_apply_when: headless/dedicated browser with a known lifecycle owner.
+- evidence: EV-21, EV-26, EV-49
+- counterexample: `last` counts only `type=="page" && is_real_page` across `self.info`; a stale `info` map could mis-count. Not tested against a real browser in this run.
+- validation: truth PASS; abstraction OK; counterexample open (info staleness).
+- links: contrast→KO-03
 
-**M-01 Agent 影响真实外部状态的动作必须经守护中间层**
-动作经守护进程（持有会话/计费/权限权威）转发；agent 直接触碰真实状态的路径越少越好。可执行：让 harness 类工具持 CDP/会话，agent 只持任务与工作区文件。
-证据：EK-04/05/18 + SKILL.md 后台操作原则
-Epistemic：Methodology（browser-harness 验证；跨项目 pending）
+## KO-05 · Typed failures are part of the ownership protocol (L3 Pattern)
 
-**M-02 Agent 自扩展能力须限定在独立工作区且经显式加载点接入**
-新增能力以文件落地（agent_helpers.py/domain-skills），经唯一加载点（_load_agent_helpers）注入受控命名空间；核心库不改、接口不扩。可执行：为 agent 定义"扩展目录 + 加载点"而非开放 import。
-证据：EK-03/41；helpers.py:655-668
-Epistemic：Methodology（browser-harness 验证；跨项目 pending）
+- claim: A broker that refuses an action must return a stable, typed error that says what was not sent and what the caller can do next; silent fallback to another tab is a protocol violation.
+- epistemic_status: Validated Pattern
+- confidence: high
+- derivation.facts: EK-11, EK-28, EK-29, EK-44, EK-45
+- aggregation_rule: R4
+  - rule: R4 thematic cluster
+  - cluster_eks: [EK-11,EK-28,EK-29,EK-44,EK-45]
+  - edges: `subsystem: EK-28/EK-29/EK-44/EK-45`; `contrast: EK-11`
+  - naming: each member defines a terminal state and its caller-visible explanation.
+  - scope_expansion: individual errors become a protocol: `tab-taken`, `tab-closed`, `tab-released`, `tab-crashed`, `owner-shared` all preserve "nothing was sent" semantics.
+- scope:
+  - applies_when: remote/broker execution where the caller cannot inspect the browser directly.
+  - does_not_apply_when: local in-process library where exceptions can carry a live object.
+- evidence: EV-11, EV-28, EV-29, EV-44, EV-45
+- counterexample: `tab-released` is returned only once for `gone`; a later same command may create a new tab and look successful.
+- validation: truth PASS; abstraction OK; blind reconstruction performed.
+- links: contrast→KO-01
 
-**M-03 对不可信 agent 的输出面统一脱敏，且脱敏必须发生在持久化/外发之前**
-日志/录制/遥测/视频四层各持独立脱敏正则（拓扑/URL 参数/键名/敏感实体），且位于写盘/上报之前。可执行：外发前检查链上每一层是否"输出面清洗"。
-证据：EK-28/29/30/36；recorder.py:52-67
-Epistemic：Methodology（browser-harness 验证；跨项目 pending）
+## KO-06 · Verify process identity end-to-end before signaling or reusing it (L3 Pattern)
 
----
-## 与 02 的反向追溯
-- 每个 KO 的每条 EK 均可回溯：EK-01~45（02 文件）均有 Evidence 行号。
-- 无悬空升维：P-01~03 由 EK 簇直接导出；CM/M 均锚定具体 EK 与证据。
-- 反例预算：每个 L3+ 候选 ≥3 定向反例攻击，见 06_validation.md §反例。
+- claim: A PID file, socket file, or open port is not proof of the process that owns it; before signaling or reusing a daemon, require a live protocol answer plus a self-reported identity plus a start-time/fingerprint match.
+- epistemic_status: Validated Pattern
+- confidence: high
+- derivation.facts: EK-31, EK-32, EK-33, EK-34, EK-35, EK-36, EK-38
+- aggregation_rule: R1
+  - rule: R1 mechanism cluster
+  - cluster_eks: [EK-31,EK-32,EK-33,EK-34,EK-35,EK-36,EK-38]
+  - edges: `mechanism: EK-31↔EK-32↔EK-38`; `dependency: EK-33→EK-31`; `constraint: EK-34/EK-35/EK-36`
+  - naming: all members answer "is this the daemon I think it is, and may I touch it?"
+  - scope_expansion: from a single `identify()` call to a lifecycle policy covering ready, pending, active, remote, and mismatched endpoints.
+- scope:
+  - applies_when: a supervisor may SIGTERM/reuse a long-lived process by name.
+  - does_not_apply_when: PID namespaces or kernel-level process handles are the authority.
+- evidence: EV-31, EV-32, EV-33, EV-34, EV-35, EV-36, EV-38
+- counterexample: pending daemon with no fingerprint refuses to act (fail-closed); active owners block restart; both are intentional limits.
+- validation: truth PASS; abstraction OK; blind reconstruction performed.
+- links: contrast→KO-07
+
+## KO-07 · Fail closed when a name is bound to a remote or different browser (L3 Pattern)
+
+- claim: A reusable daemon name must never silently fall back to a different browser after a remote browser ends or an endpoint changes; the correct behavior is an explicit error that preserves the binding until an explicit reset.
+- epistemic_status: Validated Pattern
+- confidence: high
+- derivation.facts: EK-36, EK-37, EK-49, EK-50
+- aggregation_rule: R3
+  - rule: R3 invariant cluster
+  - cluster_eks: [EK-36,EK-37,EK-49,EK-50]
+  - edges: `constraint: EK-36→EK-37`; `constraint: EK-49/EK-50→EK-37`
+  - naming: all four prevent a silent substitution of the browser behind a name.
+  - scope_expansion: endpoint mismatch, remote marker, idle-exit policy, and CDP death are four independent ways a name could drift; together they form one fail-closed invariant.
+- scope:
+  - applies_when: named daemons are reused across CLI invocations and may outlive their browser.
+  - does_not_apply_when: the caller always uses a fresh unique name and no remote browser.
+- evidence: EV-36, EV-37, EV-49, EV-50
+- counterexample: `restart_daemon` is an explicit reset and can clear the marker; that is intentional, not a bypass.
+- validation: truth PASS; abstraction OK.
+- links: contrast→KO-06
+
+## KO-08 · Redact at the egress boundary, with per-surface rules (L3 Pattern)
+
+- claim: Output surfaces that leave the agent's machine need their own redaction at the point of egress; a single generic key filter is not equivalent to text scrubbing, and each surface's data shape dictates the rule.
+- epistemic_status: Validated Pattern
+- confidence: high
+- derivation.facts: EK-53, EK-54, EK-55
+- aggregation_rule: R1
+  - rule: R1 mechanism cluster
+  - cluster_eks: [EK-53,EK-54,EK-55]
+  - edges: `mechanism: EK-53↔EK-54`; `contrast: EK-55`
+  - naming: three egress paths (report text, telemetry properties, HTTP proxy) each redact or avoid egress by a different mechanism.
+  - scope_expansion: from "scrub one string" to "classify egress surfaces and apply the right rule at each."
+- scope:
+  - applies_when: telemetry/feedback/HTTP fetch leave the process.
+  - does_not_apply_when: purely local logs with no external sink.
+- evidence: EV-53, EV-54, EV-55
+- counterexample: `telemetry._safe_properties` only redacts strings containing `://`; other secret-shaped values in a non-URL string are truncated, not scrubbed. Report's scrub is stronger.
+- validation: truth PASS; abstraction OK; counterexample found.
+- links: contrast→KO-09
+
+## KO-09 · Authority checks must cover the whole capability surface, not the visible one (L3 Pattern)
+
+- claim: A system can enforce ownership on its most visible operations while leaving a higher-authority path unguarded; the correct unit of analysis is the capability surface (every way to reach the resource), not the set of methods that look tab-scoped.
+- epistemic_status: Validated Pattern (within this repository); cross-project generalization is Hypothesis C-06, not established
+- confidence: medium
+- derivation.facts: EK-14, EK-16, EK-19, EK-56
+- aggregation_rule: R3
+  - rule: R3 invariant cluster
+  - cluster_eks: [EK-14,EK-16,EK-19,EK-56]
+  - edges: `constraint: EK-14/EK-16→EK-19`; `contrast: EK-56`
+  - naming: three tab-scoped guards plus one browser-scoped counterexample define the perimeter gap.
+  - scope_expansion: the claim stays inside this broker: authorization must be reasoned over the full reachability graph because the visible tab surface is not the whole capability surface. It is not yet a cross-domain model.
+- scope:
+  - applies_when: broker/proxy designs where a lower-level API can bypass higher-level guards; browser CDP, container runtimes, database pools.
+  - does_not_apply_when: the lower-level API is inaccessible to callers (separate process/namespace with no capability).
+- evidence: EV-14, EV-16, EV-19, EV-56
+- counterexample: no exploit was executed; the code path is direct and the session id is unguessable, so the practical risk depends on sid exposure. This weakens severity, not the structural claim.
+- validation: truth PASS; abstraction OK (L4 argued); counterexample open (exploitability); blind reconstruction performed.
+- links: contrast→KO-01, KO-02
+
+## KO-10 · A capability shipped upstream is not a capability in force downstream (L3 Pattern)
+
+- claim: An upstream release can add an ownership model while its main downstream stays pinned to an older version and uses a different concurrency strategy; release notes then describe a capability that is not active in the product users run.
+- epistemic_status: Validated Pattern (one upstream/downstream pair)
+- confidence: high for the pin and API absence; medium for user impact
+- derivation.facts: EK-07, EK-09, EK-19, EK-58
+- aggregation_rule: R4
+  - rule: R4 thematic cluster
+  - cluster_eks: [EK-07,EK-09,EK-19,EK-58]
+  - edges: `subsystem: EK-07/EK-09/EK-19`; `contrast: EK-58`
+  - naming: the theme is "version seam between a harness capability and its consumer."
+  - scope_expansion: from a single pin to a general adoption question: which layer actually executes the ownership check in the shipped product?
+- scope:
+  - applies_when: a library advertises a new safety/concurrency feature and a downstream pins an older version.
+  - does_not_apply_when: downstream vendors the new version or the feature is not safety-relevant.
+- evidence: EV-07, EV-09, EV-19, EV-58
+- counterexample: browser-use gives each non-shared `Browser` a unique daemon and browser, so it may not need the owner API for those modes. The shared `Browser('chrome')` path is the unresolved case. This bounds the claim: it is an adoption/coverage gap, not "browser-use is unsafe."
+- validation: truth PASS; abstraction OK; counterexample found; blind reconstruction performed.
+- links: contrast→KO-02
