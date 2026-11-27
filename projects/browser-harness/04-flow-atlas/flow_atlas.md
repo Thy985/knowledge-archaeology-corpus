@@ -1,123 +1,126 @@
-# 04 Flow Atlas — browser-harness（七类流）
+# 04 Flow Atlas — browser-harness 0.1.15
 
-> 从真实代码导出。关键 Edge 标注 symbol/file/condition/state transition。基准 commit afbcc381。
+> Edges are anchored to real symbols. "role" is the function in the chain, not a claim about intent.
+> Evidence rows are in `06-validation/evidence.md`.
 
-## 1. Control Flow（控制流）
-```
-stdin heredoc → run.py main (命令分发)
-  → ensure_daemon() [admin.py:525]
-      ├─ daemon_alive? → CDP 探测 Target.getTargets 要 "result" → 健康短路
-      ├─ stale? → cloud? → stop_remote_daemon [计费权威] / 本地 → restart_daemon
-      ├─ Chrome 未开 → _launch_browser → 等 supported_browser_running (≤15s)
-      ├─ inspect 未开 → 打开 chrome://inspect 引导 → 抛 remote-debugging-setup
-      └─ 弹窗挂起 → 抛 permission-blocked（不重试）
-  → exec(code, globals()) [run.py:330] → helper 调用
-      → _send [helpers.py:26] → ipc.connect/request → daemon.handle [daemon.py]
-          → cdp.send_raw → CDP → Chrome
-      ← 结果回传（5s 超时 / 截图 60s → _IPCResponseTimeout）
-```
-关键分支：`ensure_daemon` 的三层自愈分支（admin.py:525-560）；exec 是 CLI 进程内同步执行（无异步循环）。
+## F-01 Control — script call to CDP command
 
-## 2. State Flow（状态流）
-```
-daemon 状态机：_state ∈ {starting, ready, recovering, shutting_down} [daemon.py:16]
-  ready ──CDP session 失效──▶ recovering（_begin_recovery 注册）
-  recovering ──attach_first_page 成功──▶ ready（_finish_recovery）
-  recovering ──drain 超时/失败──▶ _schedule_recovery（_recoveries 集合排队）
-  ready ──meta=shutdown──▶ _shutting_down（停止接收新动作）
-  _shutting_down ──stop_remote 成功──▶ stop.set() → 退出
-  _shutting_down ──stop_remote 失败──▶ 回滚保持存活（下次重试清理）
+Question: who decides that a command goes to a tab, and where can it stop?
 
-会话切换：session/target_id（attached）+ dedicated_target_id（named daemon）
-  set_session：旧会话 Network.disable ‖ 新会话 4 域 enable（并行，IPC 5s 预算）
-  session_replacements：dict ≤32，恢复后清理旧会话
-```
-关键转换：recovering→ready 以 `_recoveries_idle` 为闸（daemon.py:438）；shutdown 时 `_shutting_down` 先置位（daemon.py:594）。
-
-## 3. Data Flow（数据流）
-```
-helper args (Python) → JSON (json.dumps) → IPC socket (newline-delimited)
-  → daemon.handle 解析 → {method, params} → CDP → Chrome
-  ← Chrome 响应 → daemon 组 {"result"/"error"} → 回传 → helper 返回 dict
-
-截图数据：capture_screenshot → CDP Page.captureScreenshot (base64)
-  → max_dim 缩放（LLM 视觉上限）→ BH_TMP_DIR 落盘
-
-录制数据：observe → {helper, args(300截), duration, result(500截)} [run.py]
-  → recorder events.jsonl（URL 经 _URL_SECRETS 清洗）+ 帧 jpg（ACTIONS 才帧）
-```
-关键 Edge：`_send` 的 JSON 序列化与超时预算（helpers.py:26-51）；截图不走 events.jsonl（只读 helper 不帧）。
-
-## 4. Evidence Flow（证据流）
-```
-录制文件夹 <workspace>/recordings/<name>/
-  meta.json（name/title/started）← start_recording
-  events.jsonl ← observe 每次动作
-  0001.jpg… ← 动作后帧（_SETTLE_SECONDS=0.15）
-    → video init（read recordings / require_explicit）
-    → compile（events→beats：default_action_duration / narration cadence / validate_privacy）
-    → review（时长预算 22-32s / reveal text）
-    → export（video-template.html + video-source.json 源 manifest + file_hash 校验）
-```
-关键 Edge：evidence 链的校验点 = `verify_source_manifest`（hash 比对，video.py:160）；隐私校验发生在编译期（`validate_privacy`，拒绝导出而非静默清洗）。
-
-## 5. Authority Flow（权威流）
-```
-Browser Use Cloud:
-  browser-harness auth login → PKCE (S256) + state → 本地 callback server
-    → _exchange_authorization_code → AuthRecord (config 目录 0600)
-  ──或── device code flow（headless/SSH）→ verification_uri_complete 轮询
-  ──或── api_key_stdin_login（printf | auth login --api-key-stdin）
-  → auth.get_browser_use_api_key() → _browser_use POST /browsers (X-Browser-Use-API-Key)
-  → start_remote_daemon → BU_CDP_WS + BU_BROWSER_ID → daemon
-
-本地 Chrome 授权:
-  chrome://inspect/#remote-debugging 勾选 → 用户点 "Allow remote debugging?"
-  → macOS: browser-harness mac-approve（须用户授予 Accessibility）
-  → daemon 持 CDP 会话（唯一权威）→ agent 经 IPC 请求（无直接权威）
-
-IPC 权威: Windows TCP → token 校验（_server_token）｜POSIX → socket 0600
-```
-关键 Edge：权威移交点 = ensure_daemon 成功（agent 进程获得 CDP 操作权但非会话所有权）；permission 弹窗被拒 → 权威不转移且不重试（EK-14）。
-
-## 6. Memory Flow（记忆流）
-```
-短期（进程内）：
-  daemon events deque(maxlen=500) ← CDP 事件（session 过滤）
-  session_replacements dict ≤32 ← 恢复链
-  _recoveries 集合 ← 恢复任务注册
-
-跨进程（文件）：
-  BH_HOME/{runtime,tmp,agent-workspace} 私有目录（0700）
-  recordings/<name>/（meta+events+帧）——会话记忆的可导出形态
-  telemetry.json（install_id + opt-out 偏好）——身份记忆
-  auth 文件（config 目录）——凭证记忆
-  domain-skills/<site>/——技能记忆（agent 复用）
-```
-关键 Edge：记忆的遗忘策略 = deque 上限 500 + _session_replacements ≤32 + drain 2s 预算（防无限累积）；录制文件夹是唯一长期记忆载体。
-
-## 7. Policy Flow（治理闭环）
-```
-Decision: SKILL.md/AGENTS.md 定义行为规范（后台操作/不自动激活/tab 复用/登录墙停下/计费询问）
-  → Approval: 人类批准点 = Chrome Allow 弹窗 / mac-approve / cloud 登录
-  → Policy: 守护进程强制的不变量
-      · permission-blocked 不重连（admin.py:683）
-      · shutdown 失败保持存活重试计费清理（daemon.py:594）
-      · BH_REQUIRE_EXISTING_DAEMON fail-closed（require_existing_daemon 拒绝 auto-start）
-  → Enforcement: 代码路径（ensure_daemon/restart_daemon/handle 异常分支）
-  → Future Decision: agent 遇到新站点→写 domain-skills（AGENTS.md 策略）→ 治理知识回流技能目录
-```
-关键 Edge：治理闭环的证据 = EK-14（纪律）、EK-24（计费权威）、EK-05（tab 纪律）；SKILL.md 是治理文档载体（仓库内 14,336B），非仅 README。
-
-## Flow→KO 交叉校验
-| KO | 依赖的 Flow Edge | 一致性 |
+| node | symbol | role |
 |---|---|---|
-| KO-01 | Authority Flow（IPC token/PID 验证）| 一致 |
-| KO-02 | State Flow（recovering 状态机）| 一致 |
-| KO-03 | Authority Flow（permission 不重连）| 一致 |
-| KO-04 | Control/Data Flow（exec→daemon→CDP）| 一致 |
-| KO-05 | Authority Flow（cloud 全链）| 一致 |
-| KO-06 | Data/Evidence Flow（四层脱敏位置）| 一致 |
-| KO-07 | Control Flow（后台操作路径）| 一致 |
-| KO-08 | Evidence Flow（录制→视频链）| 一致 |
-无矛盾（Flow Edge 真实性独立审计见 06 §盲重建-Flow）。
+| stdin read | `_read_task` `run.py:276-286` | input |
+| helper execution | `exec(code, globals())` `run.py:472-474` | dispatch |
+| helper call | `cdp()` `helpers.py:96-107` | request construction |
+| IPC send | `_send` `helpers.py:75-88` → `ipc.request` `_ipc.py:130-150` | transport |
+| broker entry | `Daemon.handle` `daemon.py:1070-1096` | admission |
+| meta/target route | `Daemon._meta` `daemon.py:1098-1208` | branch |
+| raw CDP route | `Daemon._send` `daemon.py:1210-1245` | guard + session selection |
+| CDP send | `self.cdp.send_raw` | execution |
+| typed failure | `_taken` / `_closed` `daemon.py:580-600` | stop |
+
+Gates:
+- `GUARDED` check before `Target.attachToTarget`/`closeTarget`/`activateTarget` (`daemon.py:1213`).
+- `_frame_tab` proof before iframe attach (`daemon.py:1216-1219`).
+- `session_owner` gate before explicit-session command (`daemon.py:1221-1223`).
+- `_current`->`_session` fallback when no session is given (`daemon.py:1226-1230`).
+
+Failure paths: `tab-taken`, `tab-closed`, `tab-released`, `frame-not-yours`, `owner-shared` (client), `daemon-outdated`, `cdp-mismatch`, `remote-browser-ended`.
+
+## F-02 State — owner and tab lifecycle
+
+Question: how does a tab move from unowned to owned, idle, forgotten, closed?
+
+| state | symbol | transition |
+|---|---|---|
+| owner absent | `Daemon.owner(key)` `daemon.py:545-548` | lazily creates `Owner` |
+| tab absent | `_current` `daemon.py:662-671` | create background blank or adopt cloud spare |
+| tab owned | `_own` `daemon.py:608-617` | `tab_owner[tid]=key`, `Owner.tabs[tid]=None` |
+| session attached | `_session` `daemon.py:673-692` | `Target.attachToTarget`, enable 4 domains |
+| current | `_switch` `daemon.py:694-710` | detach old Network, enable new, `o.current=tid` |
+| idle (30 min) | `_release(...,"idle")` `daemon.py:726-750` | current kept; others detached, `o.released` |
+| forgotten (24 h) | `sweep` `daemon.py:752-766` | `_release(...,"forget")`; last tab given back |
+| released/done | `release_tabs` `daemon.py:1115-1119` | close unmarked created, detach all |
+| closed/destroyed | `_drop` `daemon.py:619-633` | remove owner/session/marks; one-shot `gone` |
+
+Reversibility: idle release is reversible by `switch_tab` (the tab is still open); close is not. `_save`/`_load` restore owner state across daemon restart for still-existing pages.
+
+## F-03 Data — page metadata, screenshots and downloads
+
+Question: how does browser data reach the caller, and where is it filtered?
+
+| node | symbol | form |
+|---|---|---|
+| target info | `Target.getTargetInfo` `daemon.py:1210-1219` | `targetInfo` |
+| visibility filter | `_visible` `daemon.py:548-556` | same keys, empty `url`/`title` for other tabs |
+| tab list | `_meta tabs` `daemon.py:1110-1114` | `{tabs, owner, mark}` |
+| current tab | `_meta current_tab` `daemon.py:1195-1207` | `{targetId, url, title}` |
+| screenshot | `Page.captureScreenshot` `helpers.py:389-420` | base64 → PNG file |
+| JS value | `_runtime_value` `helpers.py:155-180` | JSON value / unserializable decode |
+| download event | `_route_event` `daemon.py:826-838` | `guid` → owner, then dropped |
+| HTTP | `http_get` `helpers.py:788-820` | str or bytes |
+
+Conservation points: `_visible` preserves keys so client-side filters still work; `list_tabs` explicitly sets `url/title=""` for `owner=="taken"` (`helpers.py:424-439`). A screenshot is base64 in the IPC response; the 32 MiB request cap does not cap responses.
+
+## F-04 Evidence — trace, recording, telemetry, report
+
+Question: what becomes observable, and where is it redacted?
+
+| node | symbol | output |
+|---|---|---|
+| helper call | `_traced` `run.py:215-240` | `{helper, duration}` in memory, max 500 |
+| recorder | `recorder.observe` `run.py:233` | local action recording |
+| CLI event | `telemetry.capture_cli_event` `run.py:326-355` | usage event |
+| property filter | `_safe_properties` `telemetry.py:149-163` | key whitelist, `://`→`[redacted]` |
+| run report | `report.report_run` `report.py:320-326` | `library_judgement` if telemetry on |
+| feedback | `report.report_issue` `report.py:328-339` | `library_feedback` regardless of telemetry |
+| scrub | `report.scrub` `report.py:134-160` | credentials/URLs/emails/numbers/code |
+
+Gates: `BROWSER_USE_OFFLINE=1` blocks both; telemetry off blocks judgement, not feedback; `BROWSER_USE_ZDR=1` withholds texts; per-hour caps are 3+3. The trace does not capture args; the recorder does, locally.
+
+## F-05 Authority — who may act on which target
+
+Question: what authority check stands between a caller and a browser object?
+
+| node | symbol | authority |
+|---|---|---|
+| owner claim | `_ipc.owner` `_ipc.py:34-39` | env-provided string |
+| request owner | `_send` `helpers.py:81` | `owner` field on every request |
+| broker key | `Daemon.handle` `daemon.py:1093` | `req.get("owner") or "default"` |
+| tab holder | `_holder` `daemon.py:550-554` | `tab_owner[root]`, unless idle |
+| guarded methods | `GUARDED` `daemon.py:37`, `:1213` | `attach/close/activate` refused |
+| iframe proof | `_frame_tab` `daemon.py:560-576` | parent chain or `DOM.getFrameOwner` |
+| session gate | `session_owner.get(sid,key)` `daemon.py:1221-1223` | explicit session must be registered to caller |
+| visibility | `_visible` `daemon.py:548-556` | metadata redaction |
+| browser session | `browser_sessions.add` `daemon.py:1226-1228` | **no owner binding** |
+
+Boundary: the authority is a cooperative owner label plus tab routing. It is not authenticated and does not cover browser-domain CDP sent on a `Target.attachToBrowserTarget` session (EK-19).
+
+## F-06 Memory — owners, events, captcha, reports
+
+Question: what survives a call, a tab switch, or a daemon restart?
+
+| store | symbol | lifetime |
+|---|---|---|
+| `Owner` maps | `Daemon.owners` `daemon.py:503-522` | daemon process |
+| owners JSON | `_save`/`_load` `daemon.py:635-660` | across daemon restart, same name/browser |
+| event ring | `Owner.events` deque(500) `daemon.py:487-501` | per owner; cleared on `drain_events` |
+| captcha state | `captcha_active/finished/taken` `daemon.py:503-543` | daemon process; finish expires 60 s |
+| report caps | `reports.json` `report.py:189-218` | across CLI processes, per hour |
+| recordings | `recorder` | local files |
+
+Forget paths: `_drop` removes tab state; `sweep` deletes empty owners after a grace window; `_load` drops targets no longer present. A damaged JSON file is logged and ignored (EK-48).
+
+## F-07 Policy — how release and restart rules change future behavior
+
+Question: where does a one-time decision become a rule that governs later calls?
+
+| stage | symbol | policy |
+|---|---|---|
+| decision | user/agent calls `release_tabs` or goes idle | intent to stop |
+| approval | none (cooperative) | no human gate for release |
+| policy | `_release` `daemon.py:726-750`; `sweep` `daemon.py:752-766` | "never close the last real page"; "marked tabs survive"; "idle keeps current" |
+| enforcement | `close_tab`/`_release`/`_drop` | close only `created && !marked && !last` |
+| future decision | next `switch_tab`/`new_tab` | released tabs reappear as free/person tabs; `tab-released` explains |
+
+Restart policy: protocol mismatch (`_restart_if_outdated`), endpoint mismatch (`_check_cdp_endpoint`), active owners, remote marker, pending fingerprint. There is **no** approval/policy persistence for daemon restart; each caller re-evaluates. That makes restart a control decision, not a governed policy loop.

@@ -1,41 +1,85 @@
-# 05 Candidates — browser-harness（未验证假说 / 暂定模式 / 跨项目假设）
+# 05 Candidates — browser-harness 0.1.15
 
-> 与 KO 严格区分：以下内容不能确认、证据不足或跨项目未验证，绝不写成已验证 Principle。
+> Candidates are not validated knowledge. Each has an epistemic status, the missing evidence, and a next probe.
+> Cross-project candidates never appear as Principles in 03.
 
-## C-01 SKILL.md 身份冲突（仓库内部矛盾，需人工）
-- 现象：SKILL.md front matter `name: browser-harness`；AGENTS.md 声明 "Skill identity (`name` + trigger) = `browser-use` (do not rename)"。
-- 影响：安装/触发名在两个权威文档间不一致，可能影响 skill 分发与触发。
-- 缺失证据：仓库内无统一身份声明；git history（浅克隆无历史）无法确认哪个先。
-- 验证路径：查 browser-harness 安装脚本/发布流程；或向维护者确认。
+## C-01 · Browser-level CDP session escapes tab ownership (Hypothesis, high structural confidence)
 
-## C-02 "多 agent 共享浏览器 lane"的并发安全边界（Hypothesis）
-- 观察：SKILL.md 说多 agent 可串行共享 default daemon（"Sequential tab switching, input, and screenshot capture are safe"）；又警告两 agent 同时切 tab 会竞争。
-- 假说：共享安全成立的前提是 agent 操作被外部序列化（无内置锁）。
-- 缺失证据：仓库内无共享模式下的互斥实现（_dedicated_target_lock 只用于 named daemon 切换，不用于多 agent 排队）；无并发测试。
-- 验证路径：双 agent 并发测试；或 SKILL.md 依赖的编排层（如 Codex）是否加锁。
+- status: Hypothesis; code path confirmed, exploitability unverified.
+- claim: `Target.attachToBrowserTarget` returns a session that is not recorded in `session_owner`. Any owner that knows that session id passes the explicit-session check because `session_owner.get(sid, key)` defaults to the caller's key. Browser-domain methods sent on that session (e.g. `Storage.getCookies`, `Network.getAllCookies`) are not tab-scoped.
+- evidence: `daemon.py:1210-1228`; `daemon.py:503-522`; `daemon.py:1219-1223`.
+- missing: an executed two-owner probe that attaches a browser session as A, sends the sid to B, and reads a cookie belonging to a third tab. Requires a disposable browser profile and consent.
+- why it matters: directly contradicts the README's "Isolation and privacy hold for raw CDP too" if the sid is obtainable by another owner.
+- next probe: unit test with a fake CDP that records `Storage.getCookies` as browser-wide; then integration only on a throwaway Chrome profile.
 
-## C-03 自动 cloud bootstrap 在真实 headless 环境的成功率（Hypothesis）
-- 观察：test_run.py 固定 bootstrap 矩阵（BU_AUTOSPAWN 等 5 守卫），但真实无头服务器场景的端到端成功率未在仓库内验证（无集成测试）。
-- 假说：无头环境（无 DISPLAY、无本地 Chrome）bootstrap 命中率高，但依赖 cloud API 可用性。
-- 缺失证据：无 headless 集成测试；docs/ 仅 snap-linux-headless.md（本地 Chrome 主题）。
+## C-02 · Multi-agent shared browser lane: partially resolved, not closed (Hypothesis, downgraded from "no mutex")
 
-## C-04 "harness 自我改进"的长期漂移（跨项目假说）
-- 观察：agent_helpers.py/domain-skills 随任务增长（AGENTS.md 策略），但无版本/兼容性治理（加载点注入所有公开名）。
-- 假说：长期使用后 agent-workspace 会累积与核心 API 漂移的 helper（改名/废弃参数），_load_agent_helpers 的"所有非 _ 名注入 globals"策略可能遮蔽核心函数。
-- 缺失证据：无长周期案例；仓库模板为空。
-- 验证路径：多任务后检查 agent_helpers 与 helpers 的符号覆盖冲突。
+- status: Hypothesis; the old claim "SKILL.md claims serial safety, no mutex in repo" is **downgraded**.
+- claim: 0.1.15 implements a tab-level mutex (`tab_owner`, `GUARDED`, `session_owner`, idle takeover), so the old "no implementation at all" framing is false. The remaining gap is authority: the mutex is cooperative, not authenticated; browser-level sessions bypass it (C-01); a sub-agent without `BH_OWNER` can drive the parent tab (C-03).
+- evidence: EK-12/14/15/16/17/18/19/24/28/29; tests `test_daemon.py:367-589,699,952,1009`.
+- missing: a multi-process adversarial probe; a test where one owner deliberately sets another's `BH_OWNER`.
+- next probe: two-process harness with the same OS user; A creates a tab; B sets `BH_OWNER=A` and calls `goto_url`; observe whether B drives A's tab (predicted yes).
+- benchmark value: this is the clean case for "routing contract vs security boundary."
 
-## C-05 EK-45 Windows UTF-8 修复的触发场景（Observation→暂定）
-- 观察：注释 #124(4) 表明特定 issue；reconfigure 在 run.py 启动路径。
-- 不确定：是否所有 Windows locale（GBK/CP1252）都受影响；MCP server 路径是否同样需要（mcp_server.py 未见 reconfigure）。
-- 验证路径：Windows 非 UTF-8 locale 下跑 browser-harness-mcp 复现。
+## C-03 · Sub-agent without `BH_OWNER` can drive the parent's current tab (Hypothesis, code-confirmed)
 
-## C-06 跨项目对照候选（暂定模式，不升 Principle）
-- candidate-pattern-a：进程身份三重验证（P-02）与 deepseek-harness/opencode 的 daemon 身份机制是否同构——待跨 corpus 比对（S8 证据缺）。
-- candidate-pattern-b：permission 拒绝=状态而非错误（CM-03）与 guardian/aigis 的权限模型交互——待比对。
-- 状态：均标记 `Cross-project validation pending`，不写入 Generalized 层。
+- status: Hypothesis; code-confirmed, impact depends on host behavior.
+- claim: `_shares_parents_owner()` refuses only `close_tab`/`release_tabs`. A Claude child with `CLAUDE_CODE_CHILD_SESSION=1` and no `BH_OWNER` shares the parent's owner key, and `cdp("Page.navigate")` or `js()` still routes to the parent's current tab. The warning is advisory.
+- evidence: `helpers.py:109-118`; `helpers.py:441-445`; `helpers.py:521-525`; `helpers.py:96-107`; `_ipc.py:36-38`.
+- missing: a real Claude Code sub-agent run; the host may set `BH_OWNER` itself.
+- next probe: spawn a child process with `CLAUDE_CODE_CHILD_SESSION=1`, no `BH_OWNER`, and call `js("document.title")` after the parent opens a tab; see whether it reads the parent's tab.
+- why it matters: "sub-agents must have their own BH_OWNER" is a doc rule, not a hard invariant.
 
-## C-07 recorder 自动录制偏好与隐私边界（需人工确认）
-- 观察：auto_recording 是 opt-in 偏好（BH_RECORD 覆盖）；默认新装不录（SKILL.md）。
-- 不确定：events.jsonl 的聚焦元素 box + input 标记（password 字段 mask）在真实登录墙场景是否充分——脱敏只对录制文本，不涉 DOM 原始数据（js() 结果可含敏感 DOM 文本，走 trace 时 500 字符截断但未正则清洗敏感实体）。
-- 验证路径：录制含密码输入的真实流程，检查 events.jsonl 泄漏面。
+## C-04 · `agent_helpers.py` can overwrite core helpers (Observation → Hypothesis)
+
+- status: Hypothesis; code path obvious, no test.
+- claim: `_load_agent_helpers` copies every public name into `helpers.globals()`, including names that already exist. A later agent-defined `cdp` or `switch_tab` shadows the core function. `_OWN_NAMES` is snapshotted before injection, so tracing labels the shadow as `custom`, but behavior is changed.
+- evidence: `helpers.py:828-844`; `run.py:202-240`.
+- missing: a test that defines `def cdp(...)` in agent_helpers and observes shadowing.
+- next probe: isolated `BH_AGENT_WORKSPACE` with a shadowing helper; call `cdp("Browser.getVersion")`; expect the agent's function, not the core.
+- why it matters: the "runtime capability extension" model is also an unguarded monkey-patch surface.
+
+## C-05 · The owner JSON file is readable by the same user and may leak tab targets (Observation)
+
+- status: Observation; no exploit.
+- claim: `bu-<name>.owners.json` stores target ids, current tab, marks, created sets, and session names. It is written under the runtime dir (0700) and `_save` uses tmp+replace, but no explicit `0600` on the file is set in `_save`. Same-user processes can read it; a hostile same-user process can also write it.
+- evidence: `daemon.py:635-643`; `_ipc.py:73-75`; `paths.py:19-23`; EK-60.
+- missing: file mode check; threat model for same-user processes.
+- next probe: `stat` the file after a run; inspect mode.
+- why it matters: target ids alone are not cookies, but they are handles; combined with C-01 they may matter.
+
+## C-06 · Cross-project: daemon identity mechanisms are isomorphic (Cross-project Hypothesis)
+
+- status: Cross-project Hypothesis; not validated.
+- claim: browser-harness's `ping {pong:true}` + `identify` type/range check + start-time fingerprint resembles deepseek-harness and opencode daemon identity patterns. A shared "process identity before signal" model may exist across agent harnesses.
+- evidence: EK-31/32/33/38; old corpus `projects/deepseek-harness` and `projects/opencode` (not re-read this run).
+- missing: a side-by-side symbol-level comparison with those corpora.
+- next probe: read their daemon/pid modules and compare the three checks.
+- why it matters: candidate for a cross-project L4, but currently only one side is verified.
+
+## C-07 · "One Allow per Chrome run" holds only under the default naming policy (Hypothesis)
+
+- status: Hypothesis; code-implied.
+- claim: One daemon per browser gives one Chrome connection, but `BH_NAMED_LOCAL_DAEMON=1` or a pre-existing named daemon prevents `run.py` aliasing, so two `BU_NAME`s can create two connections and two Allow prompts. The changelog's "one Allow per Chrome run" is a default-policy statement, not an invariant.
+- evidence: `run.py:25-47`; `daemon.py:1`; `admin.py:644-720`.
+- missing: a run with two `BU_NAME`s against one Chrome and a count of prompts.
+- next probe: launch a disposable Chrome, run two named daemons with `BH_NAMED_LOCAL_DAEMON=1`, count `handshake-wait` prompts.
+- why it matters: operators may read the claim as a guarantee and be surprised by multiple consent sheets.
+
+## C-08 · Version seam: 0.1.15 owner model is not active in browser-use 1.0.8 (Hypothesis, high confidence on facts)
+
+- status: Hypothesis; pin and API absence are facts, user impact is inferred.
+- claim: browser-use 1.0.8 pins `browser-harness==0.1.13`; its source has no `BH_OWNER`/`release_tabs`/`list_browsers`/`use_browser`/`name_session`/`mark_tab`. Its non-shared `Browser` uses a unique daemon + own browser; its shared `Browser('chrome')` uses the default daemon without an owner key. The upstream "many agents, one Chrome" capability is therefore not in force on the shared path.
+- evidence: `browser-use` `pyproject.toml:19`; `browser_use/browser/browser.py:900-940`; source-wide grep.
+- missing: a runtime test of two concurrent `Browser('chrome')` agents in one process; a check of whether the host sets `BH_OWNER`.
+- next probe: two async `Browser('chrome')` runs in one process, each opening a tab; inspect owner keys and tab ownership.
+- why it matters: it explains why the old C-02 risk did not disappear with the upstream fix.
+
+## C-09 · 0.1.15 telemetry trim is an undocumented release delta (Observation)
+
+- status: Observation; diff-confirmed, intent unknown.
+- claim: 0.1.15 stops sending the script text, stdout/stderr tails, helper arguments and exception text in `cli_event`; it keeps lengths, helper names, duration and an error boolean. `CHANGELOG.md` has no 0.1.15 section, so users cannot learn this from the release notes.
+- evidence: EK-59; `run.py:207-237,323-356`; `telemetry.py:282-315`; 0.1.14 wheel diff in `audit/_scratch/bh0114`.
+- missing: the release PR/commit message (not in the shallow tree); whether the trim was privacy-driven or payload-driven.
+- next probe: read the 0.1.15 release PR #1077 discussion; compare a real event payload with 0.1.14.
+- why it matters: privacy boundary changed without a changelog statement; the package's EK-02 description of "no args" is a 0.1.15 delta, not a 0.1.13 property.
